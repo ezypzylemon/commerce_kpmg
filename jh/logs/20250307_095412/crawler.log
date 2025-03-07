@@ -1,0 +1,20 @@
+2025-03-07 09:54:12,985 - INFO - 인스타그램 크롤러 시작
+2025-03-07 09:54:12,986 - INFO - 실행 ID: 20250307_095412
+2025-03-07 09:54:15,982 - INFO - 인스타그램 페이지 접속
+2025-03-07 09:54:20,994 - INFO - 사용자명 필드 찾는 중: input[name="username"]
+2025-03-07 09:54:21,064 - INFO - 사용자명 입력 완료
+2025-03-07 09:54:21,112 - INFO - 비밀번호 입력 완료
+2025-03-07 09:54:21,148 - INFO - 로그인 버튼 클릭
+2025-03-07 09:54:21,148 - INFO - 로그인 진행 중...
+2025-03-07 09:54:31,176 - INFO - 로그인 성공!
+2025-03-07 09:54:31,176 - INFO - 키워드 '여행' 데이터 수집 시작
+2025-03-07 09:54:31,177 - ERROR - 프로그램 실행 중 오류 발생: name 'posts_data' is not defined
+Traceback (most recent call last):
+  File "c:\Users\Admin\Downloads\instagram_crawler\main.py", line 153, in main
+    posts_data = scraper.scrape_hashtag_posts(
+  File "c:\Users\Admin\Downloads\instagram_crawler\src\scraper.py", line 303, in scrape_hashtag_posts
+    return posts_data
+NameError: name 'posts_data' is not defined
+2025-03-07 09:54:33,295 - INFO - 크롤링 완료: 0/0 성공 (0.0%)
+2025-03-07 09:54:33,296 - INFO - 총 실행 시간: 20.31초
+2025-03-07 09:54:33,296 - INFO - 프로그램 종료. 총 실행 시간: 20.31초

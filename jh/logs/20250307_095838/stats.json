@@ -1,0 +1,25 @@
+{
+  "start_time": "2025-03-07T09:58:38.198408",
+  "keywords_processed": 3,
+  "posts_attempted": 15,
+  "posts_successful": 15,
+  "errors": {
+    "login": 0,
+    "navigation": 0,
+    "data_extraction": 0,
+    "other": 0
+  },
+  "data_quality": {
+    "posts_with_text": 15,
+    "posts_with_hashtags": 15,
+    "posts_with_likes": 15,
+    "posts_with_comments": 0,
+    "posts_with_date": 15,
+    "posts_with_image": 15
+  },
+  "performance": {
+    "avg_time_per_post": 3.4595162,
+    "total_runtime": 165.703961
+  },
+  "end_time": "2025-03-07T10:01:23.902369"
+}

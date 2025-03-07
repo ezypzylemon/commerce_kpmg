@@ -1,0 +1,65 @@
+# Instagram 크롤링 구성
+selectors:
+  login:
+    username_field: 'input[name="username"]'
+    password_field: 'input[name="password"]'
+    login_button: 'button[type="submit"]'
+    home_icon: 'svg[aria-label="홈"], svg[aria-label="Home"]'
+  
+  post:
+    text_selectors:
+      - 'div[role="dialog"] span'
+      - 'div[role="dialog"] div[dir="auto"] span'
+      - 'div[role="dialog"] h1 ~ div span'
+      - 'span[dir="auto"]'
+    image_selectors:
+      - 'img'
+    next_post_button:
+      - 'button[aria-label*="다음"]'
+      - 'button[aria-label*="Next"]'
+      - 'svg[aria-label*="다음"]'
+      - 'svg[aria-label*="Next"]'
+    close_button:
+      - 'svg[aria-label*="닫기"]'
+      - 'svg[aria-label*="Close"]'
+      - 'button[aria-label*="닫기"]'
+      - 'button[aria-label*="Close"]'
+  
+  grid:
+    post_selectors:
+      - 'article div a'
+      - 'article a'
+      - 'div[role="presentation"] a'
+      - 'div._aagw a'
+      - 'a[href*="/p/"]'
+
+patterns:
+  date_format: '%Y-%m-%dT%H:%M:%S.%fZ'
+  hashtag_regex: '#\w+'
+  like_indicators:
+    - '좋아요'
+    - '회'
+    - 'like'
+  view_indicators:
+    - '조회'
+    - 'view'
+
+browser:
+  user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36'
+  window_size:
+    width: 1920
+    height: 1080
+
+limits:
+  min_delay: 3
+  max_delay: 7
+  posts_per_keyword: 5
+  requests_per_hour: 30
+
+keywords:
+  - ko: '여행'
+    en: 'travel'
+  - ko: '맛집'
+    en: 'food'
+  - ko: '패션'
+    en: 'fashion'
