@@ -6,6 +6,10 @@ import platform
 import os
 from collections import Counter
 import re
+import datetime
+
+# 📌 현재 날짜 가져오기
+date = datetime.datetime.today().strftime("%Y.%m.%d")
 
 # 운영체제에 따라 폰트 경로 자동 설정
 def get_font_path():
@@ -33,7 +37,7 @@ def preprocess_text(text):
     return " ".join(words)
 
 # 데이터 불러오기
-file_path = "2025.03.11_merged_fashion_trends.csv"
+file_path = f"{date}_merged_fashion_trends.csv"
 df = pd.read_csv(file_path, encoding='utf-8')  # 한글 깨짐 방지
 
 # 날짜 형식 변환 및 정렬
