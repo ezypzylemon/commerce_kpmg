@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR 문서 비교 대시보드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OCR 문서 비교 대시보드</h1>
+        </header>
+        
+        <div class="search-bar">
+            <i class="fa fa-search"></i>
+            <input type="text" id="search-input" placeholder="브랜드 또는 시즌 검색...">
+        </div>
+        
+        <!-- 알림 영역 -->
+        <div id="notification-area" class="notification-area"></div>
+        
+        <!-- 비교 결과 테이블 -->
+        <div class="comparison-result">
+            <h2>최근 문서 비교 결과</h2>
+            <div class="table-container">
+                <table class="document-table" id="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>문서 1</th>
+                            <th>문서 2</th>
+                            <th>일치율</th>
+                            <th>상태</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-table-body">
+                        <!-- 비교 결과가 여기에 동적으로 추가됩니다 -->
+                        <tr>
+                            <td colspan="6" class="text-center">로딩 중...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- 차트 및 알림 영역 -->
+        <div class="charts-container">
+            <div class="chart-container">
+                <h3 class="chart-title">전체 일치/불일치 비율</h3>
+                <div class="pie-chart-container">
+                    <canvas id="match-rate-chart" width="200" height="200"></canvas>
+                </div>
+                <div class="pie-info">
+                    <div class="pie-label">
+                        <span class="pie-color" style="background-color: #4caf50;"></span>
+                        <span>일치</span>
+                    </div>
+                    <div class="pie-label">
+                        <span class="pie-color" style="background-color: #e57373;"></span>
+                        <span>불일치</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">알림</h3>
+                <div id="notifications-list">
+                    <!-- 알림 항목들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 빠른 액션 영역 -->
+        <div class="file-upload-section">
+            <h3>빠른 액션</h3>
+            <div class="button-group">
+                <div class="action-button" id="upload-button">
+                    <i class="fas fa-upload"></i>
+                    <span>새 문서 업로드</span>
+                </div>
+                <div class="action-button" id="compare-button">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>문서 비교</span>
+                </div>
+                <div class="action-button" id="report-button">
+                    <i class="fas fa-file-alt"></i>
+                    <span>보고서 생성</span>
+                </div>
+                <div class="action-button" id="search-button">
+                    <i class="fas fa-search"></i>
+                    <span>고급 검색</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 문서 목록 및 상세 정보 영역 -->
+        <h2>OCR 문서 관리</h2>
+        <div class="document-detail">
+            <div class="doc-list" id="document-list">
+                <!-- 문서 목록이 여기에 동적으로 추가됩니다 -->
+                <div class="doc-item loading">
+                    <div>문서 목록 로딩 중...</div>
+                </div>
+            </div>
+            
+            <div class="doc-preview" id="document-preview">
+                <div class="doc-preview-header">
+                    <h3 class="doc-preview-title">문서를 선택하세요</h3>
+                    <button class="download-button" id="upload-new-doc-button">
+                        <i class="fas fa-upload"></i>
+                        새 문서 업로드
+                    </button>
+                </div>
+                
+                <div class="doc-content">
+                    <div class="doc-image">
+                        <i class="far fa-file-pdf"></i>
+                    </div>
+                    
+                    <div class="doc-info" id="document-info">
+                        <p>좌측에서 문서를 선택하거나 새 문서를 업로드하세요.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 업로드 모달 -->
+    <div class="modal" id="upload-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>새 문서 업로드</h2>
+                <span class="close" id="upload-modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file-upload">PDF 파일 선택</label>
+                        <input type="file" id="file-upload" name="file" accept=".pdf">
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-type">문서 유형</label>
+                        <select id="doc-type" name="type">
+                            <option value="invoice">인보이스</option>
+                            <option value="order">오더시트</option>
+                            <option value="packing">패킹리스트</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">업로드</button>
+                    </div>
+                </form>
+                <div id="upload-progress-container" style="display: none;">
+                    <p>업로드 중...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="upload-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div id="upload-result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 비교 모달 -->
+    <div class="modal" id="compare-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>문서 비교</h2>
+                <span class="close" id="compare-modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="compare-form">
+                    <div class="form-group">
+                        <label for="doc1-select">첫 번째 문서</label>
+                        <select id="doc1-select" name="doc1_id">
+                            <option value="">문서 선택...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc2-select">두 번째 문서</label>
+                        <select id="doc2-select" name="doc2_id">
+                            <option value="">문서 선택...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">비교 시작</button>
+                    </div>
+                </form>
+                <div id="compare-progress-container" style="display: none;">
+                    <p>비교 중...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="compare-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div id="compare-result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 비교 결과 상세 모달 -->
+    <div class="modal" id="comparison-detail-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h2>비교 결과 상세</h2>
+                <span class="close" id="comparison-detail-modal-close">&times;</span>
+            </div>
+            <div class="modal-body" id="comparison-detail-content">
+                <!-- 비교 결과 상세 내용이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI 어시스턴트 버튼 -->
+    <button class="ai-assistant-button" id="ai-assistant-button">
+        <i class="fas fa-robot"></i>
+        AI 문서 비교 어시스턴트
+    </button>
+    
+    <!-- Chart.js 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    
+    <!-- 자바스크립트 파일 -->
+    <script src="js/main.js"></script>
+    <script src="js/comparison.js"></script>
+</body>
+</html>
