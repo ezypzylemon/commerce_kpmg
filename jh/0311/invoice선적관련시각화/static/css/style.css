@@ -1,0 +1,356 @@
+/* 글로벌 스타일 */
+body {
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* 사이드바 스타일 */
+.css-1d391kg {
+    background-color: #2c2c3c;
+}
+
+.sidebar .sidebar-content {
+    background-color: #2c2c3c;
+    color: white;
+}
+
+.sidebar h1, .sidebar h2, .sidebar h3 {
+    color: white;
+}
+
+.sidebar hr {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 카드 컴포넌트 */
+.card {
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* 메트릭 카드 */
+.metric-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    border-top: 5px solid #3498db;
+}
+
+.metric-card h4 {
+    color: #555;
+    font-size: 0.9em;
+    margin: 0 0 10px 0;
+}
+
+.metric-card .metric-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+}
+
+.metric-card .metric-change {
+    font-size: 0.9em;
+}
+
+.metric-card .metric-change.positive {
+    color: green;
+}
+
+.metric-card .metric-change.negative {
+    color: red;
+}
+
+/* 대시보드 카드 */
+.dashboard-card {
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #37415a;
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* 액션 버튼 */
+.action-button {
+    background-color: #3498db;
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.action-button:hover {
+    opacity: 0.9;
+}
+
+/* 알림 스타일 */
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    border-left: 4px solid #e57373;
+}
+
+.alert-warning {
+    background-color: #fff8e1;
+    border-left: 4px solid #ffca28;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    border-left: 4px solid #81c784;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    border-left: 4px solid #64b5f6;
+}
+
+/* 상태 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.status-complete {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status-processing {
+    background-color: #f39c12;
+    color: white;
+}
+
+.status-pending {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* 프로그레스 바 */
+.stProgress > div > div {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* 탭 스타일 */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 2px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    white-space: pre-wrap;
+    border-radius: 5px 5px 0px 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* 캘린더 스타일 */
+.calendar-cell {
+    background-color: white;
+    padding: 5px;
+    min-height: 60px;
+    border: 1px solid #e0e0e0;
+}
+
+.calendar-cell.empty {
+    background-color: #f5f5f5;
+}
+
+.calendar-cell.today {
+    background-color: #ebf5fb;
+    border: 1px solid #3498db;
+}
+
+.calendar-event {
+    background-color: #3498db;
+    color: white;
+    padding: 3px 5px;
+    border-radius: 4px;
+    margin-top: 2px;
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 데이터프레임 스타일 */
+.dataframe {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* 모달 스타일 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+}
+
+/* 문서 카드 */
+.document-card {
+    display: flex;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.document-icon {
+    width: 40px;
+    font-size: 24px;
+}
+
+.document-info {
+    flex: 1;
+    margin-left: 10px;
+}
+
+.document-title {
+    font-weight: bold;
+}
+
+.document-meta {
+    display: flex;
+    color: #777;
+    font-size: 0.9em;
+}
+
+.document-progress {
+    margin-right: 15px;
+    width: 150px;
+}
+
+.document-progress-bar {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.document-progress-value {
+    height: 100%;
+}
+
+.document-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+/* 버튼 스타일 */
+.stButton > button {
+    border-radius: 6px;
+    padding: 4px 15px;
+    font-weight: 500;
+}
+
+/* 입력 필드 스타일 */
+.stTextInput > div > div > input {
+    border-radius: 6px;
+}
+
+.stSelectbox > div > div {
+    border-radius: 6px;
+}
+
+.stDateInput > div > div {
+    border-radius: 6px;
+}
+
+/* 색상 정의 */
+.color-primary {
+    color: #3498db;
+}
+
+.color-success {
+    color: #2ecc71;
+}
+
+.color-warning {
+    color: #f39c12;
+}
+
+.color-danger {
+    color: #e74c3c;
+}
+
+.color-info {
+    color: #9b59b6;
+}
+
+.bg-primary {
+    background-color: #3498db;
+}
+
+.bg-success {
+    background-color: #2ecc71;
+}
+
+.bg-warning {
+    background-color: #f39c12;
+}
+
+.bg-danger {
+    background-color: #e74c3c;
+}
+
+.bg-info {
+    background-color: #9b59b6;
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 768px) {
+    .document-meta {
+        flex-direction: column;
+    }
+    
+    .document-progress {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .calendar-cell {
+        min-height: 50px;
+    }
+}

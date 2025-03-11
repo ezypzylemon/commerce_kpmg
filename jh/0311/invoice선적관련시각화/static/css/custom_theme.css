@@ -1,0 +1,279 @@
+/* OCR 문서 관리 시스템 커스텀 테마 */
+
+/* 기본 테마 커스터마이징 */
+.main {
+    background-color: #f0f2f6;
+}
+
+/* 사이드바 스타일 */
+.css-1d391kg, .css-1wrcr25, .css-12oz5g7 {
+    background-color: #2c2c3c;
+}
+
+.sidebar .sidebar-content {
+    background-color: #2c2c3c;
+}
+
+/* 사이드바 텍스트 색상 강화 - 가독성 향상 */
+.sidebar h1, .sidebar h2, .sidebar h3, .sidebar .stMarkdown, .sidebar p, 
+.sidebar span, .sidebar div, .sidebar label, .sidebar button, .sidebar a {
+    color: white !important;
+    opacity: 1 !important;
+    font-weight: 500 !important;
+}
+
+/* 사이드바 아이콘 색상 강화 */
+.sidebar svg {
+    fill: white !important;
+    opacity: 1 !important;
+}
+
+/* 사이드바 선택 라디오/체크박스 텍스트 강화 */
+.stRadio > div, .stCheckbox > div, 
+.stRadio > div[role="radiogroup"] > label, 
+.stMultiSelect span, .stSelectbox span {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* 사이드바 구분선 */
+.sidebar hr {
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 15px 0;
+}
+
+/* 사이드바 타이틀 강조 */
+.sidebar h1 {
+    font-size: 1.5em !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+}
+
+.sidebar h3 {
+    font-size: 1.2em !important;
+    font-weight: 600 !important;
+    margin-top: 15px !important;
+}
+
+/* 메뉴 버튼 스타일 강화 */
+.sidebar button {
+    text-align: left !important;
+    font-weight: 500 !important;
+}
+
+/* 선택된 메뉴 강조 스타일 */
+.sidebar button[data-baseweb="button"][kind="primary"] {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: transparent !important;
+}
+
+/* 날짜 선택기 색상 조정 */
+.sidebar .stDateInput input, 
+.sidebar .stDateInput div[data-baseweb="input"] {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* 멀티셀렉트 드롭다운 색상 */
+.sidebar .stMultiSelect div[role="listbox"] span {
+    color: #333333 !important;
+}
+
+/* 사이드바 날짜 입력 레이블 */
+.sidebar .stDateInput label, 
+.sidebar .stMultiSelect label {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* 사이드바 뱃지 색상 */
+.sidebar .css-7oyrr6 {
+    color: white !important;
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 멀티셀렉트 선택된 아이템 강조 */
+.sidebar .stMultiSelect [data-baseweb="tag"] {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.sidebar .stMultiSelect [data-baseweb="tag"] span {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* 메인 콘텐츠 영역 */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* 글자 색상 강화 */
+h1, h2, h3, h4, h5, h6, p, span, div, label {
+    color: #333333 !important;
+}
+
+/* 카드 컴포넌트 스타일 */
+.card {
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* 대시보드 카드 */
+.dashboard-card {
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #37415a;
+    margin-bottom: 10px;
+}
+
+.dashboard-card h3, .dashboard-card p {
+    color: white !important;
+}
+
+/* 메트릭 컴포넌트 */
+.metric-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;
+}
+
+/* 빠른 액션 버튼 */
+.quick-action {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* 데이터프레임 스타일 */
+.dataframe {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dataframe th {
+    background-color: #f1f3f5 !important;
+    color: #333333 !important;
+    font-weight: bold !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.dataframe td {
+    border: 1px solid #e9ecef !important;
+    color: #333333 !important;
+}
+
+/* 탭 스타일 */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 2px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    white-space: pre-wrap;
+    border-radius: 5px 5px 0px 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #f8f9fa;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background-color: white;
+    border-bottom: 2px solid #3498db;
+}
+
+/* 버튼 스타일링 */
+.stButton>button {
+    border-radius: 6px;
+    padding: 4px 15px;
+    font-weight: 500;
+}
+
+/* 멀티셀렉트 박스 글자 색상 수정 */
+.stMultiSelect > div[data-baseweb="select"] span {
+    color: #333333 !important;
+}
+
+/* 캘린더 셀 색상 개선 */
+.calendar-cell div {
+    color: #333333 !important;
+}
+
+/* 알림 스타일 */
+.element-container div[data-testid="stAlert"] {
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+}
+
+/* 토글 스위치 스타일 */
+.stToggle {
+    height: 24px !important;
+}
+
+.stToggle > div {
+    height: 24px !important;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .sidebar h1 {
+        font-size: 1.2em !important;
+    }
+    
+    .sidebar h3 {
+        font-size: 1em !important;
+    }
+    
+    .stButton>button {
+        padding: 4px 8px;
+        font-size: 0.9em;
+    }
+}
+
+/* 다크 모드 최적화 (사용자 시스템이 다크 모드일 때) */
+@media (prefers-color-scheme: dark) {
+    /* 메인 콘텐츠 배경 */
+    .main {
+        background-color: #1e1e2f;
+    }
+    
+    /* 카드 및 컨테이너 배경 */
+    .card, 
+    .stTabs [data-baseweb="tab-panel"],
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        background-color: #252538;
+    }
+    
+    /* 텍스트 색상 */
+    h1, h2, h3, h4, h5, h6, p, span, div, label:not(.sidebar *) {
+        color: #e0e0e0 !important;
+    }
+    
+    /* 입력 필드 */
+    input, select, textarea {
+        background-color: #2c2c3c !important;
+        color: #e0e0e0 !important;
+    }
+    
+    /* 테이블/데이터프레임 */
+    .dataframe th {
+        background-color: #2c2c3c !important;
+        color: #e0e0e0 !important;
+    }
+    
+    .dataframe td {
+        background-color: #252538 !important;
+        color: #e0e0e0 !important;
+    }
+}

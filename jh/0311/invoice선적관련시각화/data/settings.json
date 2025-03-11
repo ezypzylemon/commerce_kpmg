@@ -1,0 +1,50 @@
+{
+  "app_settings": {
+    "app_name": "OCR 문서 관리 시스템",
+    "version": "1.0.0",
+    "theme": "light",
+    "language": "ko",
+    "timezone": "Asia/Seoul",
+    "cache_enabled": true,
+    "cache_timeout": 3600,
+    "max_upload_size_mb": 100,
+    "supported_formats": ["pdf"]
+  },
+  "ocr_settings": {
+    "default_dpi": 300,
+    "image_quality": 95,
+    "scale_factor": 1.5,
+    "ocr_language": "eng",
+    "ocr_config": {
+      "general": "--psm 6 --oem 3",
+      "table": "--psm 11 --oem 3 -c preserve_interword_spaces=1",
+      "digits": "--psm 7 --oem 3 -c tessedit_char_whitelist=0123456789"
+    },
+    "preprocessing_enabled": true,
+    "result_caching_enabled": true,
+    "shipping_method": "해운",
+    "shipping_estimate_weeks": 8
+  },
+  "ui_settings": {
+    "items_per_page": 10,
+    "default_date_range_days": 30,
+    "date_format": "YYYY-MM-DD",
+    "default_view": "대시보드",
+    "chart_colors": [
+      "#3498db",
+      "#2ecc71",
+      "#f39c12",
+      "#e74c3c",
+      "#9b59b6",
+      "#1abc9c",
+      "#34495e",
+      "#f1c40f"
+    ],
+    "status_colors": {
+      "완료": "#2ecc71",
+      "처리중": "#f39c12",
+      "대기중": "#3498db",
+      "실패": "#e74c3c"
+    }
+  }
+}
