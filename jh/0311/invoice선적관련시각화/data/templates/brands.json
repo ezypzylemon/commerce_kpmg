@@ -1,0 +1,44 @@
+{
+  "brands": [
+    {
+      "name": "TOGA VIRILIS",
+      "code": "TV",
+      "seasons": ["2024SS", "2024FW", "2025SS", "2025FW"],
+      "category": "Footwear",
+      "colors": ["BLACK LEATHER", "BLACK POLIDO", "WHITE LEATHER", "BROWN LEATHER"],
+      "size_range": ["39", "40", "41", "42", "43", "44", "45", "46"]
+    },
+    {
+      "name": "WILD DONKEY",
+      "code": "WD",
+      "seasons": ["2024SS", "2024FW", "2025SS", "2025FW"],
+      "category": "Apparel",
+      "colors": ["BLACK", "WHITE", "NAVY", "GREEN"],
+      "size_range": ["XS", "S", "M", "L", "XL"]
+    },
+    {
+      "name": "ATHLETICS FTWR",
+      "code": "AF",
+      "seasons": ["2024SS", "2024FW", "2025SS", "2025FW"],
+      "category": "Footwear",
+      "colors": ["BLACK", "WHITE", "RED", "BLUE"],
+      "size_range": ["250", "255", "260", "265", "270", "275", "280", "285"]
+    },
+    {
+      "name": "BASERANGE",
+      "code": "BR",
+      "seasons": ["2024SS", "2024FW", "2025SS", "2025FW"],
+      "category": "Underwear",
+      "colors": ["BLACK", "WHITE", "NUDE", "GREY"],
+      "size_range": ["XS", "S", "M", "L", "XL"]
+    },
+    {
+      "name": "NOU NOU",
+      "code": "NN",
+      "seasons": ["2024SS", "2024FW", "2025SS", "2025FW"],
+      "category": "Accessories",
+      "colors": ["BLACK", "WHITE", "MULTI", "BEIGE"],
+      "size_range": ["OS"]
+    }
+  ]
+}
