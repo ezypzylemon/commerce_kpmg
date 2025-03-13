@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>발주 및 계약 관리 - OCR 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>OCR 문서 관리</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="index.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li class="active">
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="inventory.html"><i class="fas fa-boxes"></i> 입고현황</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-filters">
+                <h3>필터</h3>
+                
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" value="2025-02-11">
+                        <span>~</span>
+                        <input type="date" class="date-input" value="2025-03-11">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>문서 타입</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-all" checked>
+                            <label for="doc-all">모든 문서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-po">
+                            <label for="doc-po">발주서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-invoice">
+                            <label for="doc-invoice">인보이스</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-contract">
+                            <label for="doc-contract">계약서</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>브랜드</label>
+                    <select class="form-select">
+                        <option selected>모든 브랜드</option>
+                        <option>TOGA VIRILIS</option>
+                        <option>WILD DONKEY</option>
+                        <option>ATHLETICS FTWR</option>
+                        <option>BASERANGE</option>
+                        <option>NOU NOU</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary btn-block">필터 적용</button>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>발주 및 계약 관리</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="문서 검색...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> 새 문서</button>
+                </div>
+            </header>
+            
+            <!-- 주요 지표 카드 -->
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 수</h3>
+                        <p class="metric-value">87</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>계약 건수</h3>
+                        <p class="metric-value">15</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>데이터 불일치</h3>
+                        <p class="metric-value">7</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 금액</h3>
+                        <p class="metric-value">₩457.9M</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 문서 관리 섹션 -->
+            <div class="document-management">
+                <div class="tabs">
+                    <button class="tab-btn active">모든 문서</button>
+                    <button class="tab-btn">발주서</button>
+                    <button class="tab-btn">인보이스</button>
+                    <button class="tab-btn">계약서</button>
+                </div>
+                
+                <div class="document-grid">
+                    <!-- 문서 아이템 예시들 -->
+                    <div class="document-item">
+                        <div class="document-header">
+                            <span class="doc-type invoice">인보이스</span>
+                            <span class="doc-date">2025-03-09</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <h3 class="doc-title">AF_Sports_Invoice_22-03-2025.pdf</h3>
+                            <div class="match-indicator high">
+                                <span class="match-label">일치율</span>
+                                <span class="match-value">92%</span>
+                            </div>
+                            <div class="doc-info">
+                                <div class="info-item">
+                                    <span class="info-label">브랜드:</span>
+                                    <span class="info-value">ATHLETICS FTWR</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">금액:</span>
+                                    <span class="info-value">₩8,750,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <span class="status-badge complete">완료</span>
+                            <div class="footer-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-header">
+                            <span class="doc-type po">발주서</span>
+                            <span class="doc-date">2025-03-08</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <h3 class="doc-title">UrbanStreet_PO_18-03-2025.pdf</h3>
+                            <div class="match-indicator medium">
+                                <span class="match-label">일치율</span>
+                                <span class="match-value">78%</span>
+                            </div>
+                            <div class="doc-info">
+                                <div class="info-item">
+                                    <span class="info-label">브랜드:</span>
+                                    <span class="info-value">WILD DONKEY</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">금액:</span>
+                                    <span class="info-value">₩4,320,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <span class="status-badge review">검토 중</span>
+                            <div class="footer-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-header">
+                            <span class="doc-type invoice">인보이스</span>
+                            <span class="doc-date">2025-03-07</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <h3 class="doc-title">MetroStyles_Invoice_10-03-2025.pdf</h3>
+                            <div class="match-indicator low">
+                                <span class="match-label">일치율</span>
+                                <span class="match-value">45%</span>
+                            </div>
+                            <div class="doc-info">
+                                <div class="info-item">
+                                    <span class="info-label">브랜드:</span>
+                                    <span class="info-value">BASERANGE</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">금액:</span>
+                                    <span class="info-value">₩3,150,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <span class="status-badge review">검토 필요</span>
+                            <div class="footer-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-header">
+                            <span class="doc-type contract">계약서</span>
+                            <span class="doc-date">2025-03-05</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <h3 class="doc-title">FitPlus_Contract_05-03-2025.pdf</h3>
+                            <div class="match-indicator high">
+                                <span class="match-label">일치율</span>
+                                <span class="match-value">89%</span>
+                            </div>
+                            <div class="doc-info">
+                                <div class="info-item">
+                                    <span class="info-label">브랜드:</span>
+                                    <span class="info-value">TOGA VIRILIS</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">계약 기간:</span>
+                                    <span class="info-value">1년</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <span class="status-badge complete">완료</span>
+                            <div class="footer-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 추가 문서 아이템들 반복 -->
+                    <div class="document-item">
+                        <div class="document-header">
+                            <span class="doc-type po">발주서</span>
+                            <span class="doc-date">2025-03-04</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="document-body">
+                            <h3 class="doc-title">NouNou_PO_04-03-2025.pdf</h3>
+                            <div class="match-indicator high">
+                                <span class="match-label">일치율</span>
+                                <span class="match-value">95%</span>
+                            </div>
+                            <div class="doc-info">
+                                <div class="info-item">
+                                    <span class="info-label">브랜드:</span>
+                                    <span class="info-value">NOU NOU</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">금액:</span>
+                                    <span class="info-value">₩5,875,000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <span class="status-badge complete">완료</span>
+                            <div class="footer-actions">
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-icon btn-sm"><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="btn btn-sm"><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-sm active">1</button>
+                    <button class="btn btn-sm">2</button>
+                    <button class="btn btn-sm">3</button>
+                    <span>...</span>
+                    <button class="btn btn-sm">8</button>
+                    <button class="btn btn-sm"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            
+            <!-- 문서 상세 보기 섹션 -->
+            <div class="document-detail">
+                <div class="section-header">
+                    <h2>문서 상세 정보</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> 편집</button>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 다운로드</button>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-print"></i> 인쇄</button>
+                    </div>
+                </div>
+                
+                <div class="document-viewer">
+                    <div class="document-info-panel">
+                        <div class="doc-preview">
+                            <img src="https://via.placeholder.com/300x400?text=PDF+Preview" alt="문서 미리보기">
+                            <div class="preview-actions">
+                                <button class="btn btn-icon"><i class="fas fa-search-plus"></i></button>
+                                <button class="btn btn-icon"><i class="fas fa-search-minus"></i></button>
+                                <button class="btn btn-icon"><i class="fas fa-expand"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="doc-details">
+                            <div class="detail-group">
+                                <h3>문서 정보</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">문서 ID:</span>
+                                    <span class="detail-value">doc002</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">문서 타입:</span>
+                                    <span class="detail-value">발주서</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">생성일:</span>
+                                    <span class="detail-value">2025-03-08</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">브랜드:</span>
+                                    <span class="detail-value">WILD DONKEY</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">시즌:</span>
+                                    <span class="detail-value">2024SS</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <h3>품목 정보</h3>
+                                <table class="detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>품목명</th>
+                                            <th>수량</th>
+                                            <th>단가</th>
+                                            <th>합계</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>캐주얼 셔츠</td>
+                                            <td>40</td>
+                                            <td>₩95,000</td>
+                                            <td>₩3,800,000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>청바지</td>
+                                            <td>35</td>
+                                            <td>₩125,000</td>
+                                            <td>₩4,375,000</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3">총 금액</td>
+                                            <td>₩8,175,000</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <h3>데이터 일치 상태</h3>
+                                <div class="alert-item warning">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="alert-content">
+                                        <h4>브랜드명 불일치</h4>
+                                        <p>OCR 인식: "URBAN STREET COLLECTION" / 매핑 필요</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-action">
+                                    <select class="form-select">
+                                        <option value="">브랜드 선택...</option>
+                                        <option value="urban_street">Urban Street</option>
+                                        <option value="urbanstreet" selected>UrbanStreet Collection</option>
+                                        <option value="urban_collection">Urban Collection</option>
+                                    </select>
+                                    <button class="btn btn-primary btn-sm">매핑 적용</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>

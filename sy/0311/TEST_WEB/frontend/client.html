@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>거래처 관리 - OCR 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <h2>OCR 문서 관리</h2>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> 대시보드</a></li>
+                    <li><a href="orders.html"><i class="fas fa-file-contract"></i> 발주 관리</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> 보고서</a></li>
+                    <li><a href="inventory.html"><i class="fas fa-boxes"></i> 입고 관리</a></li>
+                    <li class="active"><a href="clients.html"><i class="fas fa-user-tie"></i> 거래처 관리</a></li>
+                    <li><a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header>
+                <h1>거래처 관리</h1>
+            </header>
+
+            <!-- 검색 및 필터 -->
+            <div class="search-filter">
+                <div class="search-box">
+                    <input type="text" id="searchClient" placeholder="거래처 검색...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <select id="statusFilter">
+                    <option value="all">전체</option>
+                    <option value="shipping">선적 진행</option>
+                    <option value="payment">비용 정산</option>
+                    <option value="completed">거래 완료</option>
+                </select>
+            </div>
+
+            <!-- 월별 거래 진행 캘린더 -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h3>거래 진행 캘린더</h3>
+                    <div class="calendar-controls">
+                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <span id="currentMonth">2025년 3월</span>
+                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-days-header">
+                        <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+                    </div>
+                    <div class="calendar-days">
+                        <!-- JavaScript로 날짜 및 거래 내역 표시 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 월별 거래 내역 테이블 -->
+            <div class="transaction-table">
+                <h2>월별 거래 내역</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>거래처명</th>
+                            <th>거래 날짜</th>
+                            <th>거래 내용</th>
+                            <th>진행 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionData">
+                        <!-- JavaScript에서 데이터 추가 -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/clients.js"></script>
+</body>
+</html>
