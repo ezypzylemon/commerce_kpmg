@@ -1,0 +1,23 @@
+2025-03-11 15:50:32,664 - ERROR - 데이터베이스 설정 오류: 1045 (28000): Access denied for user 'your_username'@'localhost' (using password: YES)
+2025-03-11 15:50:32,664 - INFO - 스케줄러 시작
+2025-03-11 16:31:25,676 - ERROR - 데이터베이스 설정 오류: 1045 (28000): Access denied for user 'your_username'@'localhost' (using password: YES)
+2025-03-11 16:31:25,676 - INFO - 크롤링 작업 시작
+2025-03-11 16:31:26,688 - ERROR - vogue 데이터 저장 오류: 1045 (28000): Access denied for user 'your_username'@'localhost' (using password: YES)
+2025-03-11 16:31:26,688 - INFO - 보그 크롤링 완료
+2025-03-11 16:31:27,978 - ERROR - wkorea 데이터 저장 오류: 1045 (28000): Access denied for user 'your_username'@'localhost' (using password: YES)
+2025-03-11 16:31:27,978 - INFO - 더블유 코리아 크롤링 완료
+2025-03-11 16:31:36,781 - ERROR - jentestore 데이터 저장 오류: 1045 (28000): Access denied for user 'your_username'@'localhost' (using password: YES)
+2025-03-11 16:31:36,781 - INFO - 젠테 스토어 크롤링 완료
+2025-03-11 16:32:42,418 - INFO - 데이터베이스 설정 완료
+2025-03-11 16:32:42,419 - INFO - 크롤링 작업 시작
+2025-03-11 16:32:43,463 - INFO - vogue 데이터 저장 완료
+2025-03-11 16:32:43,463 - INFO - 보그 크롤링 완료
+2025-03-11 16:32:44,811 - INFO - wkorea 데이터 저장 완료
+2025-03-11 16:32:44,811 - INFO - 더블유 코리아 크롤링 완료
+2025-03-11 16:32:53,460 - INFO - jentestore 데이터 저장 완료
+2025-03-11 16:32:53,460 - INFO - 젠테 스토어 크롤링 완료
+2025-03-11 16:32:55,441 - INFO - wwdkorea 데이터 저장 완료
+2025-03-11 16:32:55,441 - INFO - WWD 코리아 크롤링 완료
+2025-03-11 16:32:56,727 - INFO - marieclaire 데이터 저장 완료
+2025-03-11 16:32:56,727 - INFO - 마리끌레르 크롤링 완료
+2025-03-11 16:32:56,728 - INFO - 크롤링 작업 완료
