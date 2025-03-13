@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>거래처 및 일정 관리</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>OCR 문서 관리</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="inventory.html"><i class="fas fa-boxes"></i> 입고현황</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-filters">
+                <h3>필터</h3>
+
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" value="2025-02-11">
+                        <span>~</span>
+                        <input type="date" class="date-input" value="2025-03-11">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>브랜드</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-all" checked>
+                            <label for="brand-all">모든 브랜드</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-toga">
+                            <label for="brand-toga">TOGA VIRILIS</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-wild">
+                            <label for="brand-wild">WILD DONKEY</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-athletics">
+                            <label for="brand-athletics">ATHLETICS FTWR</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-baserange">
+                            <label for="brand-baserange">BASERANGE</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-nounou">
+                            <label for="brand-nounou">NOU NOU</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>상태</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-all" checked>
+                            <label for="status-all">모든 상태</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-complete">
+                            <label for="status-complete">완료</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-review">
+                            <label for="status-review">검토 필요</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-progress">
+                            <label for="status-progress">처리 중</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block">필터 적용</button>
+            </div>
+
+            <div class="sidebar-actions">
+                <h3>빠른 액션</h3>
+                <button class="btn btn-outline btn-block"><i class="fas fa-upload"></i> 새 문서 업로드</button>
+                <button class="btn btn-outline btn-block"><i class="fas fa-sync-alt"></i> OCR 재처리</button>
+                <button class="btn btn-outline btn-block"><i class="fas fa-file-alt"></i> 보고서 생성</button>
+                <button class="btn btn-outline btn-block"><i class="fas fa-robot"></i> AI 문서 비교</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>거래처 및 일정 관리</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchClient" placeholder="거래처 검색...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-icon"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-icon"><i class="fas fa-question-circle"></i></button>
+                </div>
+            </header>
+
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>총 거래처 수</h3>
+                    <p id="total-clients" class="metric-value">100</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>진행 중 거래</h3>
+                    <p id="in-progress-count" class="metric-value">60 건</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h3>완료된 거래</h3>
+                    <p id="completed-count" class="metric-value">40 건</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>오늘의 일정</h3>
+                    <p class="metric-value">5 건</p>
+                </div>
+            </div>
+
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2>거래 일정</h2>
+                    <div class="calendar-controls">
+                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <span id="currentMonth">2025년 3월</span>
+                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-days-header">
+                        <div>일</div>
+                        <div>월</div>
+                        <div>화</div>
+                        <div>수</div>
+                        <div>목</div>
+                        <div>금</div>
+                        <div>토</div>
+                    </div>
+                    <div class="calendar-days" id="calendar-days"></div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>거래처별 거래 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="clientChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>거래 유형별 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-documents">
+                <div class="section-header">
+                    <h2>최근 거래처 목록</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-sm"><i class="fas fa-filter"></i> 필터</button>
+                        <button class="btn btn-sm"><i class="fas fa-download"></i> 내보내기</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>거래처명</th>
+                                <th>거래 날짜</th>
+                                <th>거래 내용</th>
+                                <th>진행 상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionData">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="pagination">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/일정.js"></script>
+</body>
+
+</html>

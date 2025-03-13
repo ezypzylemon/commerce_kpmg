@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입고 관리 - OCR 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>OCR 문서 관리</h2>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> 대시보드</a></li>
+                    <li><a href="orders.html"><i class="fas fa-file-contract"></i> 발주 관리</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> 보고서</a></li>
+                    <li class="active"><a href="inventory.html"><i class="fas fa-boxes"></i> 입고 관리</a></li>
+                    <li><a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header>
+                <h1>입고 관리</h1>
+            </header>
+            
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>총 입고 건수</h3>
+                    <p id="total-inventory">-건</p>
+                </div>
+                <div class="card">
+                    <h3>현재 입고 진행 중</h3>
+                    <p id="in-progress-count">-건</p>
+                </div>
+                <div class="card">
+                    <h3>완료된 입고</h3>
+                    <p id="completed-count">-건</p>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <h2>입고 진행 상태</h2>
+                <div class="progress-bar">
+                    <div class="progress completed" id="progress-completed" style="width: 0%">완료</div>
+                    <div class="progress in-progress" id="progress-in-progress" style="width: 0%">진행 중</div>
+                    <div class="progress review" id="progress-review" style="width: 0%">검토 필요</div>
+                </div>
+            </div>
+            
+            <div class="charts">
+                <div class="chart-container">
+                    <h2>📈 월별 입고 추이</h2>
+                    <canvas id="inventoryTrendChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h2>📊 브랜드별 입고 비율</h2>
+                    <canvas id="brandInventoryChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recent-inventory">
+                <h2>📋 최근 입고 내역</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>문서명</th>
+                            <th>입고 날짜</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- JavaScript에서 동적으로 추가 -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/inventory.js"></script>
+</body>
+</html>
