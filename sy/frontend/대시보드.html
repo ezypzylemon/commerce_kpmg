@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 대시보드 - BUYING MASTER AI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 추가된 테이블 스타일 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* 입출고 현황 테이블 스타일 */
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stock-table th,
+        .stock-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .stock-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .stock-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        .status-badge.complete {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-badge.progress {
+            background-color: #ffc107;
+            color: #343a40;
+        }
+
+        .status-badge.review {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>BUYING MASTER AI</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="trend_analysis.html"><i class="fas fa-chart-line"></i> 트렌드 분석</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="일정.html"><i class="fas fa-chart-bar"></i> 일정 관리</a>
+                    </li>
+                    <li>
+                        <a href="입출고관리.html"><i class="fas fa-boxes"></i> 입출고 관리</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>메인 대시보드</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="검색어를 입력하세요...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary"><i class="fas fa-cloud-download-alt"></i> 보고서 다운로드</button>
+                </div>
+            </header>
+
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>발주 및 계약 현황</h2>
+                    <a href="orders.html" class="section-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="metrics-cards">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>총 발주 수</h3>
+                            <p class="metric-value">87</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>계약 건수</h3>
+                            <p class="metric-value">15</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>데이터 불일치</h3>
+                            <p class="metric-value">7</p>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3>총 발주 금액</h3>
+                            <p class="metric-value">₩457.9M</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>진행 현황</h2>
+                    <a href="일정.html" class="section-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="metrics-cards">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>총 브랜드 수</h3>
+                        <p id="total-clients" class="metric-value">100</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3>진행 중</h3>
+                        <p id="in-progress-count" class="metric-value">60 건</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon success">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3>완료</h3>
+                        <p id="completed-count" class="metric-value">40 건</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>오늘의 일정</h3>
+                        <p class="metric-value">5 건</p>
+                    </div>
+                </div>
+                <div class="calendar-widget">
+                    <div class="calendar-header">
+                        <h2>일정</h2>
+                        <div class="calendar-controls">
+                            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <span id="currentMonth">2025년 3월</span>
+                            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-days-header">
+                            <div>일</div>
+                            <div>월</div>
+                            <div>화</div>
+                            <div>수</div>
+                            <div>목</div>
+                            <div>금</div>
+                            <div>토</div>
+                        </div>
+                        <div class="calendar-days" id="calendar-days"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>입출고 관리</h2>
+                    <a href="입출고관리.html" class="section-link">자세히 보기 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="metrics-cards">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3>총 입고 건수</h3>
+                        <p id="total-inbound" class="metric-value">120 건</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h3>총 출고 건수</h3>
+                        <p id="total-outbound" class="metric-value">80 건</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon success">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <h3>현재 재고</h3>
+                        <p id="current-stock" class="metric-value">40 개</p>
+                    </div>
+                </div>
+                <div class="chart-container half">
+                    <div class="chart-header">
+                        <h2>브랜드별 입출고 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="brandInOutChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container half">
+                    <div class="chart-header">
+                        <h2>유형별 거래 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="stock-table">
+                        <thead>
+                            <tr>
+                                <th>브랜드</th>
+                                <th>입고</th>
+                                <th>출고</th>
+                                <th>재고</th>
+                                <th>진행 상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TOGA VIRILIS</td>
+                                <td>100</td>
+                                <td>50</td>
+                                <td>50</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>WILD DONKEY</td>
+                                <td>80</td>
+                                <td>60</td>
+                                <td>20</td>
+                                <td><span class="status-badge progress">진행 중</span></td>
+                            </tr>
+                            <tr>
+                                <td>ATHLETICS FTWR</td>
+                                <td>120</td>
+                                <td>80</td>
+                                <td>40</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>BASERANGE</td>
+                                <td>60</td>
+                                <td>40</td>
+                                <td>20</td>
+                                <td><span class="status-badge review">검토 필요</span></td>
+                            </tr>
+                            <tr>
+                                <td>NOU NOU</td>
+                                <td>90</td>
+                                <td>70</td>
+                                <td>20</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/일정.js"></script>
+    <script>
+        // Chart.js를 사용하여 원형 차트 그리기
+        document.addEventListener('DOMContentLoaded', function () {
+            // 브랜드별 입출고 비율 차트
+            const ctx = document.getElementById('brandInOutChart').getContext('2d');
+            const brandInOutChart = new Chart(ctx, {
+                type: 'pie', // 원형 차트
+                data: {
+                    labels: ['TOGA VIRILIS', 'WILD DONKEY', 'ATHLETICS FTWR', 'BASERANGE', 'NOU NOU'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10], // 브랜드별 데이터 (합이 100이 되도록)
+                        backgroundColor: [
+                            '#003f5c',
+                            '#58508d',
+                            '#bc5090',
+                            '#ff6361',
+                            '#ffa600'
+                        ],
+                        hoverOffset: 4 // 마우스 오버 시 효과
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+
+            // 유형별 거래 비율 차트
+            const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+            const transactionChart = new Chart(transactionCtx, {
+                type: 'pie', // 원형 차트
+                data: {
+                    labels: ['의류', '신발', '액세서리', '가방', '기타'],
+                    datasets: [{
+                        data: [40, 25, 15, 10, 10], // 유형별 데이터 (합이 100이 되도록)
+                        backgroundColor: [
+                            '#264653',
+                            '#2a9d8f',
+                            '#e9c46a',
+                            '#f4a261',
+                            '#e76f51'
+                        ],
+                        hoverOffset: 4 // 마우스 오버 시 효과
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

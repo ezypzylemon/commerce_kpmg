@@ -5,13 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const calendarDaysEl = document.getElementById("calendar-days");
     let currentMonth = new Date();
 
-    // 일정 데이터 추가
+    // 📌 해외 의류 브랜드 관련 일정 데이터
     const events = {
-        "2025-03-05": "ABC 상사 계약 진행",
-        "2025-03-10": "XYZ 주식회사 발주 확인",
-        "2025-03-15": "LMN 유한회사 결제 대기",
-        "2025-03-20": "Korean Co. 미팅",
-        "2025-03-25": "Global Inc. 서류 제출"
+        "2025-03-05": "TOGA VIRILIS 신상품 입고",
+        "2025-03-10": "WILD DONKEY 해외 발주",
+        "2025-03-15": "ATHLETICS FTWR 물류센터 도착",
+        "2025-03-20": "BASERANGE 결제 마감일",
+        "2025-03-25": "NOU NOU 신제품 론칭"
     };
 
     function updateCalendar() {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateCalendar();
 
-    // 100개의 샘플 거래처 데이터를 생성 + 5개씩 페이지네이션 추가
+    // 📌 브랜드 입출고 데이터를 동적으로 추가
     const transactionDataEl = document.getElementById("transactionData");
     const paginationEl = document.getElementById("pagination");
     if (!transactionDataEl) {
@@ -70,16 +70,25 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
     
+    let brands = ["TOGA VIRILIS", "WILD DONKEY", "ATHLETICS FTWR", "BASERANGE", "NOU NOU"];
+    let currencies = ["USD", "KRW", "EUR", "JPY", "CNY"];
+    let stockStatuses = ["입고 완료", "출고 중", "입고 대기", "출고 완료"];
+    let paymentStatuses = ["결제 완료", "미결제", "결제 중"];
+
     let transactions = [];
-    for (let i = 1; i <= 100; i++) {
-        let status = i % 2 === 0 ? "진행 중" : "완료";
-        let buttonLabel = status === "진행 중" ? "계약서 작성" : "거래 내역 보기";
+    for (let i = 0; i < 50; i++) {
+        let brand = brands[i % brands.length];
+        let currency = currencies[i % currencies.length];
+        let stockStatus = stockStatuses[i % stockStatuses.length];
+        let paymentStatus = paymentStatuses[i % paymentStatuses.length];
+        let buttonLabel = paymentStatus === "결제 완료" ? "거래 내역 보기" : "계약서 작성";
+
         transactions.push(`
             <tr>
-                <td>거래처 ${i}</td>
-                <td>2025-03-${(i % 30) + 1}</td>
-                <td>수출 계약</td>
-                <td>${status}</td>
+                <td>${brand}</td>
+                <td>${currency}</td>
+                <td>${stockStatus}</td>
+                <td>${paymentStatus}</td>
                 <td><button class='btn'>${buttonLabel}</button></td>
             </tr>`);
     }
@@ -111,17 +120,17 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTablePage(currentPage);
     renderPagination();
 
-    // 거래처 분석 차트 적용
+    // 📊 거래처 분석 차트 적용
     const clientChartCtx = document.getElementById("clientChart").getContext("2d");
     const transactionChartCtx = document.getElementById("transactionChart").getContext("2d");
 
     new Chart(clientChartCtx, {
         type: "pie",
         data: {
-            labels: ["거래처 A", "거래처 B", "거래처 C"],
+            labels: brands,
             datasets: [{
-                data: [40, 35, 25],
-                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                data: [25, 20, 30, 15, 10],
+                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]
             }]
         }
     });
@@ -129,10 +138,10 @@ document.addEventListener("DOMContentLoaded", function () {
     new Chart(transactionChartCtx, {
         type: "bar",
         data: {
-            labels: ["수출 계약", "발주 확인", "결제 대기"],
+            labels: stockStatuses,
             datasets: [{
-                data: [20, 50, 30],
-                backgroundColor: ["#4BC0C0", "#FF9F40", "#9966FF"]
+                data: [10, 20, 15, 5],
+                backgroundColor: ["#4BC0C0", "#FF9F40", "#9966FF", "#FF6384"]
             }]
         }
     });

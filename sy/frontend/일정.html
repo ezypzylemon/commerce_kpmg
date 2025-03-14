@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>거래처 및 일정 관리</title>
+    <title>일정 관리</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
@@ -16,7 +16,7 @@
     <div class="container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>OCR 문서 관리</h2>
+                <h2>BUYING MASTER AI</h2>
                 <span class="user-profile">
                     <img src="https://via.placeholder.com/40" alt="프로필">
                     <span>관리자</span>
@@ -26,19 +26,19 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li>
-                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                        <a href="대시보드.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
                     </li>
                     <li>
                         <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
                     </li>
                     <li>
-                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                        <a href="일정.html"><i class="fas fa-chart-bar"></i> 일정 관리</a>
                     </li>
                     <li>
-                        <a href="inventory.html"><i class="fas fa-boxes"></i> 입고현황</a>
-                    </li>
-                    <li>
-                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                        <a href="입출고관리.html"><i class="fas fa-boxes"></i> 입출고 관리</a>
                     </li>
                     <li>
                         <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
@@ -124,7 +124,7 @@
 
         <main class="main-content">
             <header class="content-header">
-                <h1>거래처 및 일정 관리</h1>
+                <h1>일정 관리</h1>
                 <div class="header-actions">
                     <div class="search-box">
                         <input type="text" id="searchClient" placeholder="거래처 검색...">
@@ -147,14 +147,14 @@
                     <div class="metric-icon">
                         <i class="fas fa-handshake"></i>
                     </div>
-                    <h3>진행 중 거래</h3>
+                    <h3>진행 중</h3>
                     <p id="in-progress-count" class="metric-value">60 건</p>
                 </div>
                 <div class="metric-card">
                     <div class="metric-icon success">
                         <i class="fas fa-check"></i>
                     </div>
-                    <h3>완료된 거래</h3>
+                    <h3>완료</h3>
                     <p id="completed-count" class="metric-value">40 건</p>
                 </div>
                 <div class="metric-card">
@@ -168,7 +168,7 @@
 
             <div class="calendar-section">
                 <div class="calendar-header">
-                    <h2>거래 일정</h2>
+                    <h2>일정</h2>
                     <div class="calendar-controls">
                         <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
                         <span id="currentMonth">2025년 3월</span>
@@ -229,23 +229,26 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>거래처명</th>
-                                <th>거래 날짜</th>
-                                <th>거래 내용</th>
-                                <th>진행 상태</th>
+                                <th>브랜드명</th>
+                                <th>통화</th>
+                                <th>입출고 상태</th>
+                                <th>결제 상태</th>
                                 <th>관리</th>
                             </tr>
                         </thead>
                         <tbody id="transactionData">
-                            </tbody>
+                            <tr><td>TOGA VIRILIS</td><td>USD</td><td>입고 완료</td><td>결제 완료</td><td><button class="btn btn-sm">관리</button></td></tr>
+                            <tr><td>WILD DONKEY</td><td>KRW</td><td>출고 중</td><td>미결제</td><td><button class="btn btn-sm">관리</button></td></tr>
+                            <tr><td>ATHLETICS FTWR</td><td>EUR</td><td>입고 대기</td><td>결제 완료</td><td><button class="btn btn-sm">관리</button></td></tr>
+                            <tr><td>BASERANGE</td><td>JPY</td><td>입고 완료</td><td>결제 중</td><td><button class="btn btn-sm">관리</button></td></tr>
+                            <tr><td>NOU NOU</td><td>CNY</td><td>출고 완료</td><td>결제 완료</td><td><button class="btn btn-sm">관리</button></td></tr>
+                        </tbody>
                     </table>
                 </div>
-                <div class="pagination" id="pagination">
-                    </div>
+                <div class="pagination" id="pagination"></div>
             </div>
         </main>
     </div>
-
     <script src="js/일정.js"></script>
 </body>
 
