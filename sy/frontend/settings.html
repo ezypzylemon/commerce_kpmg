@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>설정 - BUYING MASTER AI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="css/일정.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>BUYING MASTER AI</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="일정.html"><i class="fas fa-chart-bar"></i> 일정 관리</a>
+                    </li>
+                    <li>
+                        <a href="입출고관리.html"><i class="fas fa-boxes"></i> 입출고 관리</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <h1>설정</h1>
+            </header>
+            
+            <div class="settings-section">
+                <div class="section-header">
+                    <h2>계정 설정</h2>
+                </div>
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label for="username">사용자 이름</label>
+                        <input type="text" id="username" value="관리자">
+                    </div>
+                    <div class="setting-item">
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" value="admin@buyingmaster.ai">
+                    </div>
+                    <div class="setting-item">
+                        <label for="password">비밀번호 변경</label>
+                        <input type="password" id="password" placeholder="새 비밀번호 입력">
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> 저장</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-header">
+                    <h2>시스템 설정</h2>
+                </div>
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label for="language">언어 설정</label>
+                        <select id="language">
+                            <option value="ko">한국어</option>
+                            <option value="en">영어</option>
+                            <option value="zh">중국어</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="timezone">시간대</label>
+                        <select id="timezone">
+                            <option value="KST">한국 표준시 (KST)</option>
+                            <option value="UTC">협정 세계시 (UTC)</option>
+                            <option value="JST">일본 표준시 (JST)</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="notifications">알림 설정</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="notifications" class="toggle-input" checked>
+                            <label for="notifications" class="toggle-label"></label>
+                        </div>
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> 저장</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-header">
+                    <h2>테마 설정</h2>
+                </div>
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label>테마 선택</label>
+                        <div class="theme-options">
+                            <button class="theme-btn active" data-theme="light">라이트 모드</button>
+                            <button class="theme-btn" data-theme="dark">다크 모드</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label for="font-size">글꼴 크기</label>
+                        <input type="number" id="font-size" value="14"> px
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-save"></i> 저장</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-header">
+                    <h2>데이터 관리</h2>
+                </div>
+                <div class="settings-card">
+                    <div class="setting-item">
+                        <label>데이터 백업</label>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 지금 백업</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>데이터 복구</label>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-upload"></i> 파일 선택</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>데이터 초기화</label>
+                        <button class="btn btn-danger btn-sm"><i class="fas fa-exclamation-triangle"></i> 초기화</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/settings.js"></script>
+</body>
+</html>

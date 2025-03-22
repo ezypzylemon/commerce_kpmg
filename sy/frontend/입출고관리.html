@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입출고 관리 - OCR 문서 관리 시스템</title> <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> </head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>BUYING MASTER AI</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="대시보드.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="일정.html"><i class="fas fa-chart-bar"></i> 일정 관리</a>
+                    </li>
+                    <li>
+                        <a href="입출고관리.html"><i class="fas fa-boxes"></i> 입출고 관리</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-filters">
+                <h3>필터</h3>
+
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" id="startDate" value="2025-02-11">
+                        <span>~</span>
+                        <input type="date" class="date-input" id="endDate" value="2025-03-11">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>브랜드</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-all" checked>
+                            <label for="brand-all">모든 브랜드</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-toga">
+                            <label for="brand-toga">TOGA VIRILIS</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-wild">
+                            <label for="brand-wild">WILD DONKEY</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-athletics">
+                            <label for="brand-athletics">ATHLETICS FTWR</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-baserange">
+                            <label for="brand-baserange">BASERANGE</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-nounou">
+                            <label for="brand-nounou">NOU NOU</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>상태</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-all" checked>
+                            <label for="status-all">모든 상태</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-complete">
+                            <label for="status-complete">완료</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-review">
+                            <label for="status-review">검토 필요</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-progress">
+                            <label for="status-progress">진행 중</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" id="filter-btn">필터 적용</button>
+            </div>
+
+            <div class="sidebar-actions">
+                <h3>빠른 액션</h3>
+                <button class="btn btn-outline btn-block"><i class="fas fa-file-upload"></i> 엑셀 파일 업로드</button>
+                <button class="btn btn-outline btn-block"><i class="fas fa-file-alt"></i> 보고서 생성</button>
+                <button class="btn btn-outline btn-block"><i class="fas fa-sync-alt"></i> 데이터 동기화</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>입출고 관리</h1>  <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="품목 검색...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-icon"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-icon"><i class="fas fa-question-circle"></i></button>
+                </div>
+            </header>
+
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>총 입고 건수</h3>
+                    <p id="total-inbound" class="metric-value">0 건</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3>총 출고 건수</h3>
+                    <p id="total-outbound" class="metric-value">0 건</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <h3>현재 재고</h3>
+                    <p id="current-stock" class="metric-value">0 개</p>
+                </div>
+            </div>
+
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>월별 입출고 추이</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="monthlyInOutChart"></canvas> </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>브랜드별 입출고 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="brandInOutChart"></canvas>  </div>
+                </div>
+            </div>
+
+
+            <div class="recent-transactions">
+                <div class="section-header">
+                    <h2>최근 입출고 내역</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-sm"><i class="fas fa-filter"></i> 필터</button>
+                        <button class="btn btn-sm"><i class="fas fa-download"></i> 내보내기</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>품목명</th>
+                                <th>날짜</th>
+                                <th>유형</th>
+                                <th>수량</th>
+                                <th>브랜드</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody">
+                            <tr>
+                                <td>셔츠 A</td>
+                                <td>2025-03-10</td>
+                                <td>입고</td>
+                                <td>50</td>
+                                <td>TOGA VIRILIS</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>바지 B</td>
+                                <td>2025-03-09</td>
+                                <td>출고</td>
+                                <td>20</td>
+                                <td>WILD DONKEY</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>신발 C</td>
+                                <td>2025-03-08</td>
+                                <td>입고</td>
+                                <td>30</td>
+                                <td>ATHLETICS FTWR</td>
+                                <td><span class="status-badge progress">진행 중</span></td>
+                            </tr>
+                            <tr>
+                                <td>자켓 D</td>
+                                <td>2025-03-07</td>
+                                <td>출고</td>
+                                <td>10</td>
+                                <td>BASERANGE</td>
+                                <td><span class="status-badge review">검토 필요</span></td>
+                            </tr>
+                            <tr>
+                                <td>모자 E</td>
+                                <td>2025-03-06</td>
+                                <td>입고</td>
+                                <td>40</td>
+                                <td>NOU NOU</td>
+                                <td><span class="status-badge complete">완료</span></td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/inve.js"></script>
+    <script>
+        // inve.js의 내용 (또는 별도 js 파일에 넣어도 됨)
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // 총 입고 건수, 총 출고 건수, 현재 재고  (가데이터)
+            document.getElementById('total-inbound').textContent = '120 건';
+            document.getElementById('total-outbound').textContent = '80 건';
+            document.getElementById('current-stock').textContent = '40 개';
+
+
+            // 월별 입출고 추이 차트 (Chart.js 사용)
+            const monthlyInOutCtx = document.getElementById('monthlyInOutChart').getContext('2d');
+            const monthlyInOutChart = new Chart(monthlyInOutCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1월', '2월', '3월', '4월', '5월', '6월'], // 월별 레이블
+                    datasets: [{
+                        label: '입고',
+                        data: [50, 60, 70, 80, 90, 100], // 월별 입고 데이터
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                    },
+                    {
+                        label: '출고',
+                        data: [30, 40, 50, 60, 70, 80],  // 월별 출고 데이터
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // 반응형 크기 조절
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 브랜드별 입출고 비율 차트 (Chart.js)
+            const brandInOutCtx = document.getElementById('brandInOutChart').getContext('2d');
+            const brandInOutChart = new Chart(brandInOutCtx, {
+                type: 'pie', // 원형 차트
+                data: {
+                    labels: ['TOGA VIRILIS', 'WILD DONKEY', 'ATHLETICS FTWR', 'BASERANGE', 'NOU NOU'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10], // 브랜드별 데이터 (합이 100이 되도록)
+                        backgroundColor: [
+                            '#003f5c',
+                            '#58508d',
+                            '#bc5090',
+                            '#ff6361',
+                            '#ffa600'
+                        ],
+                        hoverOffset: 4 // 마우스 오버 시 효과
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+
+            // 필터 버튼 이벤트 리스너 (실제 필터링 로직은 구현 필요)
+            document.getElementById('filter-btn').addEventListener('click', function () {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const brandCheckboxes = document.querySelectorAll('.sidebar-filters .checkbox-list input[type="checkbox"]');
+                const statusCheckboxes = document.querySelectorAll('.sidebar-filters .filter-group:nth-child(3) input[type="checkbox"]'); // 상태 필터
+
+                const selectedBrands = [];
+                brandCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedBrands.push(checkbox.id.replace('brand-', '')); // 'brand-' 접두사 제거
+                    }
+                });
+
+                const selectedStatuses = [];
+                statusCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedStatuses.push(checkbox.id.replace('status-', ''));
+                    }
+                });
+
+                console.log('Start Date:', startDate);
+                console.log('End Date:', endDate);
+                console.log('Selected Brands:', selectedBrands);
+                console.log('Selected Statuses:', selectedStatuses);
+
+
+                // TODO: 필터링된 데이터를 기반으로 테이블 업데이트 (여기서는 콘솔에만 출력)
+                //  -  데이터를 가져오는 fetch() 호출,
+                //  -  filter() 메서드를 사용하여 데이터 필터링
+                //  -  테이블 tbody 내용을 업데이트 (innerHTML 또는 DOM 조작)
+            });
+
+             // 검색창 이벤트 리스너 (실제 검색 로직은 구현 필요)
+            document.getElementById('searchInput').addEventListener('keyup', function(event) {
+                const searchText = event.target.value.toLowerCase();
+                console.log("Search Text:", searchText);
+
+                 // TODO:  테이블 내에서 검색어를 포함하는 행을 찾아서 보여주고, 나머지는 숨김.
+                 //  -  테이블의 각 행(tr)을 순회
+                 //  -  각 행의 품목명 셀(td)의 텍스트를 가져옴
+                 //  -  텍스트가 검색어를 포함하는지 확인 (includes() 사용)
+                 //  -  일치하면 행의 display 스타일을 '',  일치하지 않으면 'none'으로 설정
+            });
+
+
+        }); // DOMContentLoaded 끝
+    </script>
+</body>
+
+</html>
