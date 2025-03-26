@@ -1,0 +1,220 @@
+ report_generator.py
+import os
+import pandas as pd
+from datetime import datetime
+from jinja2 import Template
+import weasyprint  # HTML을 PDF로 변환
+
+class ReportGenerator:
+    def __init__(self, data, viz_files, output_path):
+        """보고서 생성기 초기화"""
+        self.data = data
+        self.viz_files = viz_files
+        self.output_path = output_path
+        
+    def get_insights(self):
+        """데이터에서 주요 인사이트 추출"""
+        insights = {}
+        
+        # 1. 가장 인기 있는 카테고리
+        if 'category' in self.data.columns:
+            top_categories = self.data['category'].value_counts().head(3)
+            insights['top_categories'] = [
+                f"{category}: {count}개 상품" 
+                for category, count in top_categories.items()
+            ]
+        
+        # 2. 가장 비싼/저렴한 카테고리
+        if 'category' in self.data.columns and 'price_numeric' in self.data.columns:
+            category_prices = self.data.groupby('category')['price_numeric'].mean().sort_values()
+            if not category_prices.empty:
+                insights['cheapest_category'] = f"{category_prices.index[0]} (평균 {int(category_prices.values[0]):,}원)"
+                insights['most_expensive_category'] = f"{category_prices.index[-1]} (평균 {int(category_prices.values[-1]):,}원)"
+        
+        # 3. 가장 인기 있는 브랜드
+        if 'brand' in self.data.columns:
+            top_brands = self.data['brand'].value_counts().head(5)
+            insights['top_brands'] = [
+                f"{brand}: {count}개 상품" 
+                for brand, count in top_brands.items()
+            ]
+        
+        # 4. 가장 인기 있는 가격대
+        if 'price_range' in self.data.columns:
+            top_price_range = self.data['price_range'].value_counts().head(1)
+            if not top_price_range.empty:
+                insights['top_price_range'] = f"{top_price_range.index[0]} ({top_price_range.values[0]}개 상품)"
+        
+        # 5. 가장 인기 있는 키워드
+        all_keywords = []
+        for keywords in self.data['keywords']:
+            all_keywords.extend(keywords)
+        
+        from collections import Counter
+        keyword_counts = Counter(all_keywords)
+        top_keywords = keyword_counts.most_common(10)
+        insights['top_keywords'] = [
+            f"{keyword}: {count}회 등장" 
+            for keyword, count in top_keywords
+        ]
+        
+        return insights
+    
+    def generate_html(self):
+        """HTML 보고서 생성"""
+        # HTML 템플릿 정의
+        template_str = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>패션 트렌드 분석 보고서</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+                h1 { color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+                h2 { color: #444; margin-top: 30px; }
+                img { max-width: 100%; height: auto; margin: 20px 0; border: 1px solid #ddd; }
+                .date { color: #888; font-size: 0.9em; }
+                .insight-box { background-color: #f9f9f9; border-left: 3px solid #007bff; padding: 15px; margin: 20px 0; }
+                .insight-list { list-style-type: square; padding-left: 20px; }
+            </style>
+        </head>
+        <body>
+            <h1>패션 트렌드 분석 보고서</h1>
+            <p class="date">생성일: {{ date }}</p>
+            
+            <div class="insight-box">
+                <h2>주요 인사이트</h2>
+                <ul class="insight-list">
+                    {% if insights.top_categories %}
+                    <li>가장 인기 있는 카테고리: 
+                        <ul>
+                            {% for category in insights.top_categories %}
+                            <li>{{ category }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if insights.cheapest_category %}
+                    <li>가장 저렴한 카테고리: {{ insights.cheapest_category }}</li>
+                    {% endif %}
+                    
+                    {% if insights.most_expensive_category %}
+                    <li>가장 비싼 카테고리: {{ insights.most_expensive_category }}</li>
+                    {% endif %}
+                    
+                    {% if insights.top_brands %}
+                    <li>가장 인기 있는 브랜드: 
+                        <ul>
+                            {% for brand in insights.top_brands %}
+                            <li>{{ brand }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    
+                    {% if insights.top_price_range %}
+                    <li>가장 인기 있는 가격대: {{ insights.top_price_range }}</li>
+                    {% endif %}
+                    
+                    {% if insights.top_keywords %}
+                    <li>가장 인기 있는 키워드: 
+                        <ul>
+                            {% for keyword in insights.top_keywords[:5] %}
+                            <li>{{ keyword }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <h2>카테고리 분석</h2>
+            <p>무신사에서 판매 중인 상품 카테고리 분석입니다.</p>
+            {% if viz_files.category_counts %}
+            <img src="{{ viz_files.category_counts }}" alt="카테고리별 상품 수">
+            {% endif %}
+            
+            {% if viz_files.category_prices %}
+            <img src="{{ viz_files.category_prices }}" alt="카테고리별 평균 가격">
+            {% endif %}
+            
+            <h2>브랜드 분석</h2>
+            <p>가장 인기 있는 브랜드 순위입니다.</p>
+            {% if viz_files.top_brands %}
+            <img src="{{ viz_files.top_brands }}" alt="인기 브랜드 TOP 20">
+            {% endif %}
+            
+            <h2>가격 분석</h2>
+            <p>무신사 상품의 가격대별 분포입니다.</p>
+            {% if viz_files.price_distribution %}
+            <img src="{{ viz_files.price_distribution }}" alt="가격대별 상품 수">
+            {% endif %}
+            
+            {% if viz_files.category_price_heatmap %}
+            <img src="{{ viz_files.category_price_heatmap }}" alt="카테고리별 가격대 분포">
+            {% endif %}
+            
+            <h2>키워드 분석</h2>
+            <p>상품명에서 추출한 키워드 분석입니다.</p>
+            {% if viz_files.keyword_wordcloud %}
+            <img src="{{ viz_files.keyword_wordcloud }}" alt="인기 키워드 워드클라우드">
+            {% endif %}
+            
+            {% if viz_files.top_keywords %}
+            <img src="{{ viz_files.top_keywords }}" alt="인기 키워드 TOP 20">
+            {% endif %}
+            
+            <p style="margin-top: 50px; color: #888; font-size: 0.8em;">
+                본 보고서는 무신사 웹사이트 크롤링 데이터를 기반으로 자동 생성되었습니다.<br>
+                © {{ year }} 패션 트렌드 분석 시스템
+            </p>
+        </body>
+        </html>
+        """
+        
+        # 데이터 준비
+        insights = self.get_insights()
+        today = datetime.now().strftime('%Y-%m-%d')
+        
+        # 상대 경로로 변환 (HTML 문서 기준)
+        viz_files_relative = {}
+        for key, path in self.viz_files.items():
+            viz_files_relative[key] = os.path.basename(path)
+        
+        # 템플릿 렌더링
+        template = Template(template_str)
+        html_content = template.render(
+            date=today,
+            year=datetime.now().year,
+            insights=insights,
+            viz_files=viz_files_relative
+        )
+        
+        # HTML 파일 저장
+        html_path = os.path.splitext(self.output_path)[0] + '.html'
+        with open(html_path, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        
+        return html_path
+    
+    def generate_pdf(self, html_path):
+        """HTML을 PDF로 변환"""
+        try:
+            pdf = weasyprint.HTML(filename=html_path).write_pdf()
+            
+            with open(self.output_path, 'wb') as f:
+                f.write(pdf)
+            
+            print(f"PDF 보고서 생성 완료: {self.output_path}")
+            return self.output_path
+        except Exception as e:
+            print(f"PDF 생성 중 오류: {e}")
+            return None
+    
+    def generate(self):
+        """HTML 보고서만 생성"""
+        html_path = self.generate_html()
+        print(f"HTML 보고서가 성공적으로 생성되었습니다: {html_path}")
+        return html_path
