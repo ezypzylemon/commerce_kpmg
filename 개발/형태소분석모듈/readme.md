@@ -61,6 +61,7 @@ MYSQL_CONFIG = {
 - 빈도가 높은 상위 20개 명사 출력
 
 ## MYSQL Table Info
+```
 CREATE TABLE `tokenised` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'from은 MySQL 예약어이므로 백틱으로 감싸야 함',
@@ -71,6 +72,7 @@ CREATE TABLE `tokenised` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title` (`title`)
 ) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+```
 
 ## 예시 (Example)
 ```python
