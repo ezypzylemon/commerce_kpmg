@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>23SS BUYING MASTER AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        header { background-color: #4f46e5; color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; }
+        .container { display: flex; }
+        .sidebar { width: 200px; background-color: #343a40; color: white; padding: 15px; }
+        .content { flex-grow: 1; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; }
+        th { background-color: #e9ecef; }
+        .status { padding: 5px 10px; border-radius: 5px; }
+        .status.complete { background-color: #d4edda; color: #155724; }
+        .status.pending { background-color: #fff3cd; color: #856404; }
+        .status.delayed { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <header>23SS BUYING MASTER AI</header>
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li>SHIPMENT DB</li>
+                <li>BRAND LIST</li>
+                <li>2023 매입</li>
+                <li>ORDER</li>
+                <li>코드체계</li>
+            </ul>
+        </div>
+        <div class="content">
+            <h2>브랜드 입고 현황</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>브랜드</th>
+                        <th>통화</th>
+                        <th>입고 상태</th>
+                        <th>결제 상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ATHLETICS FTWR</td>
+                        <td>USD</td>
+                        <td class="status complete">입고완료</td>
+                        <td class="status pending">결제대기</td>
+                    </tr>
+                    <tr>
+                        <td>NOU NOU</td>
+                        <td>KRW</td>
+                        <td class="status pending">입고중</td>
+                        <td class="status complete">결제완료</td>
+                    </tr>
+                    <tr>
+                        <td>WILD DONKEY</td>
+                        <td>EUR</td>
+                        <td class="status pending">출고대기</td>
+                        <td class="status delayed">미결제</td>
+                    </tr>
+                    <tr>
+                        <td>GARBSTORE</td>
+                        <td>GBP</td>
+                        <td class="status pending">입고예정</td>
+                        <td class="status delayed">미결제</td>
+                    </tr>
+                    <tr>
+                        <td>BASERANGE</td>
+                        <td>EUR</td>
+                        <td class="status delayed">입고지연</td>
+                        <td class="status delayed">미결제</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
