@@ -1,26 +1,16 @@
-from kiwipiepy import Kiwi
 import mysql.connector
 import pandas as pd
-import re
+from kiwipiepy import Kiwi
 import json
 from tqdm import tqdm  # 진행 상황 표시용
 from config import MYSQL_CONFIG
 
 
-# Kiwipiepy 버전 확인
-try:
-    import pkg_resources
-    kiwi_version = pkg_resources.get_distribution("kiwipiepy").version
-    print(f"[INFO] Kiwipiepy 버전: {kiwi_version}")
-except:
-    print("[INFO] Kiwipiepy 버전을 확인할 수 없습니다.")
-
-# Kiwi 객체 생성 (v0.8.0 호환)
+# Kiwi 객체 생성
 kiwi = Kiwi(
     num_workers=4,         # 병렬 처리 워커 수
     load_default_dict=True # 기본 사전 로드
 )
-print("[INFO] Kiwi 객체가 성공적으로 생성되었습니다.")
 
 # 불용어 정의 (필요에 따라 확장 가능)
 stopwords = set([
@@ -55,40 +45,14 @@ def extract_nouns(text):
 
 # MySQL 연결 함수
 def get_mysql_connection():
-    # MySQL 설정은 사용자가 제공해야 함
     return mysql.connector.connect(**MYSQL_CONFIG)
 
 # DB에서 content 컬럼 있는 테이블 불러오기
 def load_table_content(table_name, content_col="content"):
     try:
-        # 테이블명 검증 로직 추가
-        if not re.match(r'^[a-zA-Z0-9_]+$', table_name):
-            raise ValueError("테이블명에 허용되지 않은 문자가 포함되어 있습니다")
-            
-        # 컬럼명 검증 로직 추가
-        if not re.match(r'^[a-zA-Z0-9_]+$', content_col):
-            raise ValueError("컬럼명에 허용되지 않은 문자가 포함되어 있습니다")
-            
         conn = get_mysql_connection()
-        
-        # pandas.read_sql 사용 시 경고 회피 (SQLAlchemy 사용 권장)
-        try:
-            from sqlalchemy import create_engine
-            # SQLAlchemy 엔진 생성 (여기에 실제 연결 정보 넣어야 함)
-            # engine = create_engine('mysql+mysqlconnector://user:password@host/database')
-            # df = pd.read_sql(f"SELECT * FROM {table_name}", engine)
-            
-            # 위 코드가 구현되지 않았으므로 기본 방식 사용
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute(f"SELECT * FROM {table_name}")
-            rows = cursor.fetchall()
-            df = pd.DataFrame(rows)
-            cursor.close()
-        except ImportError:
-            # SQLAlchemy가 없는 경우 기존 방식 사용
-            query = f"SELECT * FROM {table_name}"
-            df = pd.read_sql(query, conn)
-            
+        query = f"SELECT id, title, {content_col}, upload_date FROM {table_name}"
+        df = pd.read_sql(query, conn)  # pandas read_sql을 사용할 때는 conn을 그대로 전달
         conn.close()
         
         if content_col not in df.columns:
@@ -100,7 +64,7 @@ def load_table_content(table_name, content_col="content"):
         return None
 
 # MySQL 테이블에 결과 저장하는 함수
-def save_to_tokenized_trends(df, table_name):
+def save_to_tokenised(df, table_name):
     try:
         conn = get_mysql_connection()
         cursor = conn.cursor()
@@ -108,7 +72,7 @@ def save_to_tokenized_trends(df, table_name):
         # Category 설정: all_trends인 경우 magazine으로 설정
         category = "magazine" if table_name == "all_trends" else table_name
         
-        print(f"[INFO] 결과를 tokenized_trends 테이블에 저장합니다. (카테고리: {category})")
+        print(f"[INFO] 결과를 tokenised 테이블에 저장합니다. (카테고리: {category})")
         
         # 데이터 삽입
         insert_count = 0
@@ -117,18 +81,19 @@ def save_to_tokenized_trends(df, table_name):
             title = row.get('title', None)
             content = row.get('content', None)
             tokens = row.get('tokens', [])
+            upload_date = row.get('upload_date', None)
             
             # SQL 삽입 쿼리 생성
             query = """
-            INSERT INTO tokenized_trends (category, title, content, tokens)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO tokenised (category, title, content, tokens, upload_date)
+            VALUES (%s, %s, %s, %s, %s)
             """
             
             # JSON 형식으로 토큰 변환
             tokens_json = json.dumps(tokens, ensure_ascii=False)
             
             # 쿼리 실행
-            cursor.execute(query, (category, title, content, tokens_json))
+            cursor.execute(query, (category, title, content, tokens_json, upload_date))
             insert_count += 1
             
             # 1000개 단위로 커밋
@@ -139,7 +104,7 @@ def save_to_tokenized_trends(df, table_name):
         # 남은 내용 커밋
         conn.commit()
         
-        print(f"[✓] 총 {insert_count}개 레코드를 tokenized_trends 테이블에 저장했습니다.")
+        print(f"[✓] 총 {insert_count}개 레코드를 tokenised 테이블에 저장했습니다.")
         cursor.close()
         conn.close()
         return True
@@ -159,21 +124,6 @@ def run_tokenization(table_name, content_col="content", batch_size=1000):
         if df is None or df.empty:
             print("[WARNING] 처리할 데이터가 없습니다.")
             return None
-            
-        # 첫 번째 데이터에 대한 디버그 출력
-        if not df.empty:
-            sample_text = df.iloc[0][content_col]
-            print(f"\n[DEBUG] 첫 번째 텍스트 샘플: {sample_text[:50]}...")
-            
-            # 첫 번째 텍스트에 대한 토큰화 테스트
-            sample_tokens = kiwi.tokenize(sample_text)
-            print(f"[DEBUG] 토큰화 결과 구조: {type(sample_tokens)}")
-            if sample_tokens:
-                print(f"[DEBUG] 첫 번째 토큰 예시: {sample_tokens[0]}")
-                
-            # 명사 추출 테스트
-            sample_nouns = extract_nouns(sample_text)
-            print(f"[DEBUG] 추출된 명사: {sample_nouns}")
             
         # 형태소 분석 시작
         print("[+] 형태소 분석 시작...")
@@ -203,16 +153,16 @@ def run_tokenization(table_name, content_col="content", batch_size=1000):
         
         # 결과 컬럼 선택
         if 'id' in df.columns and 'title' in df.columns:
-            result_df = df[['id', 'title', content_col, 'tokens']]
+            result_df = df[['id', 'title', content_col, 'tokens', 'upload_date']]
         elif 'id' in df.columns:
-            result_df = df[['id', content_col, 'tokens']]
+            result_df = df[['id', content_col, 'tokens', 'upload_date']]
         else:
-            result_df = df[[content_col, 'tokens']]
+            result_df = df[[content_col, 'tokens', 'upload_date']]
             
         print("[✓] 형태소 분석 완료!")
         
         # MySQL에 결과 저장
-        save_to_tokenized_trends(df, table_name)
+        save_to_tokenised(df, table_name)
         
         return result_df
     except Exception as e:
@@ -248,10 +198,6 @@ if __name__ == "__main__":
             print("\n[INFO] 가장 많이 등장하는 명사 Top 20:")
             for noun, count in noun_counter.most_common(20):
                 print(f"  - {noun}: {count}회")
-            
-            # CSV 파일로도 저장 (기존 기능 유지)
-            output_file = f"{table_name}_tokenized.csv"
-            df_tokens.to_csv(output_file, index=False)
-            print(f"[✓] 결과가 {output_file} 파일로 저장되었습니다.")
+
     except Exception as e:
         print(f"[ERROR] 실행 중 오류 발생: {e}")

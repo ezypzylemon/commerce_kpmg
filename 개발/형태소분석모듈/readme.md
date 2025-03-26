@@ -53,13 +53,26 @@ MYSQL_CONFIG = {
 - `extract_nouns(text)`: 텍스트에서 명사만 추출하는 함수
 - `get_mysql_connection()`: MySQL 연결을 생성하는 함수
 - `load_table_content(table_name, content_col)`: DB에서 콘텐츠를 불러오는 함수
-- `save_to_tokenized_trends(df, table_name)`: 분석 결과를 DB에 저장하는 함수
+- `save_to_tokenised(df, table_name)`: 분석 결과를 DB에 저장하는 함수
 - `run_tokenization(table_name, content_col, batch_size)`: 전체 분석 과정을 실행하는 함수
 
 ## 결과 (Output)
-- `tokenized_trends` 테이블에 분석 결과 저장
-- `{table_name}_tokenized.csv` 파일로도 결과 저장
+- `tokenised` 테이블에 분석 결과 저장
 - 빈도가 높은 상위 20개 명사 출력
+
+## MYSQL Table Info
+```
+CREATE TABLE `tokenised` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `category` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'from은 MySQL 예약어이므로 백틱으로 감싸야 함',
+  `upload_date` date DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci,
+  `tokens` json DEFAULT NULL COMMENT '추출된 명사 토큰을 JSON 배열로 저장',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `title` (`title`)
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+```
 
 ## 예시 (Example)
 ```python
