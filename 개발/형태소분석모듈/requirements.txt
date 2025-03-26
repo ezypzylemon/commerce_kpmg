@@ -1,0 +1,5 @@
+kiwipiepy>=0.8.0
+mysql-connector-python>=8.0.0
+pandas>=1.0.0
+tqdm>=4.45.0
+sqlalchemy>=1.4.0
