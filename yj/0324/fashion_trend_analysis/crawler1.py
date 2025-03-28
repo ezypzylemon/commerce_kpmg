@@ -54,6 +54,39 @@ class MusinsaCrawler:
         self.driver.set_window_size(1920, 1080)
         self.driver.set_page_load_timeout(30)
         
+    def clean_gender_text(self, text):
+        """성별 정보 정제"""
+        if not text or text == 'N/A':
+            return 'N/A'
+            
+        # 남/여 패턴에 맞게 정제
+        if '남' in text and '여' not in text:
+            return '남'
+        elif '여' in text and '남' not in text:
+            return '여'
+        elif '남' in text and '여' in text:
+            return '남/여'
+        else:
+            return 'N/A'
+    
+    def clean_season_text(self, text):
+        """시즌 정보 정제"""
+        if not text or text == 'N/A':
+            return 'N/A'
+            
+        # 연도와 시즌 패턴 추출 (2023 SS, 2024 FW 등)
+        season_pattern = re.search(r'(20\d{2})\s*(SS|FW)', text)
+        if season_pattern:
+            return f"{season_pattern.group(1)} {season_pattern.group(2)}"
+        else:
+            # 간단하게 SS나 FW만 있는 경우
+            season_only = re.search(r'\b(SS|FW)\b', text)
+            if season_only:
+                return season_only.group(1)
+                
+        # 위 패턴에 맞지 않으면 원본 반환
+        return text
+            
     def get_product_info(self, link, category_code):
         """상품 상세 정보 수집 (단일 상품)"""
         try:
@@ -80,7 +113,8 @@ class MusinsaCrawler:
                 'review_count': 0,
                 'crawled_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'gender': 'N/A',
-                'season': 'N/A'
+                'season': 'N/A',
+                'views': 0
             }
             
             # 1. 상세 페이지에서 카테고리 경로 직접 추출
@@ -222,25 +256,67 @@ class MusinsaCrawler:
                             rating_data = json_data['aggregateRating']
                             if 'ratingValue' in rating_data:
                                 product['rating'] = float(rating_data['ratingValue'])
-                        if 'reviewCount' in rating_data:
-                            product['review_count'] = int(rating_data['reviewCount'])
+                            if 'reviewCount' in rating_data:
+                                product['review_count'] = int(rating_data['reviewCount'])
                     except:
                         continue
             except:
                 pass
 
-            # 성별 및 시즌 정보 추출
+            # 6. 성별 및 시즌 정보 개선된 추출 방식
             try:
-                detail_elements = self.driver.find_elements(By.CSS_SELECTOR, "dl.sc-1fwcs34-0")
-                for el in detail_elements:
+                # 방법 1: 상세 정보 테이블에서 찾기
+                detail_rows = self.driver.find_elements(By.CSS_SELECTOR, "dl.sc-1fwcs34-0, .product_article, .product-table tr, .article-detail-spec dl")
+                
+                for element in detail_rows:
                     try:
-                        text = el.text
+                        text = element.text
+                        
+                        # 성별 정보 추출
                         if "성별" in text:
-                            product['gender'] = text.split("성별")[-1].strip()
+                            gender_text = text.split("성별")[-1].strip()
+                            product['gender'] = self.clean_gender_text(gender_text)
+                            
+                        # 시즌 정보 추출
                         if "시즌" in text:
-                            product['season'] = text.split("시즌")[-1].strip()
+                            season_text = text.split("시즌")[-1].strip()
+                            product['season'] = self.clean_season_text(season_text)
+                            
+                        # 조회수 정보
+                        if "조회수" in text:
+                            view_text = text.split("조회수")[-1].strip()
+                            match = re.search(r'([\d\.]+)천', view_text)
+                            if match:
+                                product['views'] = int(float(match.group(1)) * 1000)
+                            else:
+                                nums = re.findall(r'\d+', view_text)
+                                if nums:
+                                    product['views'] = int(''.join(nums))
                     except:
                         continue
+                
+                # 방법 2: 직접적인 성별/시즌 정보 요소 찾기
+                if product['gender'] == 'N/A':
+                    gender_elements = self.driver.find_elements(By.CSS_SELECTOR, ".product-info-gender, .gender, .item-gender")
+                    for el in gender_elements:
+                        try:
+                            gender_text = el.text.strip()
+                            if gender_text:
+                                product['gender'] = self.clean_gender_text(gender_text)
+                                break
+                        except:
+                            continue
+                
+                if product['season'] == 'N/A':
+                    season_elements = self.driver.find_elements(By.CSS_SELECTOR, ".product-info-season, .season, .item-season")
+                    for el in season_elements:
+                        try:
+                            season_text = el.text.strip()
+                            if season_text:
+                                product['season'] = self.clean_season_text(season_text)
+                                break
+                        except:
+                            continue
             except:
                 pass
 
@@ -355,6 +431,7 @@ class MusinsaCrawler:
         
         # 전체 카테고리 목록
         all_categories = list(self.categories.keys())
+        random.shuffle(all_categories)  # 카테고리 순서를 랜덤하게 섞어서 다양한 카테고리 수집
         
         # 카테고리당 수집할 상품 수 계산
         num_categories = len(all_categories)
@@ -429,11 +506,18 @@ class MusinsaCrawler:
             
             # 컬럼 순서 정리
             columns = ['product_id', 'brand', 'name', 'price', 'category', 'category_code', 
-                       'rating', 'review_count', 'link', 'crawled_at', 'gender', 'season']
+           'rating', 'review_count', 'views', 'link', 'crawled_at', 'gender', 'season']
             
             # 존재하는 컬럼만 선택
             available_columns = [col for col in columns if col in df.columns]
             df = df[available_columns]
+            
+            # 최종 정리: 성별과 시즌 정보 최종 정제
+            if 'gender' in df.columns:
+                df['gender'] = df['gender'].apply(self.clean_gender_text)
+                
+            if 'season' in df.columns:
+                df['season'] = df['season'].apply(self.clean_season_text)
             
             # CSV 저장
             df.to_csv(filepath, index=False, encoding='utf-8-sig')
@@ -462,15 +546,15 @@ class MusinsaCrawler:
 if __name__ == "__main__":
     try:
         # 결과 저장 경로 설정
-        output_directory = "/Users/jiyeonjoo/Desktop/최종 플젝"
+        output_directory = "/Users/jiyeonjoo/Desktop/lastproject"
         
         # 크롤러 초기화
         crawler = MusinsaCrawler(headless=False, output_dir=output_directory)
         
         # 모든 카테고리에서 총 100개 이상의 상품 수집
-        # - 카테고리당 최대 20개씩
+        # - 카테고리당 최대 15개씩
         # - 총 목표 120개 (여유있게 설정)
-        crawler.crawl_all_categories(items_per_category=20, total_target=120)
+        crawler.crawl_all_categories(items_per_category=15, total_target=120)
         
     except Exception as e:
         print(f"크롤링 중 오류 발생: {e}")

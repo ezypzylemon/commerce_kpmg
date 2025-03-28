@@ -90,7 +90,7 @@ def main():
     
     # 테이블 정보
     table_name = "musinsa_products"  # 삽입할 테이블 이름
-    table_columns = "product_id, brand, name, price, category, category_code, rating, review_count, link, crawled_at"  # 테이블 컬럼 이름 (CSV 파일 순서와 일치해야 함)
+    table_columns = "product_id, brand, name, price, category, category_code, rating, review_count, link, crawled_at, gender, season"  # 테이블 컬럼 이름 (CSV 파일 순서와 일치해야 함)
     
     # 1. 초기 연결 (데이터베이스 없이)
     connection = create_connection(host, user, password)
@@ -114,7 +114,9 @@ def main():
         rating FLOAT,
         review_count INT,
         link TEXT,
-        crawled_at DATETIME
+        crawled_at DATETIME,
+        gender VARCHAR(10),
+        season VARCHAR(20)
     )
     """
     execute_query(connection, create_table_query)
