@@ -78,7 +78,9 @@ class MusinsaCrawler:
                 'category_code': category_code,
                 'rating': 0,
                 'review_count': 0,
-                'crawled_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                'crawled_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'gender': 'N/A',
+                'season': 'N/A'
             }
             
             # 1. 상세 페이지에서 카테고리 경로 직접 추출
@@ -220,13 +222,28 @@ class MusinsaCrawler:
                             rating_data = json_data['aggregateRating']
                             if 'ratingValue' in rating_data:
                                 product['rating'] = float(rating_data['ratingValue'])
-                            if 'reviewCount' in rating_data:
-                                product['review_count'] = int(rating_data['reviewCount'])
+                        if 'reviewCount' in rating_data:
+                            product['review_count'] = int(rating_data['reviewCount'])
                     except:
                         continue
             except:
                 pass
-                
+
+            # 성별 및 시즌 정보 추출
+            try:
+                detail_elements = self.driver.find_elements(By.CSS_SELECTOR, "dl.sc-1fwcs34-0")
+                for el in detail_elements:
+                    try:
+                        text = el.text
+                        if "성별" in text:
+                            product['gender'] = text.split("성별")[-1].strip()
+                        if "시즌" in text:
+                            product['season'] = text.split("시즌")[-1].strip()
+                    except:
+                        continue
+            except:
+                pass
+
             return product
             
         except Exception as e:
@@ -412,7 +429,7 @@ class MusinsaCrawler:
             
             # 컬럼 순서 정리
             columns = ['product_id', 'brand', 'name', 'price', 'category', 'category_code', 
-                       'rating', 'review_count', 'link', 'crawled_at']
+                       'rating', 'review_count', 'link', 'crawled_at', 'gender', 'season']
             
             # 존재하는 컬럼만 선택
             available_columns = [col for col in columns if col in df.columns]

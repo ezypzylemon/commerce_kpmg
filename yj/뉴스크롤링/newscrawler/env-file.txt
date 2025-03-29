@@ -1,0 +1,10 @@
+# 데이터베이스 설정
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=9999
+DB_NAME=news_db
+
+# 크롤링 설정
+MAX_PAGES=20
+PAGE_DELAY=1.0
+ARTICLE_DELAY=0.5
