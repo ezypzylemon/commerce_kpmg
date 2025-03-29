@@ -54,23 +54,25 @@ class MusinsaCrawler:
         self.driver.set_window_size(1920, 1080)
         self.driver.set_page_load_timeout(30)
         
+        # 1. clean_gender_text 메서드 수정
     def clean_gender_text(self, text):
-        """성별 정보 정제"""
+        """성별 정보 정제 - 남/여만 깔끔하게 추출"""
         if not text or text == 'N/A':
             return 'N/A'
             
-        # 남/여 패턴에 맞게 정제
-        if '남' in text and '여' not in text:
-            return '남'
-        elif '여' in text and '남' not in text:
-            return '여'
-        elif '남' in text and '여' in text:
+        # 간결하게 남/여 정보만 반환
+        if '남' in text and '여' in text:
             return '남/여'
+        elif '남' in text:
+            return '남'
+        elif '여' in text:
+            return '여'
         else:
             return 'N/A'
-    
+
+    # 2. clean_season_text 메서드 수정  
     def clean_season_text(self, text):
-        """시즌 정보 정제"""
+        """시즌 정보 정제 - 연도와 SS/FW 형식만 추출"""
         if not text or text == 'N/A':
             return 'N/A'
             
@@ -78,14 +80,10 @@ class MusinsaCrawler:
         season_pattern = re.search(r'(20\d{2})\s*(SS|FW)', text)
         if season_pattern:
             return f"{season_pattern.group(1)} {season_pattern.group(2)}"
-        else:
-            # 간단하게 SS나 FW만 있는 경우
-            season_only = re.search(r'\b(SS|FW)\b', text)
-            if season_only:
-                return season_only.group(1)
-                
-        # 위 패턴에 맞지 않으면 원본 반환
-        return text
+            
+        # SS나 FW만 있는 경우는 제외하고 N/A 반환
+        return 'N/A'
+
             
     def get_product_info(self, link, category_code):
         """상품 상세 정보 수집 (단일 상품)"""
@@ -272,6 +270,10 @@ class MusinsaCrawler:
                     try:
                         text = element.text
                         
+                        # 성별 정보 추출
+                        # 4. get_product_info 메서드 내 성별/시즌 추출 로직 수정
+                        # 이 부분을 get_product_info 메서드 내에서 찾아 수정:
+
                         # 성별 정보 추출
                         if "성별" in text:
                             gender_text = text.split("성별")[-1].strip()
@@ -487,6 +489,7 @@ class MusinsaCrawler:
         
         return final_path
     
+    
     def save_to_csv(self, filename=None):
         """수집한 데이터를 CSV로 저장"""
         if not self.products:
@@ -506,7 +509,7 @@ class MusinsaCrawler:
             
             # 컬럼 순서 정리
             columns = ['product_id', 'brand', 'name', 'price', 'category', 'category_code', 
-           'rating', 'review_count', 'views', 'link', 'crawled_at', 'gender', 'season']
+        'rating', 'review_count', 'views', 'link', 'crawled_at', 'gender', 'season']
             
             # 존재하는 컬럼만 선택
             available_columns = [col for col in columns if col in df.columns]
@@ -514,10 +517,10 @@ class MusinsaCrawler:
             
             # 최종 정리: 성별과 시즌 정보 최종 정제
             if 'gender' in df.columns:
-                df['gender'] = df['gender'].apply(self.clean_gender_text)
+                df['gender'] = df['gender'].apply(lambda x: self.clean_gender_text(x) if isinstance(x, str) else x)
                 
             if 'season' in df.columns:
-                df['season'] = df['season'].apply(self.clean_season_text)
+                df['season'] = df['season'].apply(lambda x: self.clean_season_text(x) if isinstance(x, str) else x)
             
             # CSV 저장
             df.to_csv(filepath, index=False, encoding='utf-8-sig')
@@ -534,7 +537,8 @@ class MusinsaCrawler:
         except Exception as e:
             print(f"CSV 저장 중 오류: {e}")
             return None
-    
+
+
     def close(self):
         """브라우저 종료"""
         if hasattr(self, 'driver'):
@@ -554,7 +558,7 @@ if __name__ == "__main__":
         # 모든 카테고리에서 총 100개 이상의 상품 수집
         # - 카테고리당 최대 15개씩
         # - 총 목표 120개 (여유있게 설정)
-        crawler.crawl_all_categories(items_per_category=15, total_target=120)
+        crawler.crawl_all_categories(items_per_category=150, total_target=1000)
         
     except Exception as e:
         print(f"크롤링 중 오류 발생: {e}")
