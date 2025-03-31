@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>통합 분석 대시보드</h2>
+
+<!-- 3행 2열 레이아웃 구조로 변경 -->
+<div class="dashboard-grid">
+  <!-- 1행 1열: 키워드 네트워크 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>키워드 네트워크</h3>
+    <div class="network-graph">
+      {% if fig_network %}
+        {{ fig_network | safe }}
+      {% else %}
+        <div class="no-data">데이터가 없습니다.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- 1행 2열: 카테고리 분포 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>카테고리 분포</h3>
+    <div class="category-breakdown">
+      <div class="pie-chart">
+        {% if fig_category %}
+          {{ fig_category | safe }}
+        {% else %}
+          <div class="no-data">데이터가 없습니다.</div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2행 1열: 워드클라우드 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>워드클라우드</h3>
+    <div class="wordcloud">
+      {% if fig_wordcloud %}
+        {{ fig_wordcloud | safe }}
+      {% else %}
+        <div class="no-data">데이터가 없습니다.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- 2행 2열: TF-IDF -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>TF-IDF 상위 키워드</h3>
+    <div class="tfidf-chart">
+      {% if fig_tfidf %}
+        {{ fig_tfidf | safe }}
+      {% else %}
+        <div class="no-data">데이터가 없습니다.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- 3행: 매거진별 키워드 -->
+  <section class="grid-item" style="grid-column: span 2; border: 2px solid #ffffff;">
+    <h3>매거진별 키워드</h3>
+    <div class="magazine-keywords">
+      {% for magazine, data in magazine_data.items() %}
+        <div class="magazine-column">
+          <h4>{{ magazine }}</h4>
+          <div class="keyword-list">
+            {% for keyword in data.keywords %}
+              <div class="keyword-item {% if loop.index <= 3 %}top-three{% endif %}">
+                <span class="keyword-rank">{{ loop.index }}.</span>
+                <span class="keyword-name">{{ keyword.name }}</span>
+                <span class="keyword-count">{{ keyword.percent }}%</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<style>
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.grid-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.full-width-img, .chart-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.magazine-keywords {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.keyword-list {
+  margin-top: 10px;
+}
+
+.keyword-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.keyword-rank {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.keyword-name {
+  flex-grow: 1;
+}
+
+.keyword-count {
+  margin-left: 10px;
+  color: #888;
+}
+
+.top-three {
+  background: rgba(76, 175, 80, 0.1);
+}
+</style>
+{% endblock %}

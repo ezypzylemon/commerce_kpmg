@@ -1,0 +1,55 @@
+<!-- templates/error.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-code">{{ error_code }}</div>
+        <div class="error-message">{{ error_message }}</div>
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">메인으로 돌아가기</a>
+            <button onclick="history.back()" class="btn btn-secondary">이전 페이지로</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    text-align: center;
+}
+
+.error-content {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.error-code {
+    font-size: 72px;
+    font-weight: bold;
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    font-size: 24px;
+    color: #495057;
+    margin-bottom: 30px;
+}
+
+.error-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.error-actions .btn {
+    padding: 10px 20px;
+}
+</style>
+{% endblock %}

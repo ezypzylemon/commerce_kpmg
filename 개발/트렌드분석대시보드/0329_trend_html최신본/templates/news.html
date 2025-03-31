@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>트렌드 분석 - 뉴스 탭</h2>
+
+<!-- 시간대별 필터링 옵션 -->
+<div class="time-filter-bar">
+  <div class="filter-option {% if period == '1주일' %}active{% endif %}">1주일</div>
+  <div class="filter-option {% if period == '1개월' %}active{% endif %}">1개월</div>
+  <div class="filter-option {% if period == '3개월' %}active{% endif %}">3개월</div>
+  <div class="filter-option {% if period == '6개월' %}active{% endif %}">6개월</div>
+  <div class="filter-option {% if period == '1년' %}active{% endif %}">1년</div>
+  <div class="filter-option {% if period == '2년' %}active{% endif %}">2년</div>
+  <div class="filter-option {% if period == '직접설정' %}active{% endif %}">직접설정</div>
+</div>
+
+<!-- 3열 2행 레이아웃의 대시보드 -->
+<div class="dashboard-grid news-grid-3col-2row">
+  <!-- 1행 1열: 키워드 top 5 빈도수 기준 -->
+  <section class="grid-item">
+    <h3>키워드 TOP 5</h3>
+    <div class="keyword-list">
+      {% for keyword in top_keywords %}
+      <div class="keyword-item">
+        <div class="keyword-name">{{ keyword.word }}</div>
+        <div class="keyword-count">{{ keyword.count }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 1행 2열: 키워드별 언급량 추세 -->
+  <section class="grid-item">
+    <h3>키워드별 언급량 추세</h3>
+    <div id="keyword-trend-chart">
+      {% if keyword_trend_chart %}
+      <img src="{{ keyword_trend_chart }}" class="full-width-img">
+      {% else %}
+      <p class="no-data">데이터가 없습니다.</p>
+      {% endif %}
+    </div>
+  </section>
+  
+  <!-- 1행 3열: 최신 뉴스 기사 헤드라인 -->
+  <section class="grid-item highlight-box">
+    <h3>최신 뉴스 기사</h3>
+    <div class="card-news-container">
+      {% for article in latest_articles %}
+      <div class="headline-card">
+        <div class="headline-content">
+          <h4 class="headline-title">{{ article.title }}</h4>
+          <p class="headline-summary">{{ article.summary }}</p>
+          <div class="headline-meta">
+            <span class="headline-date">{{ article.date }}</span>
+            <a href="{{ article.link }}" class="headline-link" target="_blank">자세히 보기</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2행 1열: TF-IDF 워드클라우드 -->
+  <section class="grid-item">
+    <h3>TF-IDF 워드클라우드</h3>
+    <div id="tfidf-wordcloud">
+      {% if tfidf_wordcloud %}
+      <img src="{{ tfidf_wordcloud }}" class="full-width-img">
+      {% else %}
+      <p class="no-data">데이터가 없습니다.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- 2행 2열: 연관어 네트워크 분석 -->
+  <section class="grid-item">
+    <h3>연관어 네트워크 분석</h3>
+    <div id="word-network">
+      {% if word_network %}
+      <img src="{{ word_network }}" class="full-width-img">
+      {% else %}
+      <p class="no-data">데이터가 없습니다.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- 2행 3열: 긍정/부정 기사 대표 -->
+  <section class="grid-item highlight-yellow">
+    <h3>긍정/부정 기사 분석</h3>
+    <div class="sentiment-articles">
+      <div class="sentiment-column">
+        <h4>긍정 기사 TOP 3</h4>
+        {% for article in positive_articles %}
+        <div class="sentiment-article">
+          <div class="article-header">
+            <span class="article-date">{{ article.date }}</span>
+            <span class="article-source">{{ article.source }}</span>
+          </div>
+          <div class="article-content">{{ article.content }}</div>
+          <div class="article-keywords">
+            {% for keyword in article.keywords %}
+            <span class="article-keyword positive">{{ keyword }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      
+      <div class="sentiment-column">
+        <h4>부정 기사 TOP 3</h4>
+        {% for article in negative_articles %}
+        <div class="sentiment-article">
+          <div class="article-header">
+            <span class="article-date">{{ article.date }}</span>
+            <span class="article-source">{{ article.source }}</span>
+          </div>
+          <div class="article-content">{{ article.content }}</div>
+          <div class="article-keywords">
+            {% for keyword in article.keywords %}
+            <span class="article-keyword negative">{{ keyword }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// 기간 설정 스크립트
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(today.getMonth() - 1);
+  
+  // 필터 옵션 클릭 이벤트
+  document.querySelectorAll('.filter-option').forEach(option => {
+    option.addEventListener('click', function() {
+      const period = this.textContent;
+      window.location.href = '/news?period=' + period;
+    });
+  });
+});
+</script>
+
+<style>
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.grid-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.keyword-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keyword-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.card-news-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.headline-card {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.sentiment-articles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.sentiment-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.article-keyword {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin: 2px;
+  font-size: 0.8em;
+}
+
+.article-keyword.positive {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.article-keyword.negative {
+  background: #fbe9e7;
+  color: #d32f2f;
+}
+
+.no-data {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+}
+
+.full-width-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+</style>
+{% endblock %}
