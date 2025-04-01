@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>트렌드 분석 - 매거진 탭</h2>
+
+<!-- 시간대별 필터링 옵션 -->
+<div class="time-filter-bar">
+  <div class="filter-option {% if period == '1주일' %}active{% endif %}">1주일</div>
+  <div class="filter-option {% if period == '1개월' %}active{% endif %}">1개월</div>
+  <div class="filter-option {% if period == '3개월' %}active{% endif %}">3개월</div>
+  <div class="filter-option {% if period == '6개월' %}active{% endif %}">6개월</div>
+  <div class="filter-option {% if period == '1년' %}active{% endif %}">1년</div>
+  <div class="filter-option {% if period == '2년' %}active{% endif %}">2년</div>
+  <div class="filter-option {% if period == '직접설정' %}active{% endif %}">직접설정</div>
+</div>
+
+<!-- 날짜 필터링 섹션 -->
+<div class="date-filter-section">
+  <h3>날짜 필터링</h3>
+  <div class="date-filter">
+    <div class="date-range-picker">
+      <input type="date" class="date-input" id="start-date">
+      <span>~</span>
+      <input type="date" class="date-input" id="end-date">
+      <button class="apply-date-btn">적용</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매거진 탭 레이아웃 - 3열 2행 구조 -->
+<div class="dashboard-grid magazine-grid-3col">
+  <!-- 1행 1열: 매거진 분야 키워드 -->
+  <section class="grid-item">
+    <h3>매거진 분야 키워드</h3>
+    <div class="magazine-keywords-table">
+      <div class="keyword-column vogue">
+        <div class="keyword-column-header">Vogue</div>
+        <div class="keyword-rank-list">
+          {% for keyword in vogue_keywords %}
+          <div class="keyword-rank-item">
+            <span class="rank-number">{{ loop.index }}</span>
+            <span class="rank-keyword">{{ keyword.keyword }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <div class="keyword-column w">
+        <div class="keyword-column-header">W</div>
+        <div class="keyword-rank-list">
+          {% for keyword in w_keywords %}
+          <div class="keyword-rank-item">
+            <span class="rank-number">{{ loop.index }}</span>
+            <span class="rank-keyword">{{ keyword.keyword }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <div class="keyword-column harpers">
+        <div class="keyword-column-header">Harper's</div>
+        <div class="keyword-rank-list">
+          {% for keyword in harpers_keywords %}
+          <div class="keyword-rank-item">
+            <span class="rank-number">{{ loop.index }}</span>
+            <span class="rank-keyword">{{ keyword.keyword }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 1행 2열: 키워드별 언급량 추세 -->
+  <section class="grid-item">
+    <h3>키워드별 언급량 추세</h3>
+    <img src="{{ keyword_trend_chart }}" class="full-width-img">
+  </section>
+  
+  <!-- 1행 3열: 카드뉴스 섹션 -->
+  <section class="grid-item highlight-box">
+    <h3>카드뉴스 (최신 뉴스 기사 기준, 옆으로 날짜별 더 보기로, 매거진 필터링)</h3>
+    
+    <!-- 매거진 필터 버튼 -->
+    <div class="magazine-filter-buttons">
+      <button class="magazine-filter-btn active" data-magazine="all">전체</button>
+      <button class="magazine-filter-btn" data-magazine="vogue">Vogue</button>
+      <button class="magazine-filter-btn" data-magazine="w">W</button>
+      <button class="magazine-filter-btn" data-magazine="harpers">Harper's</button>
+    </div>
+    
+    <!-- 카드 뉴스 그리드 -->
+    <div class="magazine-card-grid">
+      {% for card in magazine_cards %}
+      <div class="magazine-card" data-magazine="{{ card.magazine }}">
+        <div class="magazine-card-image-container">
+          <img src="{{ card.image_url }}" alt="Magazine Cover" class="magazine-card-image">
+        </div>
+        <div class="magazine-card-content">
+          <div class="magazine-card-title">{{ card.title }}</div>
+          <div class="magazine-card-date">{{ card.date }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2행 1열: TF-IDF 기반 워드클라우드 -->
+  <section class="grid-item">
+    <h3>TF-IDF 기반 워드클라우드</h3>
+    <img src="{{ tfidf_chart_url }}" class="full-width-img">
+  </section>
+  
+  <!-- 2행 2열: 연관어 기반 네트워크 분석 -->
+  <section class="grid-item">
+    <h3>연관어 기반 네트워크 분석</h3>
+    <img src="{{ network_graph_url }}" class="full-width-img">
+  </section>
+  
+  <!-- 2행 3열: 카테고리별 차트 -->
+  <section class="grid-item">
+    <h3>카테고리별 (아이템/컬러/소재/프린트/스타일) 차트</h3>
+    
+    <!-- 시즌 선택 드롭다운 -->
+    <div class="season-selector">
+      <label for="season-select">시즌 기준:</label>
+      <select id="season-select" class="season-dropdown">
+        <option value="25SS" {% if season == '25SS' %}selected{% endif %}>25 S/S Women's</option>
+        <option value="24FW" {% if season == '24FW' %}selected{% endif %}>24 F/W Women's</option>
+        <option value="24SS" {% if season == '24SS' %}selected{% endif %}>24 S/S Women's</option>
+        <option value="25SSM" {% if season == '25SSM' %}selected{% endif %}>25 S/S Men's</option>
+      </select>
+    </div>
+    
+    <!-- 카테고리 필터 라디오 버튼 -->
+    <div class="category-filter">
+      <span class="filter-label">기준: </span>
+      <label class="radio-container">
+        <input type="radio" name="category" value="item" {% if category == 'item' %}checked{% endif %}>
+        <span class="radio-label">아이템</span>
+      </label>
+      <label class="radio-container">
+        <input type="radio" name="category" value="color" {% if category == 'color' %}checked{% endif %}>
+        <span class="radio-label">컬러</span>
+      </label>
+      <label class="radio-container">
+        <input type="radio" name="category" value="material" {% if category == 'material' %}checked{% endif %}>
+        <span class="radio-label">소재</span>
+      </label>
+      <label class="radio-container">
+        <input type="radio" name="category" value="print" {% if category == 'print' %}checked{% endif %}>
+        <span class="radio-label">프린트</span>
+      </label>
+      <label class="radio-container">
+        <input type="radio" name="category" value="style" {% if category == 'style' %}checked{% endif %}>
+        <span class="radio-label">스타일</span>
+      </label>
+    </div>
+    
+    <!-- 현재 선택된 카테고리 차트 표시 -->
+    <div class="category-chart-container">
+      <img src="{{ current_chart_url }}" class="full-width-img">
+    </div>
+  </section>
+</div>
+
+<script>
+// 날짜 필터링 스크립트
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(today.getMonth() - 1);
+  
+  document.getElementById('start-date').valueAsDate = oneMonthAgo;
+  document.getElementById('end-date').valueAsDate = today;
+  
+  document.querySelector('.apply-date-btn').addEventListener('click', function() {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    
+    if (startDate && endDate) {
+      // 여기에 날짜 필터링 적용 로직 추가
+      window.location.href = '/매거진?start_date=' + startDate + '&end_date=' + endDate;
+    }
+  });
+  
+  // 필터 옵션 클릭 이벤트
+  document.querySelectorAll('.filter-option').forEach(option => {
+    option.addEventListener('click', function() {
+      const period = this.textContent;
+      window.location.href = '/매거진?period=' + period;
+    });
+  });
+  
+  // 매거진 필터 버튼 클릭 이벤트
+  document.querySelectorAll('.magazine-filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // 현재 활성화된 버튼 비활성화
+      document.querySelector('.magazine-filter-btn.active').classList.remove('active');
+      
+      // 클릭된 버튼 활성화
+      this.classList.add('active');
+      
+      const magazine = this.getAttribute('data-magazine');
+      
+      // 매거진 카드 필터링
+      if (magazine === 'all') {
+        document.querySelectorAll('.magazine-card').forEach(card => {
+          card.style.display = 'block';
+        });
+      } else {
+        document.querySelectorAll('.magazine-card').forEach(card => {
+          if (card.getAttribute('data-magazine') === magazine) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+    });
+  });
+  
+  // 카테고리 필터 라디오 버튼 이벤트
+  document.querySelectorAll('input[name="category"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      // 현재 URL 가져오기
+      const url = new URL(window.location.href);
+      
+      // 카테고리 파라미터 설정
+      url.searchParams.set('category', this.value);
+      
+      // 페이지 이동
+      window.location.href = url.toString();
+    });
+  });
+  
+  // 시즌 선택 드롭다운 이벤트
+  document.getElementById('season-select').addEventListener('change', function() {
+    // 현재 URL 가져오기
+    const url = new URL(window.location.href);
+    
+    // 시즌 파라미터 설정
+    url.searchParams.set('season', this.value);
+    
+    // 페이지 이동
+    window.location.href = url.toString();
+  });
+});
+</script>
+{% endblock %}
