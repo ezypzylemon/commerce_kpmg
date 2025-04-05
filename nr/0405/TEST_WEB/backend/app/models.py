@@ -121,6 +121,10 @@ class DocumentComparison(db.Model):
     # JSON 형태로 저장된 상세 비교 결과
     comparison_data = db.Column(db.Text)  
     comparison_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # 새로 추가된 필드
+    manually_compared = db.Column(db.Boolean, default=False)  # 수동 비교 여부
+
     
     def __repr__(self):
         return f'<DocumentComparison {self.document1_id} vs {self.document2_id} ({self.match_percentage}%)>'

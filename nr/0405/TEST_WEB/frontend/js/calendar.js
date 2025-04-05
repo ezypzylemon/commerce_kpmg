@@ -11,14 +11,14 @@ const CATEGORY_COLORS = {
     'default': '#9E9E9E'    // 기본 회색
 };
 
-// 브랜드별 색상 매핑 (추가됨)
+// 브랜드별 색상 매핑
 const BRAND_COLORS = {
-    'TOGA VIRILIS': '#4263eb',    // 파란색
-    'WILD DONKEY': '#2b8a3e',     // 초록색
-    'ATHLETICS FTWR': '#e8590c',  // 주황색
-    'BASERANGE': '#7950f2',       // 보라색
-    'NOU NOU': '#e03131',         // 빨간색
-    'default': '#868e96'          // 기본 회색
+    'TOGA VIRILIS': '#4263eb',
+    'WILD DONKEY': '#2b8a3e',
+    'ATHLETICS FTWR': '#e8590c',
+    'BASERANGE': '#7950f2',
+    'NOU NOU': '#e03131',
+    'default': '#868e96'
 };
 
 // 캘린더 데이터
@@ -27,11 +27,11 @@ let calendarEvents = [];          // 캘린더에 표시할 이벤트 배열
 let personalEvents = [];          // 개인 일정 배열
 let businessEvents = [];          // 업무 일정 배열
 let shippingEvents = [];          // 선적 일정 배열
-let currentView = 'month';        // 현재 뷰 모드 (month, week, day)
+let currentView = 'month';        // 현재 뷰 모드
 let selectedEvent = null;         // 현재 선택된 이벤트
 let selectedDate = null;          // 선택된 날짜
 
-// 추가된 변수
+// 문서 처리 관련 변수
 let allInvoices = [];             // 모든 인보이스 문서
 let allOrders = [];               // 모든 오더시트 문서
 let matchedDocumentPairs = [];    // 일치하는 문서 쌍 배열
@@ -51,26 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
     loadShippingEvents();
     
     // 뷰 모드 전환 버튼 이벤트 리스너
-    document.getElementById('monthViewBtn').addEventListener('click', function() {
-        switchView('month');
-    });
-    
-    document.getElementById('weekViewBtn').addEventListener('click', function() {
-        switchView('week');
-    });
-    
-    document.getElementById('dayViewBtn').addEventListener('click', function() {
-        switchView('day');
-    });
+    document.getElementById('monthViewBtn').addEventListener('click', () => switchView('month'));
+    document.getElementById('weekViewBtn').addEventListener('click', () => switchView('week'));
+    document.getElementById('dayViewBtn').addEventListener('click', () => switchView('day'));
     
     // 캘린더 네비게이션 이벤트 리스너
-    document.getElementById('prevMonth').addEventListener('click', function() {
-        navigatePrevious();
-    });
-    
-    document.getElementById('nextMonth').addEventListener('click', function() {
-        navigateNext();
-    });
+    document.getElementById('prevMonth').addEventListener('click', navigatePrevious);
+    document.getElementById('nextMonth').addEventListener('click', navigateNext);
     
     // 필터 체크박스 이벤트 리스너
     document.getElementById('filter-personal').addEventListener('change', applyFilters);
@@ -78,10 +65,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('filter-shipping').addEventListener('change', applyFilters);
     
     // 새 일정 추가 버튼 이벤트 리스너
-    document.getElementById('addEventBtn').addEventListener('click', function() {
-        openAddEventModal(new Date());
-    });
+    document.getElementById('addEventBtn').addEventListener('click', () => openAddEventModal(new Date()));
     
+    // 모달 이벤트 리스너
+    setupModalEventListeners();
+    
+    // 검색 기능
+    const searchInput = document.getElementById('searchEvent');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                searchEvents(this.value);
+            }
+        });
+    }
+});
+
+// 모달 이벤트 리스너 설정
+function setupModalEventListeners() {
     // 모달 닫기 버튼 이벤트 리스너
     document.querySelectorAll('.modal-close').forEach(button => {
         button.addEventListener('click', function() {
@@ -98,34 +99,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 반복 일정 체크박스 이벤트 리스너
     document.getElementById('eventRepeat').addEventListener('change', function() {
-        const repeatOptions = document.getElementById('repeatOptions');
-        repeatOptions.style.display = this.checked ? 'block' : 'none';
+        document.getElementById('repeatOptions').style.display = this.checked ? 'block' : 'none';
     });
     
     // 일정 저장 버튼 이벤트 리스너
     document.getElementById('saveEventBtn').addEventListener('click', saveEvent);
     
     // 일정 취소 버튼 이벤트 리스너
-    document.getElementById('cancelEventBtn').addEventListener('click', function() {
-        closeModal('eventModal');
-    });
+    document.getElementById('cancelEventBtn').addEventListener('click', () => closeModal('eventModal'));
     
     // 일정 삭제 버튼 이벤트 리스너
     document.getElementById('deleteEventBtn').addEventListener('click', deleteEvent);
     
     // 일정 수정 버튼 이벤트 리스너
     document.getElementById('editEventBtn').addEventListener('click', editEvent);
-    
-    // 검색 기능
-    const searchInput = document.getElementById('searchEvent');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                searchEvents(this.value);
-            }
-        });
-    }
-});
+}
 
 // 캘린더 초기화
 function initCalendar() {
@@ -196,17 +184,9 @@ function renderMonthView() {
     }
 }
 
-// 주간 뷰 렌더링 (아직 구현 안됨)
-function renderWeekView() {
-    // 미구현
-    renderMonthView(); // 임시로 월간 뷰로 대체
-}
-
-// 일간 뷰 렌더링 (아직 구현 안됨)
-function renderDayView() {
-    // 미구현
-    renderMonthView(); // 임시로 월간 뷰로 대체
-}
+// 주간/일간 뷰 함수 (현재는 월간 뷰로 대체)
+function renderWeekView() { renderMonthView(); }
+function renderDayView() { renderMonthView(); }
 
 // 날짜 요소 생성
 function createDayElement(date, isInactive, isToday = false) {
@@ -240,7 +220,7 @@ function createDayElement(date, isInactive, isToday = false) {
     // 해당 날짜의 이벤트 필터링
     const dayEvents = filterEvents(dateStr);
     
-    // 일정이 많은 날 및 불일치가 많은 날 강조 표시
+    // 일정이 많은 날 강조 표시
     if (dayEvents.length > 0) {
         dayElement.classList.add('has-events');
         if (dayEvents.length >= 4) {
@@ -271,9 +251,7 @@ function createDayElement(date, isInactive, isToday = false) {
     }
     
     // 날짜 클릭 이벤트 (새 일정 추가)
-    dayElement.addEventListener('click', function() {
-        openAddEventModal(date);
-    });
+    dayElement.addEventListener('click', () => openAddEventModal(date));
     
     return dayElement;
 }
@@ -290,21 +268,20 @@ function createEventElement(event) {
         eventElement.classList.add(event.is_confirmed ? 'confirmed' : 'pending');
     }
     
-    // 브랜드 색상 적용 (추가된 부분)
+    // 브랜드 색상 적용
     if (event.brand && BRAND_COLORS[event.brand]) {
         eventElement.style.backgroundColor = BRAND_COLORS[event.brand];
     } else if (event.color) {
         eventElement.style.backgroundColor = event.color;
     }
     
-    // 선적 일정인 경우 추가 처리
+    // 선적 일정 추가 처리
     if (event.category === 'shipping' || event.type === 'pending' || event.type === 'complete') {
-        // 선적 시작/완료 구분
         const isStart = event.schedule_type === 'start' || event.type === 'pending';
         eventElement.classList.add(isStart ? 'shipping-start' : 'shipping-end');
     }
     
-    // 시간 정보 추가
+    // 이벤트 제목 설정
     let eventTitle = event.title;
     if (event.allDay) {
         eventTitle = `${eventTitle} (종일)`;
@@ -321,7 +298,7 @@ function createEventElement(event) {
         eventElement.appendChild(repeatIcon);
     }
     
-    // 툴팁 및 상세 정보 구성
+    // 툴팁 구성
     let tooltipContent = `${event.title}`;
     
     // 선적 일정의 경우 추가 정보 포함
@@ -330,12 +307,10 @@ function createEventElement(event) {
         tooltipContent += `\n모델: ${event.model_name || event.model_code || ''}`;
         tooltipContent += `\n일정 유형: ${event.schedule_type === 'start' || event.type === 'pending' ? '선적 시작' : '선적 완료'}`;
         
-        // 추가 메타데이터 포함
         if (event.meta && event.meta.total_quantity) {
             tooltipContent += `\n총 수량: ${event.meta.total_quantity}`;
         }
         
-        // 확정 상태 표시
         tooltipContent += `\n상태: ${event.is_confirmed ? '확정됨' : '미확정'}`;
     }
     
@@ -345,7 +320,7 @@ function createEventElement(event) {
     
     eventElement.title = tooltipContent;
     
-    // 클릭 이벤트 추가 (이벤트 상세 보기)
+    // 클릭 이벤트 (이벤트 상세 보기)
     eventElement.addEventListener('click', function(e) {
         e.stopPropagation();
         showEventDetails(event);
@@ -402,7 +377,7 @@ function filterEvents(dateStr) {
         }
     });
     
-    // 시간 순 정렬 (종일 이벤트가 먼저, 그 다음 시작 시간 순)
+    // 시간 순 정렬
     filteredEvents.sort((a, b) => {
         if (a.allDay && !b.allDay) return -1;
         if (!a.allDay && b.allDay) return 1;
@@ -528,7 +503,7 @@ function saveEvent() {
     
     // 이벤트 객체 생성
     const event = {
-        id: selectedEvent ? selectedEvent.id : Date.now().toString(), // 기존 ID 유지 또는 새 ID 생성
+        id: selectedEvent ? selectedEvent.id : Date.now().toString(),
         title: title,
         date: date,
         startTime: startTime,
@@ -543,10 +518,8 @@ function saveEvent() {
     
     // 이벤트 저장 또는 업데이트
     if (selectedEvent) {
-        // 기존 이벤트 업데이트
         updateExistingEvent(event);
     } else {
-        // 새 이벤트 추가
         addNewEvent(event);
     }
     
@@ -719,560 +692,476 @@ function showEventDetails(event) {
         // 선적 일정은 편집/삭제 불가
         editBtn.style.display = 'none';
         deleteBtn.style.display = 'none';
-     } else {
+    } else {
         editBtn.style.display = 'inline-flex';
         deleteBtn.style.display = 'inline-flex';
-     }
-     
-     // 모달 표시
-     showModal('eventDetailModal');
-     }
-     
-     // 카테고리 이름 가져오기
-     function getCategoryName(category) {
-        switch (category) {
-            case 'personal': return '개인 일정';
-            case 'business': return '업무 일정';
-            case 'shipping': return '선적 일정';
-            case 'pending': return '선적 시작';
-            case 'complete': return '선적 완료';
-            default: return '기타 일정';
-        }
-     }
-     
-     // 반복 텍스트 생성
-     function getRepeatText(repeatType, repeatUntil) {
-        let typeText = '';
-        switch (repeatType) {
-            case 'daily': typeText = '매일'; break;
-            case 'weekly': typeText = '매주'; break;
-            case 'monthly': typeText = '매월'; break;
-            default: typeText = '반복';
-        }
-        
-        if (repeatUntil) {
-            const untilDate = new Date(repeatUntil);
-            return `${typeText} (${untilDate.getFullYear()}년 ${untilDate.getMonth() + 1}월 ${untilDate.getDate()}일까지)`;
-        }
-        
-        return typeText;
-     }
-     
-     // 로컬 스토리지에서 이벤트 불러오기
-     function loadEventsFromLocalStorage() {
-        // 개인 일정 불러오기
-        const storedPersonalEvents = localStorage.getItem(PERSONAL_EVENTS_KEY);
-        if (storedPersonalEvents) {
-            personalEvents = JSON.parse(storedPersonalEvents);
-        }
-        
-        // 업무 일정 불러오기
-        const storedBusinessEvents = localStorage.getItem(BUSINESS_EVENTS_KEY);
-        if (storedBusinessEvents) {
-            businessEvents = JSON.parse(storedBusinessEvents);
-        }
-        
-        // 전체 이벤트 목록 업데이트
-        updateAllEvents();
-     }
-     
-     // 로컬 스토리지에 이벤트 저장
-     function saveEventsToLocalStorage() {
-        // 개인 일정 저장
-        localStorage.setItem(PERSONAL_EVENTS_KEY, JSON.stringify(personalEvents));
-        
-        // 업무 일정 저장
-        localStorage.setItem(BUSINESS_EVENTS_KEY, JSON.stringify(businessEvents));
-     }
-     
-     // 선적 일정 데이터 로드 (수정된 함수)
-     function loadShippingEvents() {
-        // 기존 API 호출 대신 문서 기반 처리로 전환
-        loadDocumentsAndProcess()
-            .then(() => {
-                console.log('문서 처리 완료, 선적 일정 생성됨');
-                
-                // 전체 이벤트 목록 업데이트
-                updateAllEvents();
-                
-                // 캘린더 다시 렌더링
-                renderCalendar();
-            })
-            .catch(error => {
-                console.error('선적 일정 로드 중 오류 발생:', error);
-                
-                // 오류 상세 정보 로깅
-                if (error.response) {
-                    console.error('서버 응답 에러:', error.response);
-                } else if (error.request) {
-                    console.error('서버 응답 없음:', error.request);
-                } else {
-                    console.error('요청 설정 에러:', error.message);
-                }
-                
-                // 대체 방식으로 API 호출 시도
-                tryFallbackAPICall();
-            });
-     }
-     
-     // 대체 API 호출 시도 (기존 방식)
-     function tryFallbackAPICall() {
-        console.log('대체 API 호출 시도 중...');
-        
-        fetch(`${API_BASE_URL}/calendar/events`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`API 호출 실패: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('API에서 받은 일정 데이터:', data);
-                
-                // shipping_events 배열을 사용
-                if (data.shipping_events && Array.isArray(data.shipping_events)) {
-                    shippingEvents = data.shipping_events.map(event => ({
-                        id: `ship-${event.id}`,
-                        title: event.title,
-                        date: event.date,
-                        category: 'shipping',
-                        description: event.description,
-                        is_confirmed: event.is_confirmed,
-                        schedule_type: event.schedule_type,
-                        brand: event.brand,
-                        model_code: event.model_code,
-                        model_name: event.model_name
-                    }));
-                } else {
-                    console.warn('API에서 유효한 선적 일정 데이터를 받지 못했습니다');
-                    shippingEvents = [];
-                }
-                
-                // 전체 이벤트 목록 업데이트
-                updateAllEvents();
-                
-                // 캘린더 다시 렌더링
-                renderCalendar();
-            })
-            .catch(error => {
-                console.error('대체 API 호출 실패:', error);
+    }
+    
+    // 모달 표시
+    showModal('eventDetailModal');
+}
+
+// 카테고리 이름 가져오기
+function getCategoryName(category) {
+    switch (category) {
+        case 'personal': return '개인 일정';
+        case 'business': return '업무 일정';
+        case 'shipping': return '선적 일정';
+        case 'pending': return '선적 시작';
+        case 'complete': return '선적 완료';
+        default: return '기타 일정';
+    }
+}
+
+function getRepeatText(repeatType, repeatUntil) {
+    let typeText = '';
+    switch (repeatType) {
+        case 'daily': typeText = '매일'; break;
+        case 'weekly': typeText = '매주'; break;
+        case 'monthly': typeText = '매월'; break;
+        default: typeText = '반복';
+    }
+    
+    if (repeatUntil) {
+        const untilDate = new Date(repeatUntil);
+        return `${typeText} (${untilDate.getFullYear()}년 ${untilDate.getMonth() + 1}월 ${untilDate.getDate()}일까지)`;
+    }
+    
+    return typeText;
+ }
+ 
+ // 로컬 스토리지에서 이벤트 불러오기
+ function loadEventsFromLocalStorage() {
+    // 개인 일정 불러오기
+    const storedPersonalEvents = localStorage.getItem(PERSONAL_EVENTS_KEY);
+    if (storedPersonalEvents) {
+        personalEvents = JSON.parse(storedPersonalEvents);
+    }
+    
+    // 업무 일정 불러오기
+    const storedBusinessEvents = localStorage.getItem(BUSINESS_EVENTS_KEY);
+    if (storedBusinessEvents) {
+        businessEvents = JSON.parse(storedBusinessEvents);
+    }
+    
+    // 전체 이벤트 목록 업데이트
+    updateAllEvents();
+ }
+ 
+ // 로컬 스토리지에 이벤트 저장
+ function saveEventsToLocalStorage() {
+    localStorage.setItem(PERSONAL_EVENTS_KEY, JSON.stringify(personalEvents));
+    localStorage.setItem(BUSINESS_EVENTS_KEY, JSON.stringify(businessEvents));
+ }
+ 
+ // 선적 일정 데이터 로드 (수정된 함수)
+ function loadShippingEvents() {
+    // 문서 기반 처리로 전환
+    loadDocumentsAndProcess()
+        .then(() => {
+            // 전체 이벤트 목록 업데이트
+            updateAllEvents();
+            renderCalendar();
+        })
+        .catch(error => {
+            // 대체 API 호출 시도
+            tryFallbackAPICall();
+        });
+ }
+ 
+ // 대체 API 호출 시도
+ function tryFallbackAPICall() {
+    fetch(`${API_BASE_URL}/calendar/events`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`API 호출 실패: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // shipping_events 배열을 사용
+            if (data.shipping_events && Array.isArray(data.shipping_events)) {
+                shippingEvents = data.shipping_events.map(event => ({
+                    id: `ship-${event.id}`,
+                    title: event.title,
+                    date: event.date,
+                    category: 'shipping',
+                    description: event.description,
+                    is_confirmed: event.is_confirmed,
+                    schedule_type: event.schedule_type,
+                    brand: event.brand,
+                    model_code: event.model_code,
+                    model_name: event.model_name
+                }));
+            } else {
                 shippingEvents = [];
-                updateAllEvents();
-                renderCalendar();
-            });
-     }
-     
-     // 문서 로드 및 처리 (새로운 함수)
-     async function loadDocumentsAndProcess() {
-        try {
-            console.log('문서 로드 및 처리 시작');
-            
-            // 인보이스 데이터 로드
-            const invoiceResponse = await fetch(`${API_BASE_URL}/documents/invoice`);
-            if (!invoiceResponse.ok) {
-                throw new Error(`인보이스 로드 실패: ${invoiceResponse.status}`);
             }
-            const invoiceData = await invoiceResponse.json();
-            allInvoices = invoiceData.invoices || [];
-            console.log(`${allInvoices.length}개의 인보이스 문서 로드됨`);
             
-            // 오더시트 데이터 로드
-            const orderResponse = await fetch(`${API_BASE_URL}/documents/order`);
-            if (!orderResponse.ok) {
-                throw new Error(`오더시트 로드 실패: ${orderResponse.status}`);
-            }
-            const orderData = await orderResponse.json();
-            allOrders = orderData.orders || [];
-            console.log(`${allOrders.length}개의 오더시트 문서 로드됨`);
-            
-            // 문서 처리 및 일정 생성
-            await processDocuments();
-            
-            return true;
-        } catch (error) {
-            console.error('문서 로드 및 처리 중 오류:', error);
-            throw error;
+            updateAllEvents();
+            renderCalendar();
+        })
+        .catch(error => {
+            shippingEvents = [];
+            updateAllEvents();
+            renderCalendar();
+        });
+ }
+ 
+ // 문서 로드 및 처리
+ async function loadDocumentsAndProcess() {
+    try {
+        // 인보이스 데이터 로드
+        const invoiceResponse = await fetch(`${API_BASE_URL}/documents/invoice`);
+        if (!invoiceResponse.ok) {
+            throw new Error(`인보이스 로드 실패: ${invoiceResponse.status}`);
         }
-     }
-     
-     // 문서 처리 및 선적 일정 생성 (새로운 함수)
-     async function processDocuments() {
-        try {
-            shippingEvents = []; // 기존 선적 일정 초기화
-            matchedDocumentPairs = []; // 일치 문서 쌍 초기화
-            
-            console.log(`인보이스 개수: ${allInvoices.length}, 오더시트 개수: ${allOrders.length}`);
-            
-            // 처리된 쌍을 추적하기 위한 셋
-            const processedPairs = new Set();
-            
-            // 가능한 모든 인보이스와 오더시트 조합에 대해 비교
-            for (const invoice of allInvoices) {
-                for (const order of allOrders) {
-                    // 두 문서가 같은 브랜드에 속하는지 확인 (최적화)
-                    if (invoice.brand === order.brand || invoice.brand === '자동 감지' || order.brand === '자동 감지') {
-                        // 이미 처리된 쌍인지 확인
-                        const pairKey = `${invoice.id}_${order.id}`;
-                        if (processedPairs.has(pairKey)) {
-                            console.log(`이미 처리된 쌍 건너뜀: ${pairKey}`);
-                            continue;
-                        }
+        const invoiceData = await invoiceResponse.json();
+        allInvoices = invoiceData.invoices || [];
+        
+        // 오더시트 데이터 로드
+        const orderResponse = await fetch(`${API_BASE_URL}/documents/order`);
+        if (!orderResponse.ok) {
+            throw new Error(`오더시트 로드 실패: ${orderResponse.status}`);
+        }
+        const orderData = await orderResponse.json();
+        allOrders = orderData.orders || [];
+        
+        // 문서 처리 및 일정 생성
+        await processDocuments();
+        
+        return true;
+    } catch (error) {
+        throw error;
+    }
+ }
+ 
+ // 문서 처리 및 선적 일정 생성
+ async function processDocuments() {
+    try {
+        shippingEvents = []; // 기존 선적 일정 초기화
+        matchedDocumentPairs = []; // 일치 문서 쌍 초기화
+        
+        // 처리된 쌍을 추적하기 위한 셋
+        const processedPairs = new Set();
+        
+        // 가능한 모든 인보이스와 오더시트 조합에 대해 비교
+        for (const invoice of allInvoices) {
+            for (const order of allOrders) {
+                // 두 문서가 같은 브랜드에 속하는지 확인 (최적화)
+                if (invoice.brand === order.brand || invoice.brand === '자동 감지' || order.brand === '자동 감지') {
+                    // 이미 처리된 쌍인지 확인
+                    const pairKey = `${invoice.id}_${order.id}`;
+                    if (processedPairs.has(pairKey)) {
+                        continue;
+                    }
+                    
+                    processedPairs.add(pairKey);
+                    
+                    try {
+                        // 문서 비교 API 호출
+                        const compareResponse = await fetch(`${API_BASE_URL}/compare/${invoice.id}/${order.id}`);
+                        const compareResult = await compareResponse.json();
                         
-                        processedPairs.add(pairKey);
+                        // 비교 결과에서 일치 항목 확인
+                        const matchPercentage = compareResult.summary.match_percentage;
                         
-                        try {
-                            console.log(`문서 비교 시도: ${invoice.id} vs ${order.id}`);
-                            // 문서 비교 API 호출
-                            const compareResponse = await fetch(`${API_BASE_URL}/compare/${invoice.id}/${order.id}`);
-                            const compareResult = await compareResponse.json();
+                        // 일치율이 80% 이상인 문서 쌍만 처리
+                        if (matchPercentage >= 80) {
+                            // 일치하는 문서 쌍 추가
+                            matchedDocumentPairs.push({
+                                invoice,
+                                order,
+                                matches: compareResult.matches,
+                                brand: invoice.brand
+                            });
                             
-                            // 비교 결과에서 일치 항목 확인
-                            const matchPercentage = compareResult.summary.match_percentage;
-                            console.log(`비교 결과: ${invoice.id} vs ${order.id} = ${matchPercentage}%`);
+                            // 오더 문서의 상세 정보 가져옴
+                            const orderDetailResponse = await fetch(`${API_BASE_URL}/document/${order.id}`);
+                            const orderDetail = await orderDetailResponse.json();
                             
-                            // 일치율이 80% 이상인 문서 쌍만 처리
-                            if (matchPercentage >= 80) {
-                                console.log(`일치하는 문서 쌍 발견: ${invoice.id} vs ${order.id}, 일치율: ${matchPercentage}%`);
-                                // 일치하는 문서 쌍 추가
-                                matchedDocumentPairs.push({
-                                    invoice,
-                                    order,
-                                    matches: compareResult.matches,
-                                    brand: invoice.brand
-                                });
+                            // 각 일치 항목에 대해 이벤트 생성
+                            if (orderDetail.items && orderDetail.items.length > 0) {
+                                // 제품별로 그룹화하기 위한 맵
+                                const shipDateMap = {};
                                 
-                                // 오더 문서의 상세 정보 가져옴
-                                const orderDetailResponse = await fetch(`${API_BASE_URL}/document/${order.id}`);
-                                const orderDetail = await orderDetailResponse.json();
-                                
-                                // 각 일치 항목에 대해 이벤트 생성
-                                if (orderDetail.items && orderDetail.items.length > 0) {
-                                    // 제품별로 그룹화하기 위한 맵
-                                    const shipDateMap = {};
+                                // 각 항목의 선적 날짜 정보 수집
+                                orderDetail.items.forEach(item => {
+                                    // 날짜 확인 및 형식 변환
+                                    const startDate = parseDate(item.shipping_start);
+                                    const endDate = parseDate(item.shipping_end);
                                     
-                                    // 각 항목의 선적 날짜 정보 수집
-                                    orderDetail.items.forEach(item => {
-                                        // 날짜 확인 및 형식 변환
-                                        const startDate = parseDate(item.shipping_start);
-                                        const endDate = parseDate(item.shipping_end);
-                                        
-                                        // 유효한 날짜인 경우에만 처리
-                                        if (startDate) {
-                                            const dateStr = formatDate(startDate);
-                                            if (!shipDateMap[dateStr]) {
-                                                shipDateMap[dateStr] = {
-                                                    date: dateStr,
-                                                    type: 'pending',
-                                                    items: [],
-                                                    brand: invoice.brand
-                                                };
-                                            }
+                                    // 유효한 날짜인 경우에만 처리
+                                    if (startDate) {
+                                        const dateStr = formatDate(startDate);
+                                        if (!shipDateMap[dateStr]) {
+                                            shipDateMap[dateStr] = {
+                                                date: dateStr,
+                                                type: 'pending',
+                                                items: [],
+                                                brand: invoice.brand
+                                            };
+                                        }
+                                        shipDateMap[dateStr].items.push(item);
+                                    }
+                                    
+                                    if (endDate) {
+                                        const dateStr = formatDate(endDate);
+                                        if (!shipDateMap[dateStr]) {
+                                            shipDateMap[dateStr] = {
+                                                date: dateStr,
+                                                type: 'complete',
+                                                items: [],
+                                                brand: invoice.brand
+                                            };
+                                        }
+                                        // 도착일이 다른 경우만 추가
+                                        if (!startDate || formatDate(startDate) !== formatDate(endDate)) {
                                             shipDateMap[dateStr].items.push(item);
                                         }
+                                    }
+                                });
+                                
+                                // 수집된 데이터로 이벤트 생성
+                                for (const dateKey in shipDateMap) {
+                                    const shipData = shipDateMap[dateKey];
+                                    if (shipData.items.length > 0) {
+                                        // 첫 번째 항목 정보 사용
+                                        const firstItem = shipData.items[0];
+                                        const otherItemsCount = shipData.items.length - 1;
                                         
-                                        if (endDate) {
-                                            const dateStr = formatDate(endDate);
-                                            if (!shipDateMap[dateStr]) {
-                                                shipDateMap[dateStr] = {
-                                                    date: dateStr,
-                                                    type: 'complete',
-                                                    items: [],
-                                                    brand: invoice.brand
-                                                };
-                                            }
-                                            // 도착일이 다른 경우만 추가
-                                            if (!startDate || formatDate(startDate) !== formatDate(endDate)) {
-                                                shipDateMap[dateStr].items.push(item);
-                                            }
+                                        // 모델명 처리
+                                        const modelCode = firstItem.model_code || '';
+                                        const modelName = firstItem.model_name || '';
+                                        
+                                        // 이름 결정
+                                        let itemName = '';
+                                        if (modelName && modelName.length > 0) {
+                                            itemName = modelName.includes('-') ? 
+                                                modelName.split('-')[0] : 
+                                                (modelName.length > 10 ? modelName.substring(0, 10) + '...' : modelName);
+                                        } else if (modelCode) {
+                                            itemName = modelCode;
+                                        } else {
+                                            itemName = '상품';
                                         }
-                                    });
-                                    
-                                    // 수집된 데이터로 이벤트 생성
-                                    for (const dateKey in shipDateMap) {
-                                        const shipData = shipDateMap[dateKey];
-                                        if (shipData.items.length > 0) {
-                                            // 첫 번째 항목 정보 사용
-                                            const firstItem = shipData.items[0];
-                                            const otherItemsCount = shipData.items.length - 1;
-                                            
-                                            // 이벤트 텍스트 생성 (간결하게)
-                                            const modelCode = firstItem.model_code || ''; 
-                                            const modelName = firstItem.model_name || '';
-                                            
-                                            // 모델명이 있으면 그것을 우선적으로 사용, 없으면 모델코드 사용
-                                            let itemName = '';
-                                            if (modelName && modelName.length > 0) {
-                                                // 모델명이 있는 경우 간결하게 표시
-                                                if (modelName.includes('-')) {
-                                                    // 하이픈이 있는 경우 앞부분만 사용
-                                                    itemName = modelName.split('-')[0];
-                                                } else {
-                                                    // 10자로 제한
-                                                    itemName = modelName.length > 10 ? modelName.substring(0, 10) + '...' : modelName;
-                                                }
-                                            } else if (modelCode) {
-                                                itemName = modelCode;
-                                            } else {
-                                                itemName = '상품';
-                                            }
-                                            
-                                            // 브랜드명 처리
-                                            let brandName = shipData.brand || '';
-                                            
-                                            // '자동 감지'인 경우 다른 데이터에서 브랜드 추출 시도
-                                            if (brandName === '자동 감지' || !brandName) {
-                                                // 모델명에서 브랜드 추출 시도
-                                                const modelName = firstItem.model_name || '';
-                                                
-                                                // 모델명에 특정 브랜드명이 포함되어 있는지 확인
-                                                if (modelName.includes('TOGA')) {
-                                                    brandName = 'TOGA';
-                                                } else if (modelName.includes('WILD')) {
-                                                    brandName = 'WILD';
-                                                } else if (modelName.includes('ATHLETICS')) {
-                                                    brandName = 'ATHL';
-                                                } else if (modelName.includes('BASERANGE')) {
-                                                    brandName = 'BASE';
-                                                } else if (modelName.includes('NOU')) {
-                                                    brandName = 'NOUN';
-                                                } else {
-                                                    // 모델 코드에서 브랜드 판별 시도
-                                                    const modelCode = firstItem.model_code || '';
-                                                    if (modelCode.startsWith('AJ')) {
-                                                        brandName = 'TOGA'; // 예시: AJ로 시작하는 코드는 TOGA 브랜드로 가정
-                                                    } else if (modelCode.startsWith('WD')) {
-                                                        brandName = 'WILD';
-                                                    } else {
-                                                        brandName = 'ITEM'; // 추출 실패 시 기본값
-                                                    }
-                                                }
-                                            } else {
-                                                // 브랜드명이 있으면 첫 4글자만 사용
-                                                brandName = brandName.substring(0, 4);
-                                            }
-                                            
-                                            // 짧고 간결한 이벤트 제목 생성
-                                            let eventTitle = `${brandName}-${itemName}`;
-                                            if (otherItemsCount > 0) {
-                                                eventTitle += ` 외${otherItemsCount}`;
-                                            }
-                                            
-                                            // 이벤트 타입에 따른 아이콘 추가
-                                            if (shipData.type === 'pending') {
-                                                eventTitle += '↗'; // 출발 아이콘
-                                            } else {
-                                                eventTitle += '↘'; // 도착 아이콘
-                                            }
-                                            
-                                            // 완벽한 브랜드명 찾기
-                                            let fullBrandName = invoice.brand;
-                                            if (fullBrandName === '자동 감지') {
-                                                fullBrandName = order.brand;
-                                            }
-                                            
-                                            // 이벤트 색상 결정
-                                            let eventColor;
-                                            // 전체 브랜드명으로 먼저 시도
-                                            if (BRAND_COLORS[fullBrandName]) {
-                                                eventColor = BRAND_COLORS[fullBrandName];
-                                            } 
-                                            // 단축된 브랜드명으로 시도
-                                            else if (fullBrandName.startsWith('TOGA')) {
-                                                eventColor = BRAND_COLORS['TOGA VIRILIS'];
-                                            } else if (fullBrandName.startsWith('WILD')) {
-                                                eventColor = BRAND_COLORS['WILD DONKEY'];
-                                            } else if (fullBrandName.startsWith('ATHLETICS')) {
-                                                eventColor = BRAND_COLORS['ATHLETICS FTWR'];
-                                            } else if (fullBrandName.startsWith('BASE')) {
-                                                eventColor = BRAND_COLORS['BASERANGE'];
-                                            } else if (fullBrandName.startsWith('NOU')) {
-                                                eventColor = BRAND_COLORS['NOU NOU'];
-                                            } else {
-                                                eventColor = BRAND_COLORS['default'];
-                                            }
-                                            
-                                            // 이벤트 객체 생성
-                                            const calendarEvent = {
-                                                id: `${order.id}-${dateKey}-${shipData.type}`,
-                                                date: shipData.date,
-                                                title: eventTitle,
-                                                type: shipData.type,
-                                                color: eventColor,
-                                                brand: fullBrandName,
-                                                description: `${shipData.items.length}개 품목`,
-                                                items: shipData.items,
-                                                document: {
-                                                    invoice_id: invoice.id,
-                                                    order_id: order.id
-                                                },
-                                                model_name: modelName,
-                                                model_code: modelCode,
-                                                // 선적 일정에 대한 추가 정보
-                                                schedule_type: shipData.type === 'pending' ? 'start' : 'end',
-                                                is_confirmed: true  // 문서 일치로 확정된 일정
-                                            };
-                                            
-                                            // 이벤트 배열에 추가
-                                            shippingEvents.push(calendarEvent);
+                                        
+                                        // 브랜드명 처리
+                                        let brandName = shipData.brand || '';
+                                        if (brandName === '자동 감지' || !brandName) {
+                                            // 간략화된 브랜드 추출 로직
+                                            if (modelName.includes('TOGA')) brandName = 'TOGA';
+                                            else if (modelName.includes('WILD')) brandName = 'WILD';
+                                            else if (modelName.includes('ATHLETICS')) brandName = 'ATHL';
+                                            else if (modelName.includes('BASERANGE')) brandName = 'BASE';
+                                            else if (modelName.includes('NOU')) brandName = 'NOUN';
+                                            else if (modelCode.startsWith('AJ')) brandName = 'TOGA';
+                                            else if (modelCode.startsWith('WD')) brandName = 'WILD';
+                                            else brandName = 'ITEM';
+                                        } else {
+                                            // 브랜드명이 있으면 첫 4글자만 사용
+                                            brandName = brandName.substring(0, 4);
                                         }
+                                        
+                                        // 이벤트 제목 생성
+                                        let eventTitle = `${brandName}-${itemName}`;
+                                        if (otherItemsCount > 0) {
+                                            eventTitle += ` 외${otherItemsCount}`;
+                                        }
+                                        
+                                        // 이벤트 타입에 따른 아이콘 추가
+                                        eventTitle += shipData.type === 'pending' ? '↗' : '↘';
+                                        
+                                        // 완전한 브랜드명 찾기
+                                        let fullBrandName = invoice.brand;
+                                        if (fullBrandName === '자동 감지') {
+                                            fullBrandName = order.brand;
+                                        }
+                                        
+                                        // 이벤트 색상 결정
+                                        let eventColor = BRAND_COLORS['default'];
+                                        if (BRAND_COLORS[fullBrandName]) {
+                                            eventColor = BRAND_COLORS[fullBrandName];
+                                        } else if (fullBrandName.startsWith('TOGA')) {
+                                            eventColor = BRAND_COLORS['TOGA VIRILIS'];
+                                        } else if (fullBrandName.startsWith('WILD')) {
+                                            eventColor = BRAND_COLORS['WILD DONKEY'];
+                                        } else if (fullBrandName.startsWith('ATHLETICS')) {
+                                            eventColor = BRAND_COLORS['ATHLETICS FTWR'];
+                                        } else if (fullBrandName.startsWith('BASE')) {
+                                            eventColor = BRAND_COLORS['BASERANGE'];
+                                        } else if (fullBrandName.startsWith('NOU')) {
+                                            eventColor = BRAND_COLORS['NOU NOU'];
+                                        }
+                                        
+                                        // 이벤트 객체 생성
+                                        const calendarEvent = {
+                                            id: `${order.id}-${dateKey}-${shipData.type}`,
+                                            date: shipData.date,
+                                            title: eventTitle,
+                                            type: shipData.type,
+                                            color: eventColor,
+                                            brand: fullBrandName,
+                                            description: `${shipData.items.length}개 품목`,
+                                            items: shipData.items,
+                                            document: {
+                                                invoice_id: invoice.id,
+                                                order_id: order.id
+                                            },
+                                            model_name: modelName,
+                                            model_code: modelCode,
+                                            schedule_type: shipData.type === 'pending' ? 'start' : 'end',
+                                            is_confirmed: true
+                                        };
+                                        
+                                        // 이벤트 배열에 추가
+                                        shippingEvents.push(calendarEvent);
                                     }
                                 }
-                            } else {
-                                console.log(`일치하지 않는 문서 쌍: ${invoice.id} vs ${order.id}, 일치율: ${matchPercentage}%`);
                             }
-                        } catch (compareError) {
-                            console.warn(`${invoice.id}와 ${order.id} 비교 중 오류:`, compareError);
                         }
+                    } catch (compareError) {
+                        // 비교 오류는 무시하고 다음 쌍으로 진행
+                        continue;
                     }
                 }
             }
-            
-            console.log(`총 ${shippingEvents.length}개의 선적 일정 이벤트가 생성되었습니다.`);
-            
-        } catch (error) {
-            console.error('문서 처리 중 오류 발생:', error);
-            throw error;
         }
-     }
-     
-     // 날짜 문자열을 Date 객체로 변환 (다양한 형식 지원)
-     function parseDate(dateString) {
-        if (!dateString) return null;
+    } catch (error) {
+        throw error;
+    }
+ }
+ 
+ // 날짜 문자열을 Date 객체로 변환
+ function parseDate(dateString) {
+    if (!dateString) return null;
+    
+    // 문자열 정리
+    dateString = dateString.trim();
+    
+    // MM/DD/YYYY 형식
+    const usMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (usMatch) {
+        const [_, month, day, year] = usMatch;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+    
+    // DD-MM-YYYY 형식
+    const euMatch = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+    if (euMatch) {
+        const [_, day, month, year] = euMatch;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+    
+    // YYYY-MM-DD 형식
+    const isoMatch = dateString.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (isoMatch) {
+        const [_, year, month, day] = isoMatch;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+    
+    // 기타 형식 (YYYYMMDD, 등)
+    const numericMatch = dateString.match(/^(\d{4})(\d{2})(\d{2})$/);
+    if (numericMatch) {
+        const [_, year, month, day] = numericMatch;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+    
+    // 기타 형식은 Date 생성자로 시도
+    const dateObj = new Date(dateString);
+    return isNaN(dateObj.getTime()) ? null : dateObj;
+ }
+ 
+ // 특정 날짜에 대한 모든 이벤트 표시
+ function showDayEvents(date, events) {
+    alert(`${formatDisplayDate(date)}의 모든 일정 (${events.length}개)`);
+ }
+ 
+ // 전체 이벤트 목록 업데이트
+ function updateAllEvents() {
+    // 모든 이벤트 합치기
+    calendarEvents = [
+        ...personalEvents,
+        ...businessEvents,
+        ...shippingEvents
+    ];
+ }
+ 
+ // 이벤트 검색
+ function searchEvents(searchText) {
+    if (!searchText.trim()) {
+        renderCalendar();
+        return;
+    }
+    
+    // 검색어 포함 필터링
+    const searchResults = calendarEvents.filter(event => {
+        return (
+            event.title.toLowerCase().includes(searchText.toLowerCase()) ||
+            (event.description && event.description.toLowerCase().includes(searchText.toLowerCase())) ||
+            (event.brand && event.brand.toLowerCase().includes(searchText.toLowerCase()))
+        );
+    });
+    
+    // 결과가 없는 경우
+    if (searchResults.length === 0) {
+        alert(`'${searchText}' 검색 결과가 없습니다.`);
+        return;
+    }
+    
+    // 첫 번째 결과의 날짜로 이동
+    if (searchResults.length > 0) {
+        const firstResult = searchResults[0];
+        const resultDate = parseDate(firstResult.date);
         
-        // 문자열 정리
-        dateString = dateString.trim();
+        // 현재 날짜 업데이트
+        currentDate = new Date(resultDate.getFullYear(), resultDate.getMonth(), 1);
         
-        // MM/DD/YYYY 형식
-        const usFormat = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-        const usMatch = dateString.match(usFormat);
-        if (usMatch) {
-            const [_, month, day, year] = usMatch;
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        // 캘린더 새로고침
+        updateCalendarHeader();
+        renderCalendar();
+        
+        // 결과 메시지
+        alert(`'${searchText}' 검색 결과: ${searchResults.length}개 일정 찾음`);
+    }
+ }
+ 
+ // 통계 지표 업데이트
+ function updateMetrics() {
+    // 브랜드 수 계산 (중복 제거)
+    const uniqueBrands = new Set();
+    shippingEvents.forEach(event => {
+        if (event.brand) {
+            uniqueBrands.add(event.brand);
         }
-        
-        // DD-MM-YYYY 형식
-        const euFormat = /^(\d{1,2})-(\d{1,2})-(\d{4})$/;
-        const euMatch = dateString.match(euFormat);
-        if (euMatch) {
-            const [_, day, month, year] = euMatch;
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        }
-        
-        // YYYY-MM-DD 형식
-        const isoFormat = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
-        const isoMatch = dateString.match(isoFormat);
-        if (isoMatch) {
-            const [_, year, month, day] = isoMatch;
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        }
-        
-        // 기타 형식 (YYYYMMDD, 등)
-        const numericFormat = /^(\d{4})(\d{2})(\d{2})$/;
-        const numericMatch = dateString.match(numericFormat);
-        if (numericMatch) {
-            const [_, year, month, day] = numericMatch;
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        }
-        
-        // 기타 형식은 Date 생성자로 시도
-        const dateObj = new Date(dateString);
-        return isNaN(dateObj.getTime()) ? null : dateObj;
-     }
-     
-     // 특정 날짜에 대한 모든 이벤트 표시
-     function showDayEvents(date, events) {
-        alert(`${formatDisplayDate(date)}의 모든 일정 (${events.length}개)`);
-        
-        // 향후 구현: 일간 뷰로 전환하여 해당 날짜의 모든 이벤트 표시
-     }
-     
-     // 전체 이벤트 목록 업데이트
-     function updateAllEvents() {
-        // 모든 이벤트 합치기
-        calendarEvents = [
-            ...personalEvents,
-            ...businessEvents,
-            ...shippingEvents
-        ];
-     }
-     
-     // 이벤트 검색
-     function searchEvents(searchText) {
-        if (!searchText.trim()) {
-            // 검색어가 없으면 전체 표시
-            renderCalendar();
-            return;
-        }
-        
-        // 이벤트 검색 결과를 배열로 저장
-        const searchResults = calendarEvents.filter(event => {
-            return (
-                event.title.toLowerCase().includes(searchText.toLowerCase()) ||
-                (event.description && event.description.toLowerCase().includes(searchText.toLowerCase())) ||
-                (event.brand && event.brand.toLowerCase().includes(searchText.toLowerCase()))
-            );
-        });
-        
-        // 결과가 없는 경우
-        if (searchResults.length === 0) {
-            alert(`'${searchText}' 검색 결과가 없습니다.`);
-            return;
-        }
-        
-        // 첫 번째 결과의 날짜로 이동
-        if (searchResults.length > 0) {
-            const firstResult = searchResults[0];
-            const resultDate = parseDate(firstResult.date);
-            
-            // 현재 날짜 업데이트
-            currentDate = new Date(resultDate.getFullYear(), resultDate.getMonth(), 1);
-            
-            // 캘린더 새로고침
-            updateCalendarHeader();
-            renderCalendar();
-            
-            // 결과 메시지
-            alert(`'${searchText}' 검색 결과: ${searchResults.length}개 일정 찾음`);
-        }
-     }
-     
-     // 통계 지표 업데이트
-     function updateMetrics() {
-        // 브랜드 수 계산 (중복 제거)
-        const uniqueBrands = new Set();
-        shippingEvents.forEach(event => {
-            if (event.brand) {
-                uniqueBrands.add(event.brand);
-            }
-        });
-        
-        // 진행 중/완료된 거래 수 계산
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작으로 설정
-        
-        let inProgressCount = 0;
-        let completedCount = 0;
-        
-        shippingEvents.forEach(event => {
-            if (event.type === 'pending') {
-                const eventDate = parseDate(event.date);
-                if (eventDate >= today) {
-                    inProgressCount++;
-                } else {
-                    completedCount++;
-                }
-            } else if (event.type === 'complete') {
+    });
+    
+    // 진행 중/완료된 거래 수 계산
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let inProgressCount = 0;
+    let completedCount = 0;
+    
+    shippingEvents.forEach(event => {
+        if (event.type === 'pending') {
+            const eventDate = parseDate(event.date);
+            if (eventDate >= today) {
+                inProgressCount++;
+            } else {
                 completedCount++;
             }
-        });
-        
-        // 오늘의 일정 수 계산
-        const todayDateStr = formatDate(today);
-        const todayEvents = calendarEvents.filter(event => event.date === todayDateStr);
-        
-        // 지표 업데이트
-        document.getElementById('total-clients').textContent = uniqueBrands.size;
-        document.getElementById('in-progress-count').textContent = `${inProgressCount}건`;
-        document.getElementById('completed-count').textContent = `${completedCount}건`;
-        document.getElementById('today-events').textContent = `${todayEvents.length}건`;
-     }
+        } else if (event.type === 'complete') {
+            completedCount++;
+        }
+    });
+    
+    // 오늘의 일정 수 계산
+    const todayDateStr = formatDate(today);
+    const todayEvents = calendarEvents.filter(event => event.date === todayDateStr);
+    
+    // 지표 업데이트
+    document.getElementById('total-clients').textContent = uniqueBrands.size;
+    document.getElementById('in-progress-count').textContent = `${inProgressCount}건`;
+    document.getElementById('completed-count').textContent = `${completedCount}건`;
+    document.getElementById('today-events').textContent = `${todayEvents.length}건`;
+ }
