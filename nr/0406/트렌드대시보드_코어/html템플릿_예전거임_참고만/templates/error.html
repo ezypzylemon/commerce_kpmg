@@ -1,0 +1,78 @@
+<!-- templates/error.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>오류 발생 - Fashion Trend Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <style>
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .error-icon {
+      font-size: 5rem;
+      color: #FF5A5A;
+      margin-bottom: 1rem;
+    }
+    
+    .error-title {
+      font-size: 2rem;
+      color: #1e2b3c;
+      margin-bottom: 1rem;
+    }
+    
+    .error-message {
+      font-size: 1.2rem;
+      color: #6c7293;
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    
+    .error-button {
+      background-color: #36D6BE;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .error-button:hover {
+      background-color: #2bc4ad;
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <header class="top-header">
+    <div class="header-left">
+      <h1>Fashion Trend Dashboard</h1>
+    </div>
+    <div class="header-right">
+      <button class="settings-btn" onclick="toggleTheme()">⚙</button>
+    </div>
+  </header>
+
+  <div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h2 class="error-title">오류가 발생했습니다</h2>
+    <p class="error-message">{{ error_message }}</p>
+    <a href="/" class="error-button">홈으로 돌아가기</a>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
+</body>
+</html>

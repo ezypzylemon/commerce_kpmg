@@ -1,0 +1,643 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>트렌드 분석 - 매거진 탭</h2>
+
+<!-- 매거진 선택 필터 -->
+<div class="magazine-filter">
+    <h3>매거진 선택</h3>
+    <div class="filter-tags">
+        <span class="filter-tag {% if 'jentestore' in selected_magazines %}active{% endif %}" data-magazine="jentestore">jentestore <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'marieclaire' in selected_magazines %}active{% endif %}" data-magazine="marieclaire">marieclaire <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'vogue' in selected_magazines %}active{% endif %}" data-magazine="vogue">vogue <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'wkorea' in selected_magazines %}active{% endif %}" data-magazine="wkorea">wkorea <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'wwdkorea' in selected_magazines %}active{% endif %}" data-magazine="wwdkorea">wwdkorea <span class="remove">×</span></span>
+    </div>
+</div>
+
+<div class="dashboard-grid magazine-grid-3col">
+  <!-- 1행 1열: 공통 키워드 + 매거진별 키워드 -->
+  <section class="grid-item">
+    <!-- 공통 키워드 -->
+    <div class="common-keywords-section">
+      <h3>공통 키워드</h3>
+      <div class="common-keywords">
+        {% for keyword in common_keywords %}
+        <div class="common-keyword-item">
+          <span class="keyword-text">{{ keyword }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 매거진별 키워드 -->
+    <div class="magazine-keywords-section">
+      <h3>매거진별 키워드</h3>
+      <div class="magazine-keyword-cards">
+        {% for magazine_name, data in magazine_data.items() %}
+        <div class="magazine-card magazine-card-{{ magazine_name|lower }}">
+          <h4>{{ magazine_name }}</h4>
+          <div class="keyword-list">
+            {% for i in range(1, 11) %}
+            <div class="keyword-item">
+              <span class="keyword-rank">{{ i }}</span>
+              <span class="keyword-text">{{ data.keywords[i-1].keyword }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  
+  <!-- 1행 2열: 키워드별 언급량 추세 -->
+  <section class="grid-item">
+    <h3>키워드별 언급량 추세</h3>
+    {% if fig_trend %}
+      {{ fig_trend | safe }}
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+  </section>
+  
+  <!-- 1행 3열: 카드뉴스 섹션 -->
+  <section class="grid-item">
+    <h3>카드뉴스</h3>
+    <!-- 매거진 필터 버튼 -->
+    <div class="magazine-filter-buttons">
+      <button class="magazine-filter-btn active" data-magazine="all">전체</button>
+      {% for magazine in selected_magazines %}
+      <button class="magazine-filter-btn" data-magazine="{{ magazine|lower }}">{{ magazine }}</button>
+      {% endfor %}
+    </div>
+    
+    <!-- 카드 뉴스 그리드 -->
+    <div class="magazine-card-grid">
+      {% for article in articles %}
+      <div class="magazine-card" data-magazine="{{ article.source|default('')|lower }}">
+        {% if article.image_url %}
+        <div class="magazine-card-image-container">
+          <img src="{{ article.image_url }}" alt="{{ article.title }}" class="magazine-card-image">
+        </div>
+        {% endif %}
+        <div class="magazine-card-content">
+          <h4 class="magazine-card-title">{{ article.title }}</h4>
+          <p class="magazine-card-date">{{ article.upload_date }}</p>
+          <p class="magazine-card-source">출처: {{ article.source }}</p>
+          {% if article.article_url %}
+          <a href="{{ article.article_url }}" target="_blank" class="magazine-card-link">자세히 보기</a>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="no-data">카드뉴스가 없습니다.</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2행 1열: TF-IDF 키워드 워드클라우드 -->
+  <section class="grid-item">
+    <h3>TF-IDF 기반 워드클라우드</h3>
+    {% if fig_wordcloud %}
+      {{ fig_wordcloud | safe }}
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+  </section>
+  
+  <!-- 2행 2열: 연관어 기반 네트워크 분석 -->
+  <section class="grid-item">
+    <h3>연관어 기반 네트워크 분석</h3>
+    {% if fig_network %}
+      {{ fig_network | safe }}
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+  </section>
+  
+  <!-- 2행 3열: 카테고리별 분포 -->
+  <section class="grid-item">
+    <h3>카테고리별 분포</h3>
+    {% if fig_category %}
+      {{ fig_category | safe }}
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+  </section>
+</div>
+
+<style>
+.magazine-grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 20px;
+  padding: 20px;
+}
+
+.grid-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 300px;
+}
+
+.magazine-keywords-section {
+    padding: 20px;
+    background: #1e2b3c;
+    border-radius: 10px;
+}
+
+.magazine-keywords-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.magazine-block {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.magazine-block h4 {
+    color: #4CAF50;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    text-transform: uppercase;
+}
+
+.keyword-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyword-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    color: #fff;
+}
+
+.keyword-item.common-keyword {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.keyword-rank {
+    color: #4CAF50;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.keyword-text {
+    flex-grow: 1;
+}
+
+.magazine-filter-buttons {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.magazine-filter-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  cursor: pointer;
+}
+
+.magazine-filter-btn.active {
+  background: #4CAF50;
+}
+
+.magazine-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.magazine-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.magazine-card-image-container {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.magazine-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.magazine-card-content {
+  padding: 10px;
+}
+
+.magazine-card-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.magazine-card-date {
+  font-size: 0.9em;
+  color: #888;
+}
+
+.full-width-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+.common-keywords-guide {
+    margin-top: 20px;
+    padding: 20px;
+    background: #1e2b3c;
+    border-radius: 10px;
+}
+
+.common-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.common-keyword-item {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.magazine-keywords-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.keywords-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.magazine-keywords {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.magazine-keywords h4 {
+    color: #4CAF50;
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.keyword-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.keyword-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.keyword-item.common-keyword {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.keyword-rank {
+    color: #4CAF50;
+    margin-right: 10px;
+    font-weight: bold;
+    min-width: 20px;
+}
+
+.keyword-text {
+    flex-grow: 1;
+    color: #fff;
+}
+
+.magazine-keyword-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.magazine-card {
+    padding: 15px;
+    border-radius: 10px;
+    color: white;
+}
+
+.magazine-card h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.keyword-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyword-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.keyword-rank {
+    margin-right: 10px;
+    font-weight: bold;
+    min-width: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.keyword-text {
+    flex-grow: 1;
+    color: white;
+}
+
+.magazine-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.magazine-card:hover {
+    transform: translateY(-5px);
+}
+
+.magazine-card-image-container {
+    aspect-ratio: 16/9;
+    overflow: hidden;
+}
+
+.magazine-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.magazine-card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.magazine-card-title {
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+    color: #fff;
+    line-height: 1.4;
+}
+
+.magazine-card-date {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.magazine-card-link {
+    display: inline-block;
+    margin-top: auto;
+    padding: 8px 15px;
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.2s;
+    text-align: center;
+}
+
+.magazine-card-link:hover {
+    background: rgba(76, 175, 80, 0.3);
+}
+
+.magazine-filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.magazine-filter-btn {
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.magazine-filter-btn:hover,
+.magazine-filter-btn.active {
+    background: #4CAF50;
+}
+
+.magazine-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.no-data {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* 매거진별 배경색 스타일 */
+.magazine-card-jentestore {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+.magazine-card-wwdkorea {
+    background: linear-gradient(135deg, #2196F3, #1565C0);
+}
+
+.magazine-card-vogue {
+    background: linear-gradient(135deg, #F44336, #C62828);
+}
+
+.magazine-card-marieclaire {
+    background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+}
+
+.magazine-card-wkorea {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+}
+
+.date-filter-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #1e2b3c;
+    border-radius: 10px;
+}
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-range-picker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-input {
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.apply-date-btn {
+    padding: 8px 15px;
+    background: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.apply-date-btn:hover {
+    background: #45a049;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const filterButtons = document.querySelectorAll('.magazine-filter-btn');
+    const cards = document.querySelectorAll('.magazine-card');
+    
+    // 태그 필터링 이벤트
+    filterTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            this.classList.toggle('active');
+            
+            // 선택된 매거진 목록 업데이트
+            const selectedMagazines = Array.from(document.querySelectorAll('.filter-tag.active'))
+                .map(tag => tag.dataset.magazine);
+            
+            // URL 파라미터 업데이트
+            const params = new URLSearchParams(window.location.search);
+            params.set('magazines', selectedMagazines.join(','));
+            window.location.search = params.toString();
+        });
+    });
+    
+    // 기간 설정 스크립트
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+    
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    
+    if (startDateInput && endDateInput) {
+        startDateInput.valueAsDate = oneMonthAgo;
+        endDateInput.valueAsDate = today;
+        
+        document.querySelector('.apply-date-btn')?.addEventListener('click', function() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                const params = new URLSearchParams(window.location.search);
+                params.set('start_date', startDate);
+                params.set('end_date', endDate);
+                window.location.search = params.toString();
+            }
+        });
+    }
+    
+    // 매거진 필터 버튼 이벤트
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedMagazine = this.dataset.magazine;
+            console.log('Selected magazine:', selectedMagazine); // 디버깅용
+            
+            // 모든 버튼에서 active 클래스 제거
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // 클릭된 버튼에 active 클래스 추가
+            this.classList.add('active');
+            // 카드 필터링
+            filterCards(selectedMagazine);
+        });
+    });
+    
+    function filterCards(magazine) {
+        cards.forEach(card => {
+            const cardMagazine = (card.dataset.magazine || '').toLowerCase();
+            console.log('Card magazine:', cardMagazine); // 디버깅용
+            
+            if (magazine === 'all') {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = cardMagazine === magazine.toLowerCase() ? 'flex' : 'none';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

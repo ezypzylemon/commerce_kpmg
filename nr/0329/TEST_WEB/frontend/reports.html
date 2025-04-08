@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>브랜드 및 품목별 보고서 - OCR 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>OCR 문서 관리</h2>
+                <span class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="calendar.html"><i class="fas fa-upload"></i> 일정</a>
+                    </li>
+                    <li>
+                        <a href="inventory.html"><i class="fas fa-boxes"></i> 입고현황</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-filters">
+                <h3>보고서 필터</h3>
+                
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" value="2025-01-01">
+                        <span>~</span>
+                        <input type="date" class="date-input" value="2025-03-11">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>보고서 유형</label>
+                    <select class="form-select">
+                        <option selected>모든 보고서</option>
+                        <option>브랜드별 분석</option>
+                        <option>품목별 분석</option>
+                        <option>시즌별 분석</option>
+                        <option>문서 처리 현황</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>데이터 그룹화</label>
+                    <select class="form-select">
+                        <option selected>월별</option>
+                        <option>주별</option>
+                        <option>분기별</option>
+                        <option>연도별</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary btn-block">필터 적용</button>
+                <button class="btn btn-outline btn-block">내보내기</button>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>브랜드 및 품목별 보고서</h1>
+                <div class="header-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-outline active">차트</button>
+                        <button class="btn btn-outline">표</button>
+                        <button class="btn btn-outline">요약</button>
+                    </div>
+                    <button class="btn btn-primary"><i class="fas fa-download"></i> 보고서 다운로드</button>
+                </div>
+            </header>
+            
+            <!-- 요약 지표 카드 -->
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 브랜드 수</h3>
+                        <p class="metric-value">5</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 품목 수</h3>
+                        <p class="metric-value">154</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 금액</h3>
+                        <p class="metric-value">₩457.9M</p>
+                        <span class="metric-delta positive">+12.5%</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 주문 건수</h3>
+                        <p class="metric-value">87</p>
+                        <span class="metric-delta positive">+8.7%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 주요 차트 섹션 -->
+            <div class="report-charts">
+                <!-- 브랜드 분석 차트 -->
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h2>브랜드별 주문 금액</h2>
+                        <div class="chart-actions">
+                            <select class="form-select form-select-sm">
+                                <option selected>최근 3개월</option>
+                                <option>최근 6개월</option>
+                                <option>최근 1년</option>
+                                <option>전체 기간</option>
+                            </select>
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <!-- 실제 차트는 JS로 구현 -->
+                        <div class="placeholder-bar-chart">
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height: 80%;">
+                                    <div class="chart-bar-label">TOGA VIRILIS</div>
+                                    <div class="chart-bar-value">₩132.5M</div>
+                                </div>
+                                <div class="chart-bar" style="height: 62%;">
+                                    <div class="chart-bar-label">WILD DONKEY</div>
+                                    <div class="chart-bar-value">₩96.8M</div>
+                                </div>
+                                <div class="chart-bar" style="height: 75%;">
+                                    <div class="chart-bar-label">ATHLETICS FTWR</div>
+                                    <div class="chart-bar-value">₩118.2M</div>
+                                </div>
+                                <div class="chart-bar" style="height: 50%;">
+                                    <div class="chart-bar-label">BASERANGE</div>
+                                    <div class="chart-bar-value">₩72.4M</div>
+                                </div>
+                                <div class="chart-bar" style="height: 38%;">
+                                    <div class="chart-bar-label">NOU NOU</div>
+                                    <div class="chart-bar-value">₩38.0M</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 월별 추이 차트 -->
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h2>월별 발주 금액 추이</h2>
+                        <div class="chart-actions">
+                            <div class="legend-items">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #4CAF50;"></span>
+                                    <span>2024년</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #2196F3;"></span>
+                                    <span>2025년</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <!-- 실제 차트는 JS로 구현 -->
+                        <div class="placeholder-line-chart">
+                            <svg width="100%" height="300" viewBox="0 0 800 300" preserveAspectRatio="none">
+                                <!-- 2024년 데이터 -->
+                                <path class="line-path" d="M0,200 C100,180 200,170 300,160 C400,150 500,140 600,130 C700,120 800,110 800,110" stroke="#4CAF50" fill="none" stroke-width="3"></path>
+                                <path class="area-path" d="M0,200 C100,180 200,170 300,160 C400,150 500,140 600,130 C700,120 800,110 800,110 L800,300 L0,300 Z" fill="rgba(76, 175, 80, 0.1)"></path>
+                                
+                                <!-- 2025년 데이터 -->
+                                <path class="line-path" d="M0,180 C100,160 200,140 300,120 C400,100 500,90 600,80 C700,70 800,60 800,60" stroke="#2196F3" fill="none" stroke-width="3"></path>
+                                <path class="area-path" d="M0,180 C100,160 200,140 300,120 C400,100 500,90 600,80 C700,70 800,60 800,60 L800,300 L0,300 Z" fill="rgba(33, 150, 243, 0.1)"></path>
+                                
+                                <!-- 점들 (2024년) -->
+                                <circle cx="0" cy="200" r="5" fill="#4CAF50"></circle>
+                                <circle cx="200" cy="170" r="5" fill="#4CAF50"></circle>
+                                <circle cx="400" cy="150" r="5" fill="#4CAF50"></circle>
+                                <circle cx="600" cy="130" r="5" fill="#4CAF50"></circle>
+                                <circle cx="800" cy="110" r="5" fill="#4CAF50"></circle>
+                                
+                                <!-- 점들 (2025년) -->
+                                <circle cx="0" cy="180" r="5" fill="#2196F3"></circle>
+                                <circle cx="200" cy="140" r="5" fill="#2196F3"></circle>
+                                <circle cx="400" cy="100" r="5" fill="#2196F3"></circle>
+                                <circle cx="600" cy="80" r="5" fill="#2196F3"></circle>
+                                <circle cx="800" cy="60" r="5" fill="#2196F3"></circle>
+                            </svg>
+                            
+                            <!-- X축 -->
+                            <div class="chart-axis-x">
+                                <span>1월</span>
+                                <span>2월</span>
+                                <span>3월</span>
+                                <span>4월</span>
+                                <span>5월</span>
+                                <span>6월</span>
+                                <span>7월</span>
+                                <span>8월</span>
+                                <span>9월</span>
+                                <span>10월</span>
+                                <span>11월</span>
+                                <span>12월</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 품목별 분석 차트 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>상위 품목 카테고리</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <!-- 실제 차트는 JS로 구현 -->
+                        <div class="placeholder-pie-chart">
+                            <div class="pie-chart">
+                                <div class="pie-segment" style="--percentage: 35%; --color: #4CAF50; --start: 0%;"></div>
+                                <div class="pie-segment" style="--percentage: 25%; --color: #2196F3; --start: 35%;"></div>
+                                <div class="pie-segment" style="--percentage: 20%; --color: #FFC107; --start: 60%;"></div>
+                                <div class="pie-segment" style="--percentage: 15%; --color: #FF5722; --start: 80%;"></div>
+                                <div class="pie-segment" style="--percentage: 5%; --color: #9C27B0; --start: 95%;"></div>
+                                <div class="pie-hole"></div>
+                            </div>
+                            <div class="pie-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #4CAF50;"></span>
+                                    <span>셔츠/블라우스 (35%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #2196F3;"></span>
+                                    <span>청바지/팬츠 (25%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #FFC107;"></span>
+                                    <span>아우터 (20%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #FF5722;"></span>
+                                    <span>신발 (15%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #9C27B0;"></span>
+                                    <span>액세서리 (5%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 시즌별 분석 차트 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>시즌별 발주 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <!-- 실제 차트는 JS로 구현 -->
+                        <div class="placeholder-pie-chart">
+                            <div class="pie-chart">
+                                <div class="pie-segment" style="--percentage: 45%; --color: #FF9800; --start: 0%;"></div>
+                                <div class="pie-segment" style="--percentage: 55%; --color: #03A9F4; --start: 45%;"></div>
+                                <div class="pie-hole"></div>
+                            </div>
+                            <div class="pie-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #FF9800;"></span>
+                                    <span>S/S (45%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #03A9F4;"></span>
+                                    <span>F/W (55%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 브랜드별 품목 분석 -->
+            <div class="brand-analysis">
+                <div class="section-header">
+                    <h2>브랜드별 품목 분석</h2>
+                    <div class="section-actions">
+                        <select class="form-select form-select-sm">
+                            <option selected>모든 시즌</option>
+                            <option>2024SS</option>
+                            <option>2024FW</option>
+                            <option>2025SS</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>브랜드</th>
+                                <th>셔츠/블라우스</th>
+                                <th>청바지/팬츠</th>
+                                <th>아우터</th>
+                                <th>신발</th>
+                                <th>액세서리</th>
+                                <th>총 발주액</th>
+                                <th>비교</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="brand-name">TOGA VIRILIS</td>
+                                <td>₩38.6M</td>
+                                <td>₩29.7M</td>
+                                <td>₩46.2M</td>
+                                <td>₩12.8M</td>
+                                <td>₩5.2M</td>
+                                <td>₩132.5M</td>
+                                <td><span class="trend-up">+12%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="brand-name">WILD DONKEY</td>
+                                <td>₩27.3M</td>
+                                <td>₩32.5M</td>
+                                <td>₩20.1M</td>
+                                <td>₩14.2M</td>
+                                <td>₩2.7M</td>
+                                <td>₩96.8M</td>
+                                <td><span class="trend-up">+8%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="brand-name">ATHLETICS FTWR</td>
+                                <td>₩26.8M</td>
+                                <td>₩21.3M</td>
+                                <td>₩19.7M</td>
+                                <td>₩46.3M</td>
+                                <td>₩4.1M</td>
+                                <td>₩118.2M</td>
+                                <td><span class="trend-up">+15%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="brand-name">BASERANGE</td>
+                                <td>₩26.1M</td>
+                                <td>₩19.5M</td>
+                                <td>₩14.3M</td>
+                                <td>₩8.7M</td>
+                                <td>₩3.8M</td>
+                                <td>₩72.4M</td>
+                                <td><span class="trend-down">-3%</span></td>
+                            </tr>
+                            <tr>
+                                <td class="brand-name">NOU NOU</td>
+                                <td>₩14.2M</td>
+                                <td>₩10.7M</td>
+                                <td>₩7.8M</td>
+                                <td>₩2.3M</td>
+                                <td>₩3.0M</td>
+                                <td>₩38.0M</td>
+                                <td><span class="trend-up">+24%</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>총계</td>
+                                <td>₩133.0M</td>
+                                <td>₩113.7M</td>
+                                <td>₩108.1M</td>
+                                <td>₩84.3M</td>
+                                <td>₩18.8M</td>
+                                <td>₩457.9M</td>
+                                <td><span class="trend-up">+10.5%</span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 품목 성장률 분석 -->
+            <div class="chart-container full-width">
+                <div class="chart-header">
+                    <h2>품목별 성장률 분석</h2>
+                    <div class="chart-actions">
+                        <select class="form-select form-select-sm">
+                            <option selected>전년 동기 대비</option>
+                            <option>전분기 대비</option>
+                            <option>전월 대비</option>
+                        </select>
+                        <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <!-- 실제 차트는 JS로 구현 -->
+                    <div class="placeholder-bar-chart horizontal">
+                        <div class="chart-item">
+                            <div class="item-label">액세서리</div>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="width: 85%; background-color: #4CAF50;">+28%</div>
+                            </div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="item-label">신발</div>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="width: 65%; background-color: #4CAF50;">+18%</div>
+                            </div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="item-label">아우터</div>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="width: 25%; background-color: #4CAF50;">+5%</div>
+                            </div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="item-label">청바지/팬츠</div>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="width: 10%; background-color: #4CAF50;">+2%</div>
+                            </div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="item-label">셔츠/블라우스</div>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="width: 15%; background-color: #F44336; left: 0;">-3%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>통합 분석 대시보드</h2>
+
+<!-- 3행 2열 레이아웃 구조로 변경 -->
+<div class="dashboard-grid">
+  <!-- 1행 1열: 키워드 Top 5 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <div class="section-header">
+      <h3>Top 5 Keywords</h3>
+      <form method="get">
+        <select name="magazine" class="dropdown-select" onchange="this.form.submit()">
+          {% for mag in magazines %}
+            <option value="{{ mag }}" {% if magazine == mag %}selected{% endif %}>{{ mag }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+
+    <!-- 매거진별 키워드 1행 3열 구조 -->
+    <div class="magazine-keywords">
+      {% for mag in magazines %}
+        <div class="magazine-column">
+          <h4>{{ mag }}</h4>
+          <div class="keyword-list">
+            {% for keyword in magazine_keywords[mag] %}
+              <div class="keyword-item {% if loop.index <= 3 %}top-three{% endif %}">
+                <span class="keyword-rank">{{ loop.index }}.</span>
+                <span class="keyword-name">{{ keyword.keyword }}</span>
+                <span class="keyword-count">{{ keyword.count }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 1행 2열: 카드뉴스 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>Card News (from {{ magazine }})</h3>
+    <div class="card-news-grid">
+      {% for item in card_items %}
+        <div class="card-news-box">
+          <img src="{{ item.image_url }}" alt="Article Image">
+          <div class="card-content">
+            <p class="title">{{ item.title }}</p>
+            <p class="summary">{{ item.summary }}</p>
+            <a href="{{ item.link }}" target="_blank" class="readmore">Read more →</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2행 1열: 네트워크 그래프 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>Keyword Network</h3>
+    <div class="network-graph">
+      <img src="{{ network_graph_url }}" class="full-width-img">
+    </div>
+  </section>
+
+  <!-- 2행 2열: 카테고리 분포 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>Category Breakdown</h3>
+    <div class="category-breakdown">
+      <div class="pie-chart">
+        <img src="{{ pie_chart_url }}" class="chart-img">
+      </div>
+      <div class="category-list">
+        {% for cat in category_keywords %}
+          <div class="category-item">
+            <span class="category-name">{{ cat.name }}</span>
+            <span class="category-percent">{{ cat.percent }}%</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3행 1열: 워드클라우드 & TF-IDF -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>Word Cloud & TF-IDF</h3>
+    <div class="visualization-row">
+      <div class="visualization-item">
+        <img src="{{ wordcloud_url }}" class="chart-img">
+      </div>
+      <div class="visualization-item">
+        <img src="{{ tfidf_url }}" class="chart-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3행 2열: 키워드 추이 -->
+  <section class="grid-item" style="border: 2px solid #ffffff;">
+    <h3>Keyword Trends Over Time</h3>
+    <form method="get" class="keyword-search-form">
+      <input type="text" name="keyword" value="{{ request.args.get('keyword', 'Y2K') }}" placeholder="예: Y2K" class="keyword-input">
+      <button type="submit" class="search-button">조회</button>
+    </form>
+    <div class="trend-charts">
+      <img src="{{ trend_chart_1 }}" class="chart-img">
+      <img src="{{ trend_chart_2 }}" class="chart-img">
+    </div>
+  </section>
+</div>
+{% endblock %}

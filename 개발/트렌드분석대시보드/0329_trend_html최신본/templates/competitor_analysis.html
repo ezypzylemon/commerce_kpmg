@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>트렌드 분석 - 경쟁사 분석 탭</h2>
+
+<!-- 시간대별 필터링 옵션 -->
+<div class="time-filter-bar">
+  <div class="filter-option {% if period == '1주일' %}active{% endif %}">1주일</div>
+  <div class="filter-option {% if period == '1개월' %}active{% endif %}">1개월</div>
+  <div class="filter-option {% if period == '3개월' %}active{% endif %}">3개월</div>
+  <div class="filter-option {% if period == '6개월' %}active{% endif %}">6개월</div>
+  <div class="filter-option {% if period == '1년' %}active{% endif %}">1년</div>
+  <div class="filter-option {% if period == '2년' %}active{% endif %}">2년</div>
+  <div class="filter-option {% if period == '직접설정' %}active{% endif %}">직접설정</div>
+</div>
+
+<!-- 날짜 필터링 섹션 -->
+<div class="date-filter-section">
+  <h3>날짜 필터링</h3>
+  <div class="date-filter">
+    <div class="date-range-picker">
+      <input type="date" class="date-input" id="start-date">
+      <span>~</span>
+      <input type="date" class="date-input" id="end-date">
+      <button class="apply-date-btn">적용</button>
+    </div>
+  </div>
+</div>
+
+<!-- 경쟁사 분석 그리드 레이아웃 -->
+<div class="dashboard-grid competitor-grid">
+  <!-- 첫 번째 행 (3열) -->
+  <div class="competitor-row">
+    <!-- 인기 아이템 TOP 5 (여성) -->
+    <section class="grid-item competitor-top-items">
+      <h3>인기 아이템 top 5 (여성 / 남성)</h3>
+      <div class="gender-top-items female">
+        <h4>여성<br>인기<br>아이템<br>top 5</h4>
+        <div class="top-items-list">
+          {% for item in female_top_items %}
+          <div class="top-item-card">
+            <span class="item-rank">{{ loop.index }}</span>
+            <span class="item-name">{{ item.name }}</span>
+            <span class="item-count">{{ item.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    
+    <!-- 인기 아이템 TOP 5 (남성) -->
+    <section class="grid-item competitor-top-items">
+      <h3>인기 아이템 top 5 (여성 / 남성)</h3>
+      <div class="gender-top-items male">
+        <h4>남성<br>인기<br>아이템<br>top 5</h4>
+        <div class="top-items-list">
+          {% for item in male_top_items %}
+          <div class="top-item-card">
+            <span class="item-rank">{{ loop.index }}</span>
+            <span class="item-name">{{ item.name }}</span>
+            <span class="item-count">{{ item.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    
+    <!-- 아이템별 언급량 추세 -->
+    <section class="grid-item">
+      <h3>아이템별 언급량 추세</h3>
+      <div class="item-trend-chart">
+        <img src="{{ item_trend_chart }}" class="full-width-img">
+      </div>
+    </section>
+  </div>
+  
+  <!-- 두 번째 행 (2열) -->
+  <div class="competitor-row">
+    <!-- 카테고리별 시계열 추이 -->
+    <section class="grid-item category-timeseries">
+      <h3>카테고리별 시계열 추이 (카테고리 필터링, 여성/남성 그래프 나누어짐)</h3>
+      
+      <div class="gender-charts-container">
+        <div class="gender-chart">
+          <h4>여성</h4>
+          <img src="{{ female_category_chart }}" class="full-width-img">
+        </div>
+        <div class="gender-chart">
+          <h4>남성</h4>
+          <img src="{{ male_category_chart }}" class="full-width-img">
+        </div>
+      </div>
+    </section>
+    
+    <!-- 인기 브랜드 TOP 20 -->
+    <section class="grid-item popular-brands">
+      <h3>인기 브랜드 top 20 (최근 날짜 기준)</h3>
+      <p class="highlight-text">아래 사진 그날 리스트 형식으로</p>
+      <div class="brands-container">
+        <div class="popular-brands-grid">
+          {% for brand in popular_brands %}
+          <div class="brand-tile" data-brand-id="{{ brand.id }}">
+            <div class="brand-name">{{ brand.name }}</div>
+            <div class="brand-count">{{ brand.count }}</div>
+            
+            <!-- 브랜드 상세정보 (마우스 오버 시 표시) -->
+            <div class="brand-detail-popup">
+              <h5>{{ brand.name }} 상세정보</h5>
+              <div class="brand-detail-content">
+                <div class="detail-row">
+                  <span class="detail-label">브랜드:</span>
+                  <span class="detail-value">{{ brand.name }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">카테고리:</span>
+                  <span class="detail-value">{{ brand.category }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">가격대:</span>
+                  <span class="detail-value">{{ brand.price_range }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">성별:</span>
+                  <span class="detail-value">{{ brand.gender }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+  
+  <!-- 세 번째 행 (1열) -->
+  <div class="competitor-row">
+    <!-- 카테고리별(아이템) 가격대 분포 히트맵 -->
+    <section class="grid-item heatmap-container">
+      <h3>카테고리별(아이템) 가격대 분포 히트맵 형식으로 한눈에 고민</h3>
+      <div class="price-heatmap">
+        <img src="{{ price_heatmap_chart }}" class="full-width-img">
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+// 날짜 필터링 스크립트
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date();
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setMonth(today.getMonth() - 1);
+  
+  document.getElementById('start-date').valueAsDate = oneMonthAgo;
+  document.getElementById('end-date').valueAsDate = today;
+  
+  document.querySelector('.apply-date-btn').addEventListener('click', function() {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    
+    if (startDate && endDate) {
+      // 여기에 날짜 필터링 적용 로직 추가
+      window.location.href = '/경쟁사분석?start_date=' + startDate + '&end_date=' + endDate;
+    }
+  });
+  
+  // 필터 옵션 클릭 이벤트
+  document.querySelectorAll('.filter-option').forEach(option => {
+    option.addEventListener('click', function() {
+      const period = this.textContent;
+      window.location.href = '/경쟁사분석?period=' + period;
+    });
+  });
+  
+  // 브랜드 타일 마우스 오버/아웃 이벤트
+  document.querySelectorAll('.brand-tile').forEach(tile => {
+    tile.addEventListener('mouseenter', function() {
+      // 팝업 위치 계산
+      const popup = this.querySelector('.brand-detail-popup');
+      popup.style.display = 'block';
+    });
+    
+    tile.addEventListener('mouseleave', function() {
+      const popup = this.querySelector('.brand-detail-popup');
+      popup.style.display = 'none';
+    });
+  });
+});
+</script>
+{% endblock %}

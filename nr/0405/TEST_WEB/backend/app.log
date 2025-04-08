@@ -1,0 +1,14 @@
+2025-03-11 17:16:13,343 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-11 17:16:13,343 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-11 17:16:13,349 - INFO -  * Restarting with watchdog (windowsapi)
+2025-03-11 17:16:14,082 - WARNING -  * Debugger is active!
+2025-03-11 17:16:14,085 - INFO -  * Debugger PIN: 330-836-385
+2025-03-11 17:57:17,743 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.28:5000
+2025-03-11 17:57:17,747 - INFO - [33mPress CTRL+C to quit[0m
+2025-03-11 17:57:17,754 - INFO -  * Restarting with watchdog (windowsapi)
+2025-03-11 17:57:18,311 - WARNING -  * Debugger is active!
+2025-03-11 17:57:18,314 - INFO -  * Debugger PIN: 330-836-385

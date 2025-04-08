@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">트렌드 분석 - 뉴스 탭</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+    
+    <!-- 2행 3열 그리드 레이아웃 -->
+    <div class="grid-container">
+        <!-- 1행 1열: 키워드 TOP 5 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">키워드 TOP 5</h5>
+            </div>
+            <div class="card-body">
+                <ul class="keyword-list">
+                    {% for keyword, count in top_keywords %}
+                    <li>
+                        <span class="keyword-text">{{ keyword }}</span>
+                        <span class="badge">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1행 2열: 키워드별 언급량 추세 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">키워드별 언급량 추세</h5>
+            </div>
+            <div class="card-body">
+                {% if keyword_trend %}
+                    <div class="trend-container">
+                        {{ keyword_trend | safe }}
+                    </div>
+                {% else %}
+                    <div class="no-data">데이터가 없습니다.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 1행 3열: 최신 뉴스 기사 헤드라인 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">최신 뉴스 헤드라인</h5>
+            </div>
+            <div class="card-body">
+                {% for article in latest_articles %}
+                <div class="article-item">
+                    <a href="{{ article.link }}" target="_blank" class="article-link">
+                        <h6 class="mb-1">{{ article.title }}</h6>
+                    </a>
+                    <p class="article-preview mb-1">{{ article.content[:100] }}...</p>
+                    <small class="text-muted">{{ article.upload_date }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 2행 1열: TF-IDF 기반 워드클라우드 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">TF-IDF 워드클라우드</h5>
+            </div>
+            <div class="card-body">
+                {% if tfidf_wordcloud %}
+                    <div class="wordcloud-container">
+                        <img src="{{ tfidf_wordcloud }}" alt="TF-IDF 워드클라우드" class="img-fluid">
+                    </div>
+                {% else %}
+                    <div class="no-data">데이터가 없습니다.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2행 2열: 연관어 네트워크 분석 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">연관어 네트워크 분석</h5>
+            </div>
+            <div class="card-body">
+                {% if keyword_network %}
+                    <div class="network-container">
+                        {{ keyword_network | safe }}
+                    </div>
+                {% else %}
+                    <div class="no-data">데이터가 없습니다.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2행 3열: 긍정/부정 기사 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">감성 분석 결과</h5>
+            </div>
+            <div class="card-body">
+                <div class="sentiment-articles">
+                    <h6 class="text-success">긍정 기사 TOP 3</h6>
+                    {% for article in positive_articles[:3] %}
+                    <div class="article-item">
+                        <small class="text-muted">{{ article.upload_date }}</small>
+                        <div>{{ article.title }}</div>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <h6 class="text-danger">부정 기사 TOP 3</h6>
+                    {% for article in negative_articles[:3] %}
+                    <div class="article-item">
+                        <small class="text-muted">{{ article.upload_date }}</small>
+                        <div>{{ article.title }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* 전체 컨테이너 스타일 개선 */
+.container-fluid {
+    padding: 20px 30px;
+    background-color: #f8f9fa;
+}
+
+/* 페이지 제목 스타일 */
+h2.mb-4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    border-left: 5px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 20px !important;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    padding: 15px 5px;
+    height: calc(100vh - 140px);
+    min-height: 650px; /* 최소 높이 설정 */
+}
+
+/* 카드 스타일 개선 */
+.card {
+    border: none;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    border-radius: 15px 15px 0 0 !important;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.2rem;
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd3da #f8f9fa;
+}
+
+.card-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background-color: #cbd3da;
+    border-radius: 6px;
+}
+
+/* 워드클라우드 컨테이너 */
+.wordcloud-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+/* 워드클라우드 이미지 크기 조정 */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 네트워크 그래프 컨테이너 */
+.network-container {
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+}
+
+/* 트렌드 컨테이너 */
+.trend-container {
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+}
+
+/* Plotly 차트 컨테이너 스타일 조정 */
+.js-plotly-plot {
+    width: 100% !important;
+}
+
+.js-plotly-plot .plot-container {
+    overflow: visible !important;
+}
+
+/* 키워드 리스트 스타일 개선 */
+.keyword-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.keyword-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 4px solid #007bff;
+}
+
+.keyword-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+}
+
+.keyword-list .badge {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.keyword-list li:hover .badge {
+    transform: scale(1.05);
+}
+
+.keyword-list .keyword-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #343a40;
+}
+
+/* 기사 목록 스타일 개선 */
+.article-item {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.article-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+}
+
+.article-item:last-child {
+    border-bottom: none;
+}
+
+.article-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.article-link:hover {
+    color: #007bff;
+}
+
+.article-preview {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* 감성 분석 섹션 스타일 */
+.sentiment-articles {
+    width: 100%;
+    max-height: none;
+    overflow-y: visible;
+}
+
+.sentiment-articles h6 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 600;
+    border-left: 3px solid;
+    padding-left: 10px;
+}
+
+.sentiment-articles h6.text-success {
+    border-color: #28a745;
+}
+
+.sentiment-articles h6.text-danger {
+    border-color: #dc3545;
+}
+
+.sentiment-articles .article-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eaeaea;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+    color: #6c757d;
+    font-size: 1.1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+}
+
+/* 반응형 미디어 쿼리 추가 */
+@media (max-width: 1200px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, 1fr);
+    }
+    
+    .container-fluid {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}
