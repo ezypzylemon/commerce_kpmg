@@ -1,0 +1,199 @@
+// static/js/musinsa.js
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 현재 페이지 ID 설정
+  const pageId = 'musinsa';
+  
+  // 필터 초기화 (기존 period_filter.js에서 제공하는 함수 호출)
+  if (typeof initPeriodFilter === 'function') {
+    initPeriodFilter(pageId);
+  }
+  
+  // 탭 전환 기능 초기화
+  initTabs();
+  
+  // 브랜드 카드 클릭 이벤트 초기화
+  initBrandCards();
+  
+  // 히트맵 클릭 이벤트 초기화
+  initHeatmapInteraction();
+});
+
+/**
+ * 탭 전환 기능 초기화
+ */
+function initTabs() {
+  const tabs = document.querySelectorAll('.tab');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      // 모든 탭에서 active 클래스 제거
+      tabs.forEach(t => t.classList.remove('active'));
+      
+      // 클릭한 탭에 active 클래스 추가
+      this.classList.add('active');
+      
+      // 모든 탭 컨텐츠 숨기기
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => content.classList.remove('active'));
+      
+      // 선택한 탭의 컨텐츠 표시
+      const tabId = this.getAttribute('data-tab');
+      const targetContent = document.getElementById(tabId + '-tab');
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
+}
+
+/**
+ * 브랜드 카드 클릭 이벤트 초기화
+ */
+function initBrandCards() {
+  const brandItems = document.querySelectorAll('.brand-item');
+  
+  brandItems.forEach(item => {
+    item.addEventListener('click', function() {
+      // 모든 아이템에서 active 클래스 제거
+      brandItems.forEach(b => b.classList.remove('active'));
+      
+      // 클릭한 아이템에 active 클래스 추가
+      this.classList.add('active');
+      
+      // 브랜드 정보 가져오기
+      const brandId = this.getAttribute('data-brand-id');
+      const brandName = this.querySelector('.brand-text').textContent;
+      const brandCount = this.querySelector('.brand-count').textContent;
+      
+      // 상세 정보 업데이트
+      updateBrandDetail(brandId, brandName, brandCount);
+    });
+  });
+}
+
+/**
+ * 브랜드 상세 정보 업데이트
+ * @param {string} brandId - 브랜드 ID
+ * @param {string} brandName - 브랜드 이름
+ * @param {string} brandCount - 브랜드 언급 수
+ */
+function updateBrandDetail(brandId, brandName, brandCount) {
+  // 상세 정보 요소 가져오기
+  const detailBrandName = document.querySelector('.detail-brand-name');
+  const detailCategory = document.querySelector('.detail-category');
+  const statValues = document.querySelectorAll('.stat-value');
+  const noDataMessage = document.getElementById('detail-no-data');
+  const chartContainer = document.getElementById('detail-chart-container');
+  
+  // 브랜드 정보 업데이트
+  if (detailBrandName) detailBrandName.textContent = brandName;
+  
+  // 카테고리 정보 - 실제로는 API 또는 데이터에서 가져와야 함
+  if (detailCategory) detailCategory.textContent = '카테고리: 캐주얼';
+  
+  // 통계 값 업데이트 - 실제로는 API 또는 데이터에서 가져와야 함
+  if (statValues && statValues.length >= 3) {
+    statValues[0].textContent = '10-30만원';  // 가격대
+    statValues[1].textContent = '남성, 여성';  // 성별
+    statValues[2].textContent = brandCount;  // 언급량
+  }
+  
+  // 차트 컨테이너 표시 및 데이터 없음 메시지 숨기기
+  if (noDataMessage) noDataMessage.style.display = 'none';
+  if (chartContainer) chartContainer.style.display = 'block';
+  
+  // 여기에 차트 생성 코드 추가 (실제 구현에서는 Chart.js 또는 Plotly.js 사용)
+  // 예: createBrandDetailChart(brandId, chartContainer);
+  
+  // 임시로 차트 영역에 메시지 표시
+  chartContainer.innerHTML = `<div style="text-align: center;">${brandName}의 월별 언급량 추이<br>(차트 라이브러리 연동 필요)</div>`;
+}
+
+/**
+ * 히트맵 상호작용 초기화
+ */
+function initHeatmapInteraction() {
+  const heatmapCells = document.querySelectorAll('.grid-row:not(.header-row) .grid-cell:not(:first-child)');
+  
+  heatmapCells.forEach(cell => {
+    cell.addEventListener('click', function() {
+      // 카테고리와 미디어 타입 가져오기
+      const category = this.parentElement.querySelector('.grid-cell:first-child').textContent;
+      const mediaType = this.parentElement.parentElement.querySelector('.header-row .grid-cell:nth-child(' + 
+                       (Array.from(this.parentElement.children).indexOf(this) + 1) + ')').textContent;
+      
+      // 언급량 가져오기
+      const count = this.textContent;
+      
+      // 알림 표시 (실제 구현에서는 모달 또는 상세 정보 표시)
+      alert(`${category} 카테고리의 ${mediaType} 미디어 타입 언급량: ${count}`);
+    });
+  });
+}
+
+/**
+ * API에서 브랜드 상세 정보 가져오기 (실제 구현 필요)
+ * @param {string} brandId - 브랜드 ID
+ * @returns {Promise} - 브랜드 상세 정보 Promise
+ */
+function fetchBrandDetails(brandId) {
+  // 실제로는 서버 API를 호출
+  // 예시: return fetch(`/api/brand/${brandId}`).then(res => res.json());
+  
+  return new Promise((resolve) => {
+    // 임시 데이터
+    setTimeout(() => {
+      resolve({
+        id: brandId,
+        category: '캐주얼',
+        priceRange: '10-30만원',
+        gender: '남성, 여성',
+        monthlyCounts: [
+          { month: '1월', count: 1200 },
+          { month: '2월', count: 1450 },
+          { month: '3월', count: 1800 },
+          { month: '4월', count: 2200 },
+          { month: '5월', count: 2000 },
+          { month: '6월', count: 2400 }
+        ]
+      });
+    }, 300);
+  });
+}
+
+/**
+ * Chart.js를 사용한 브랜드 상세 차트 생성 (실제 구현 필요)
+ * @param {string} brandId - 브랜드 ID
+ * @param {HTMLElement} container - 차트를 표시할 컨테이너
+ */
+function createBrandDetailChart(brandId, container) {
+  // 실제 구현에서는 Chart.js 또는 Plotly.js 사용
+  // Chart.js 예시:
+  /*
+  fetchBrandDetails(brandId).then(data => {
+    const ctx = document.createElement('canvas');
+    container.innerHTML = '';
+    container.appendChild(ctx);
+    
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.monthlyCounts.map(item => item.month),
+        datasets: [{
+          label: '월별 언급량',
+          data: data.monthlyCounts.map(item => item.count),
+          backgroundColor: 'rgba(74, 144, 226, 0.2)',
+          borderColor: 'rgba(74, 144, 226, 1)',
+          borderWidth: 2,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  });
+  */
+}

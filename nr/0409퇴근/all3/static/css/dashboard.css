@@ -1,0 +1,600 @@
+/* dashboard.css - 통합 대시보드 스타일 */
+
+/* 대시보드 컨테이너 */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  /* 그리드 아이템 공통 스타일 */
+  .grid-item {
+    background: var(--card-bg-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    overflow: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 섹션 제목 */
+  .grid-item h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+  }
+  
+  /* 각 섹션 위치 설정 */
+  .top-trends-section {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    min-height: 400px;
+  }
+  
+  .fashion-calendar-section {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+  
+  .buying-insight-section {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    width: 50%;
+  }
+  
+  .selling-insight-section {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    margin-left: 50%;
+    width: 50%;
+  }
+  
+  .trend-report-section {
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+  }
+  
+  /* 트렌드 섹션 스타일 */
+  .trends-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .trend-keywords {
+    flex: 1;
+    padding-right: 20px;
+  }
+  
+  .trend-insight {
+    flex: 2;
+    padding-left: 20px;
+    border-left: 1px solid var(--border-color);
+  }
+  
+  .keyword-header, .insight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .keyword-period {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    background-color: var(--accent-color);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  
+  .keyword-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 350px;
+    overflow-y: auto;
+  }
+  
+  .keyword-item {
+    display: flex;
+    align-items: center;
+    background: var(--accent-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .keyword-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .keyword-rank {
+    background: var(--primary-color);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .keyword-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .keyword-text {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+  }
+  
+  .keyword-description {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+  }
+  
+  .top-three .keyword-rank {
+    background: linear-gradient(135deg, #FC466B 0%, #3F5EFB 100%);
+  }
+  
+  /* 키워드 연관성 차트 */
+  .keyword-association {
+    margin-top: 20px;
+  }
+  
+  .keyword-association h5 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+  }
+  
+  .association-chart {
+    height: 200px;
+    background-color: var(--accent-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* 인사이트 섹션 스타일 */
+  .insight-container {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .insight-container h4 {
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 1.1rem;
+  }
+  
+  .buying-recommendations, .marketing-recommendations {
+    margin-bottom: 20px;
+  }
+  
+  .recommendation-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+  }
+  
+  .recommendation-list li {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: var(--accent-color);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .product-category {
+    color: var(--primary-color);
+    font-weight: 600;
+    min-width: 80px;
+  }
+  
+  .product-name {
+    flex-grow: 1;
+    padding: 0 10px;
+  }
+  
+  .recommendation-reason {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+    font-style: italic;
+  }
+  
+  .marketing-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .marketing-keyword {
+    background: var(--accent-color);
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+  }
+  
+  .marketing-keyword .keyword-text {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+  
+  .marketing-keyword .keyword-stats {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+    margin-top: 5px;
+  }
+  
+  .category-analysis, .keyword-trends {
+    margin-top: auto;
+  }
+  
+  .category-analysis h5, .keyword-trends h5 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+  }
+  
+  .category-chart, .trend-chart {
+    height: 180px;
+    background-color: var(--accent-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* 캘린더 스타일 */
+  .calendar-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .prev-month, .next-month {
+    background: var(--accent-color);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .prev-month:hover, .next-month:hover {
+    background: var(--primary-color);
+    color: white;
+  }
+  
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .calendar-header span {
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 10px 0;
+    flex: 1;
+  }
+  
+  .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .calendar-day:hover {
+    background: var(--accent-color);
+  }
+  
+  .calendar-day.has-event {
+    background: var(--primary-color);
+    color: white;
+    position: relative;
+  }
+  
+  .calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+  }
+  
+  .calendar-day.selected {
+    border: 2px solid var(--primary-color);
+    font-weight: bold;
+  }
+  
+  .calendar-day.empty {
+    visibility: hidden;
+  }
+  
+  .calendar-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--secondary-text);
+  }
+  
+  .event-details {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+  }
+  
+  .event-list {
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .event-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--accent-color);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .event-date {
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+  }
+  
+  .event-title {
+    font-weight: 600;
+    margin: 5px 0;
+  }
+  
+  .event-location {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+  }
+  
+  .no-events {
+    text-align: center;
+    padding: 20px;
+    color: var(--secondary-text);
+    font-style: italic;
+  }
+  
+  .event-detail-card {
+    background: var(--accent-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .event-time {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin: 5px 0 10px;
+  }
+  
+  .event-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  /* 리포트 섹션 스타일 */
+  .report-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .report-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .report-tab {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    font-weight: 600;
+    color: var(--secondary-text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  
+  .report-tab:hover {
+    color: var(--primary-color);
+  }
+  
+  .report-tab.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+  }
+  
+  .report-panel {
+    display: none;
+    padding: 15px;
+  }
+  
+  .report-panel.active {
+    display: block;
+  }
+  
+  .report-summary {
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .report-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .report-section {
+    background: var(--accent-color);
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .report-section h5 {
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+  
+  .pie-chart-placeholder {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    color: var(--secondary-text);
+  }
+  
+  /* 차트 컨테이너 스타일 */
+  .chart-container {
+    width: 100%;
+    height: 200px;
+    margin: 15px 0;
+  }
+  
+  /* 데이터 없음 표시 */
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    color: var(--secondary-text);
+    background-color: var(--accent-color);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  /* 반응형 조정 */
+  @media (max-width: 1200px) {
+    .dashboard-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .top-trends-section, 
+    .fashion-calendar-section, 
+    .buying-insight-section, 
+    .selling-insight-section, 
+    .trend-report-section {
+      grid-column: 1;
+    }
+    
+    .top-trends-section {
+      grid-row: 1;
+    }
+    
+    .buying-insight-section {
+      grid-row: 2;
+      width: 100%;
+      margin-left: 0;
+    }
+    
+    .selling-insight-section {
+      grid-row: 3;
+      width: 100%;
+      margin-left: 0;
+    }
+    
+    .fashion-calendar-section {
+      grid-row: 4;
+    }
+    
+    .trend-report-section {
+      grid-row: 5;
+    }
+    
+    .trends-content {
+      flex-direction: column;
+    }
+    
+    .trend-keywords, .trend-insight {
+      width: 100%;
+      padding: 0;
+    }
+    
+    .trend-insight {
+      margin-top: 20px;
+      border-left: none;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .report-details {
+      grid-template-columns: 1fr;
+    }
+    
+    .report-tabs {
+      flex-wrap: wrap;
+    }
+    
+    .marketing-keywords {
+      justify-content: center;
+    }
+  }

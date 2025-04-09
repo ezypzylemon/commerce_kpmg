@@ -1,0 +1,1032 @@
+{% extends "base.html" %}
+
+{% block title %}통합 대시보드 - Fashion Trend Dashboard{% endblock %}
+
+{% block content %}
+<h2>트렌드 분석 - 통합 탭</h2>
+
+<!-- 기간 설정 컴포넌트 추가 -->
+{% with pageId = 'dashboard' %}
+{% include 'period_filter.html' with context %}
+{% endwith %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<!-- 새로운 대시보드 레이아웃 구성 -->
+<div class="dashboard-container">
+  <!-- 1. 탑 트렌드 키워드 (메져진 content 데이터 + 뉴스 api호출) -->
+  <section class="grid-item top-trends-section">
+    <h3>탑 트렌드 키워드</h3>
+    <!-- 탑 트렌드 키워드 섹션 (하드코딩) -->
+    <div class="trends-content">
+      <div class="trend-keywords">
+        <div class="keyword-header">
+          <h4>Top Trend Keywords</h4>
+          <span class="keyword-period">2025년 1분기 기준</span>
+        </div>
+        
+        <div class="keyword-list">
+          {% set top_keywords = [
+            {
+              'rank': 1,
+              'text': '브랜드',
+              'description': '글로벌 패션 브랜드의 혁신적 전략과 영향력',
+              'is_top_three': true
+            },
+            {
+              'rank': 2,
+              'text': '섬유',
+              'description': '지속가능한 텍스타일 기술의 부상',
+              'is_top_three': true
+            },
+            {
+              'rank': 3,
+              'text': '패션',
+              'description': '개인화와 다양성을 반영하는 트렌드',
+              'is_top_three': true
+            },
+            {
+              'rank': 4,
+              'text': '한국',
+              'description': 'K-패션의 글로벌 영향력 확대',
+              'is_top_three': false
+            },
+            {
+              'rank': 5,
+              'text': '제품',
+              'description': '혁신적 패션 제품의 진화',
+              'is_top_three': false
+            }
+          ] %}
+
+          {% for keyword in top_keywords %}
+          <div class="keyword-item {% if keyword.is_top_three %}top-three{% endif %}">
+            <span class="keyword-rank">{{ keyword.rank }}</span>
+            <div class="keyword-details">
+              <span class="keyword-text">{{ keyword.text }}</span>
+              <span class="keyword-description">{{ keyword.description }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+       <!-- 트렌드 인사이트 -->
+      <div class="trend-insight">
+        <div class="insight-header">
+          <h4>트렌드 인사이트</h4>
+        </div>
+        <div class="insight-content">
+          <p>2025년 패션 산업은 지속가능성, 개인화, 기술 혁신을 중심으로 급격한 변화를 맞이하고 있습니다. 브랜드와 섬유 기술의 융합, K-패션의 글로벌 영향력 확대, 그리고 소비자 중심의 혁신적인 제품 개발이 주요 트렌드로 부상했습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 2. 바잉 인사이트: 어떤 상품을 들여와야 하나 -->
+  <section class="grid-item buying-insight-section">
+    <h3>바잉 인사이트</h3>
+    <div class="insight-container">
+      <h4>어떤 상품을 들여와야 할까?</h4>
+      <div class="buying-recommendations">
+        <!-- GPT 또는 Gemini로 생성된 바잉 인사이트 -->
+        <p>{{ buying_insight|default('트렌드 분석 결과, 다음 상품들이 주목받을 것으로 예측됩니다:') }}</p>
+        <ul class="recommendation-list">
+          <li>
+            <span class="product-category">아우터</span>
+            <span class="product-name">오버사이즈 크롭 재킷</span>
+            <span class="recommendation-reason">S/S 시즌 트렌드 부상 중</span>
+          </li>
+          <li>
+            <span class="product-category">상의</span>
+            <span class="product-name">니트 베스트</span>
+            <span class="recommendation-reason">언급량 전월 대비 82% 증가</span>
+          </li>
+          <li>
+            <span class="product-category">하의</span>
+            <span class="product-name">와이드 팬츠</span>
+            <span class="recommendation-reason">지속적인 인기 유지</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 3. 셀링 인사이트: 어떤 키워드로 마케팅할까 -->
+  <section class="grid-item selling-insight-section">
+    <h3>셀링 인사이트</h3>
+    <div class="insight-container">
+      <h4>어떤 키워드로 마케팅할까?</h4>
+      <div class="marketing-recommendations">
+        <!-- GPT 또는 Gemini로 생성된 셀링 인사이트 -->
+        <p>{{ selling_insight|default('현재 트렌드와 검색량을 분석한 결과, 다음 키워드를 활용한 마케팅이 효과적일 것으로 예측됩니다:') }}</p>
+        <div class="marketing-keywords">
+          <div class="marketing-keyword">
+            <span class="keyword-text">#미니멀룩</span>
+            <span class="keyword-stats">검색량 증가율: +45%</span>
+          </div>
+          <div class="marketing-keyword">
+            <span class="keyword-text">#오버핏</span>
+            <span class="keyword-stats">검색량 증가율: +38%</span>
+          </div>
+          <div class="marketing-keyword">
+            <span class="keyword-text">#뉴트로</span>
+            <span class="keyword-stats">검색량 증가율: +27%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 4. 패션 전시/등 패션 관련 문화, 이슈 달력 -->
+  <section class="grid-item fashion-calendar-section">
+    <h3>패션 전시 등 패션 관련 이슈 캘린더</h3>
+    <div class="calendar-container">
+      <div class="calendar-navigation">
+        <button class="prev-month"><i class="bi bi-chevron-left"></i></button>
+        <h4 id="current-month">{{ current_month|default('2025년 4월') }}</h4>
+        <button class="next-month"><i class="bi bi-chevron-right"></i></button>
+      </div>
+      
+      <!-- 캘린더 그리드 -->
+      <div class="calendar-grid">
+        <div class="calendar-header">
+          <span>일</span>
+          <span>월</span>
+          <span>화</span>
+          <span>수</span>
+          <span>목</span>
+          <span>금</span>
+          <span>토</span>
+        </div>
+        <div class="calendar-days">
+          <!-- 동적으로 생성되는 캘린더 날짜들 -->
+          <!-- 예시: -->
+          <div class="calendar-day empty"></div>
+          <div class="calendar-day">1</div>
+          <div class="calendar-day">2</div>
+          <div class="calendar-day has-event" data-events="서울패션위크">3</div>
+          <div class="calendar-day">4</div>
+          <div class="calendar-day">5</div>
+          <div class="calendar-day">6</div>
+          <!-- ... 나머지 날짜들 ... -->
+        </div>
+      </div>
+      
+      <!-- 선택된 날짜의 이벤트 -->
+      <div class="event-details">
+        <h5>이번 달 주요 패션 이벤트</h5>
+        <div class="event-list">
+          <div class="event-item">
+            <span class="event-date">4월 3일 - 4월 8일</span>
+            <span class="event-title">서울패션위크 2025 F/W</span>
+            <span class="event-location">동대문 DDP</span>
+          </div>
+          <div class="event-item">
+            <span class="event-date">4월 15일 - 4월 20일</span>
+            <span class="event-title">패션 아트 전시회</span>
+            <span class="event-location">성수동 S팩토리</span>
+          </div>
+          <div class="event-item">
+            <span class="event-date">4월 25일</span>
+            <span class="event-title">지속가능 패션 포럼</span>
+            <span class="event-location">코엑스 컨퍼런스룸</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 5. 탑 트렌드 키워드에 대한 상세 GPT 리포트 -->
+  <section class="grid-item trend-report-section">
+    <h3>탑 트렌드 키워드 상세 리포트</h3>
+    <div class="report-container">
+      <div class="report-tabs">
+        {% for i in range(1, 6) %}
+        <button class="report-tab {% if i == 1 %}active{% endif %}" data-tab="keyword{{ i }}">키워드 {{ i }}</button>
+        {% endfor %}
+      </div>
+      
+      <!-- 탑 트렌드 키워드 섹션 (하드코딩) -->
+<div class="keyword-list">
+  {% for keyword, description in [
+    ('브랜드', '국내외 패션 브랜드의 트렌드와 영향력 분석'),
+    ('섬유', '첨단 텍스타일 기술과 지속가능한 소재 트렌드'),
+    ('패션', '2025년 패션 산업의 혁신적인 변화와 방향성'),
+    ('한국', '한국 패션의 글로벌 영향력과 K-패션 트렌드'),
+    ('제품', '소비자 중심의 혁신적인 패션 제품 트렌드')
+  ] %}
+  <div class="keyword-item {% if loop.index <= 3 %}top-three{% endif %}">
+    <span class="keyword-rank">{{ loop.index }}</span>
+    <div class="keyword-details">
+      <span class="keyword-text">{{ keyword }}</span>
+      <span class="keyword-description">{{ description }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+  <!-- 키워드 리포트 섹션 (하드코딩) -->
+  <div class="report-content">
+    {% set keyword_reports = [
+      {
+        'keyword': '브랜드',
+        'summary': '브랜드는 최근 1개월 동안 패션 산업에서 가장 주목받는 키워드로, 특히 20-30대 소비자들 사이에서 큰 관심을 받고 있습니다. 글로벌 브랜드와 로컬 브랜드 간의 경쟁이 심화되고 있으며, 소셜 미디어 노출량은 전월 대비 35% 증가했습니다.',
+        'product_trend': '글로벌 럭셔리 브랜드의 캡슐 컬렉션과 지속가능한 라인 출시 증가',
+        'demographics': '주요 타겟: 20-35세, 높은 구매력과 브랜드 인식도',
+        'marketing_tips': [
+          '인스타그램과 틱톡을 통한 브랜드 스토리텔링',
+          '지속가능성과 윤리적 생산 강조',
+          '마이크로 인플루언서 협업 확대'
+        ]
+      },
+      {
+        'keyword': '섬유',
+        'summary': '섬유 기술의 혁신은 패션 산업의 미래를 결정짓는 핵심 요소로 부상했습니다. 친환경 소재와 첨단 텍스타일 기술에 대한 관심이 급증하고 있으며, 관련 투자와 연구 개발이 활발히 진행되고 있습니다.',
+        'product_trend': '재생 섬유, 스마트 텍스타일, 생분해성 소재 개발 가속화',
+        'demographics': '기술 혁신에 관심 있는 25-40세 소비자층',
+        'marketing_tips': [
+          '기술 혁신의 구체적인 이점 커뮤니케이션',
+          '환경 친화적 소재 사용 강조',
+          '기능성과 지속가능성을 결합한 마케팅'
+        ]
+      },
+      {
+        'keyword': '패션',
+        'summary': '패션은 단순한 의복을 넘어 문화와 사회적 가치를 반영하는 중요한 표현 수단으로 자리 잡았습니다. 개인화, 다양성, 지속가능성 트렌드가 두드러지게 나타나고 있습니다.',
+        'product_trend': '젠더리스 패션, 개인 맞춤형 스타일, 지속가능한 패션 아이템 증가',
+        'demographics': '18-35세 MZ세대, 개성과 가치 소비에 적극적',
+        'marketing_tips': [
+          '개인의 다양성을 존중하는 캠페인',
+          '지속가능한 패션 라이프스타일 제안',
+          '사회적 가치를 반영하는 브랜드 메시지'
+        ]
+      },
+      {
+        'keyword': '한국',
+        'summary': 'K-패션의 글로벌 영향력이 지속적으로 확대되고 있습니다. K-팝, K-드라마의 글로벌 인기와 함께 한국 패션 브랜드의 국제적 인지도가 크게 상승했습니다.',
+        'product_trend': 'K-스타일 글로벌 진출, 한국 디자이너 브랜드의 국제 무대 진출 확대',
+        'demographics': '글로벌 20-30대, K-컬처에 높은 관심',
+        'marketing_tips': [
+          '글로벌 K-팝 아이돌 및 연예인 협업',
+          '국제 패션위크 참여 확대',
+          '글로벌 소비자 취향에 맞는 현지화 전략'
+        ]
+      },
+      {
+        'keyword': '제품',
+        'summary': '소비자 경험과 실용성을 극대화하는 혁신적인 제품 개발이 패션 산업의 새로운 트렌드로 부상했습니다. 기능성, 편의성, 개인화된 솔루션에 대한 수요가 높아지고 있습니다.',
+        'product_trend': '스마트 웨어러블, 기능성 아웃도어 웨어, 개인 맞춤형 의류 서비스',
+        'demographics': '실용성과 혁신을 중시하는 25-40세 소비자',
+        'marketing_tips': [
+          '제품의 혁신적인 기능과 가치 강조',
+          '개인화된 맞춤 서비스 제공',
+          '사용자 경험 중심의 마케팅 접근'
+        ]
+      }
+    ] %}
+    
+    {% for keyword_report in keyword_reports %}
+    <div id="keyword{{ loop.index }}" class="report-panel {% if loop.index == 1 %}active{% endif %}">
+      <h4>{{ keyword_report.keyword }} 분석 리포트</h4>
+      
+      <div class="report-summary">
+        <p>{{ keyword_report.summary }}</p>
+      </div>
+      
+      <div class="report-details">
+        <div class="report-section">
+          <h5>관련 제품 트렌드</h5>
+          <p>{{ keyword_report.product_trend }}</p>
+        </div>
+        
+        <div class="report-section">
+          <h5>소비자 인구통계</h5>
+          <p>{{ keyword_report.demographics }}</p>
+        </div>
+        
+        <div class="report-section">
+          <h5>마케팅 추천</h5>
+          <ul>
+          {% for tip in keyword_report.marketing_tips %}
+          <li>{{ tip }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<style>
+/* 대시보드 컨테이너 */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* 그리드 아이템 공통 스타일 */
+.grid-item {
+  background: var(--card-bg-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  overflow: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 섹션 제목 */
+.grid-item h3 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+}
+
+/* 각 섹션 위치 설정 */
+.top-trends-section {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  min-height: 400px;
+}
+
+.fashion-calendar-section {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+}
+
+.buying-insight-section {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  width: 50%;
+}
+
+.selling-insight-section {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  margin-left: 50%;
+  width: 50%;
+}
+
+.trend-report-section {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+}
+
+/* 트렌드 섹션 스타일 */
+.trends-content {
+  display: flex;
+  flex: 1;
+}
+
+.trend-keywords {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.trend-insight {
+  flex: 2;
+  padding-left: 20px;
+  border-left: 1px solid var(--border-color);
+}
+
+.keyword-header, .insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.keyword-period {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  background-color: var(--accent-color);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.keyword-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keyword-item {
+  display: flex;
+  align-items: center;
+  background: var(--accent-color);
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.keyword-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.keyword-rank {
+  background: var(--primary-color);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.keyword-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.keyword-text {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.keyword-description {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+.top-three .keyword-rank {
+  background: linear-gradient(135deg, #FC466B 0%, #3F5EFB 100%);
+}
+
+/* 인사이트 섹션 스타일 */
+.insight-container {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-container h4 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.recommendation-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.recommendation-list li {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--accent-color);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-category {
+  color: var(--primary-color);
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.product-name {
+  flex-grow: 1;
+  padding: 0 10px;
+}
+
+.recommendation-reason {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  font-style: italic;
+}
+
+.marketing-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.marketing-keyword {
+  background: var(--accent-color);
+  padding: 10px 15px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.keyword-text {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.keyword-stats {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 5px;
+}
+
+/* 캘린더 스타일 */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.prev-month, .next-month {
+  background: var(--accent-color);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prev-month:hover, .next-month:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-header span {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 10px 0;
+  flex: 1;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover {
+  background: var(--accent-color);
+}
+
+.calendar-day.has-event {
+  background: var(--primary-color);
+  color: white;
+  position: relative;
+}
+
+.calendar-day.has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+}
+
+.calendar-day.empty {
+  visibility: hidden;
+}
+
+.event-details {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+}
+
+.event-list {
+  margin-top: 10px;
+}
+
+.event-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--accent-color);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-date {
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.event-title {
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.event-location {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+/* 리포트 섹션 스타일 */
+.report-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.report-tabs {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  color: var(--secondary-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.report-tab:hover {
+  color: var(--primary-color);
+}
+
+.report-tab.active {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.report-panel {
+  display: none;
+  padding: 15px;
+}
+
+.report-panel.active {
+  display: block;
+}
+
+.report-summary {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.report-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.report-section {
+  background: var(--accent-color);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.report-section h5 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.pie-chart-placeholder {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.5);
+  border-radius: 8px;
+  color: var(--secondary-text);
+}
+
+/* 차트 컨테이너 스타일 */
+.chart-container {
+  width: 100%;
+  height: 200px;
+  margin: 15px 0;
+}
+
+.association-chart, .category-chart, .trend-chart {
+  margin-top: 15px;
+  height: 180px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  color: var(--secondary-text);
+  background-color: var(--accent-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* 반응형 조정 */
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .top-trends-section, 
+  .fashion-calendar-section, 
+  .buying-insight-section, 
+  .selling-insight-section, 
+  .trend-report-section {
+    grid-column: 1;
+  }
+  
+  .top-trends-section {
+    grid-row: 1;
+  }
+  
+  .buying-insight-section {
+    grid-row: 2;
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .selling-insight-section {
+    grid-row: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .fashion-calendar-section {
+    grid-row: 4;
+  }
+  
+  .trend-report-section {
+    grid-row: 5;
+  }
+  
+  .trends-content {
+    flex-direction: column;
+  }
+  
+  .trend-keywords, .trend-insight {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .trend-insight {
+    margin-top: 20px;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .report-details {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}?v={{ now.timestamp() }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 현재 페이지 ID 설정
+    const pageId = 'dashboard';
+    
+    // 기간 필터 초기화
+    if (typeof initPeriodFilter === 'function') {
+      initPeriodFilter(pageId);
+    }
+    
+    // 리포트 탭 전환 기능
+    const reportTabs = document.querySelectorAll('.report-tab');
+    const reportPanels = document.querySelectorAll('.report-panel');
+    
+    reportTabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        
+        // 모든 탭 비활성화
+        reportTabs.forEach(t => t.classList.remove('active'));
+        reportPanels.forEach(p => p.classList.remove('active'));
+        
+        // 선택한 탭 활성화
+        this.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // 캘린더 이벤트 핸들링
+    const calendarDays = document.querySelectorAll('.calendar-day');
+    
+    calendarDays.forEach(day => {
+      day.addEventListener('click', function() {
+        if (this.classList.contains('empty')) return;
+        
+        // 선택한 날짜 하이라이트
+        calendarDays.forEach(d => d.classList.remove('selected'));
+        this.classList.add('selected');
+        
+        // 선택한 날짜의 이벤트 표시 (실제 구현 필요)
+        // 여기에 이벤트 로드 코드가 들어갑니다.
+      });
+    });
+    
+    // 달력 이동 버튼
+    const prevMonthBtn = document.querySelector('.prev-month');
+    const nextMonthBtn = document.querySelector('.next-month');
+    const currentMonthEl = document.getElementById('current-month');
+    
+    if (prevMonthBtn && nextMonthBtn && currentMonthEl) {
+      // 현재 표시된 월 정보
+      let currentDate = new Date();
+      
+      // 날짜 형식 도우미 함수
+      function formatMonth(date) {
+        return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+      }
+      
+      // 초기 월 표시
+      currentMonthEl.textContent = formatMonth(currentDate);
+      
+      // 이전 달 버튼
+      prevMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        currentMonthEl.textContent = formatMonth(currentDate);
+        // 여기에 해당 월의 캘린더 데이터를 새로 불러오는 AJAX 요청 코드 추가
+        updateCalendarData(currentDate);
+      });
+      
+      // 다음 달 버튼
+      nextMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        currentMonthEl.textContent = formatMonth(currentDate);
+        // 여기에 해당 월의 캘린더 데이터를 새로 불러오는 AJAX 요청 코드 추가
+        updateCalendarData(currentDate);
+      });
+      
+      // 캘린더 데이터 업데이트 함수
+      function updateCalendarData(date) {
+        // 실제 구현에서는 서버에서 해당 월의 이벤트 데이터를 가져와야 함
+        console.log(`${date.getFullYear()}년 ${date.getMonth() + 1}월 데이터 요청`);
+        
+        // 예시로 로딩 표시 추가
+        const calendarDays = document.querySelector('.calendar-days');
+        if (calendarDays) {
+          calendarDays.innerHTML = '<div class="calendar-loading">로딩 중...</div>';
+        }
+        
+        // 나중에 구현할 AJAX 요청 코드 (예시)
+        /*
+        fetch(`/api/calendar-events?year=${date.getFullYear()}&month=${date.getMonth() + 1}`)
+          .then(response => response.json())
+          .then(data => {
+            // 캘린더 업데이트 로직
+            renderCalendar(date, data.events);
+          })
+          .catch(error => {
+            console.error('캘린더 데이터 로드 오류:', error);
+          });
+        */
+        
+        // 임시로 캘린더 렌더링 (실제 구현에서는 서버 데이터 사용)
+        setTimeout(() => {
+          renderCalendar(date, [
+            { date: new Date(date.getFullYear(), date.getMonth(), 3), title: '패션쇼' },
+            { date: new Date(date.getFullYear(), date.getMonth(), 15), title: '전시회' },
+            { date: new Date(date.getFullYear(), date.getMonth(), 25), title: '포럼' }
+          ]);
+        }, 500);
+      }
+      
+      // 캘린더 렌더링 함수
+      function renderCalendar(date, events) {
+        const calendarDays = document.querySelector('.calendar-days');
+        if (!calendarDays) return;
+        
+        // 해당 월의 첫 날과 마지막 날
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        
+        // 첫 날의 요일 (0: 일요일, 6: 토요일)
+        const firstDayOfWeek = firstDay.getDay();
+        
+        // HTML 생성
+        let html = '';
+        
+        // 첫 날 이전의 빈 칸
+        for (let i = 0; i < firstDayOfWeek; i++) {
+          html += '<div class="calendar-day empty"></div>';
+        }
+        
+        // 해당 월의 날짜 채우기
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+          const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
+          
+          // 이벤트가 있는지 확인
+          const hasEvent = events.some(event => 
+            event.date.getDate() === day &&
+            event.date.getMonth() === currentDate.getMonth() &&
+            event.date.getFullYear() === currentDate.getFullYear()
+          );
+          
+          // 이벤트가 있으면 클래스 추가
+          const eventClass = hasEvent ? 'has-event' : '';
+          
+          // 이벤트 제목 데이터 속성 추가
+          const eventTitle = hasEvent 
+            ? events.find(event => 
+                event.date.getDate() === day &&
+                event.date.getMonth() === currentDate.getMonth() &&
+                event.date.getFullYear() === currentDate.getFullYear()
+              ).title 
+            : '';
+          
+          html += `<div class="calendar-day ${eventClass}" data-events="${eventTitle}">${day}</div>`;
+        }
+        
+        // 캘린더 업데이트
+        calendarDays.innerHTML = html;
+        
+        // 날짜 클릭 이벤트 재설정
+        document.querySelectorAll('.calendar-day').forEach(day => {
+          day.addEventListener('click', function() {
+            if (this.classList.contains('empty')) return;
+            
+            // 선택한 날짜 하이라이트
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            // 이벤트 정보 표시
+            const events = this.getAttribute('data-events');
+            console.log('선택한 날짜의 이벤트:', events);
+            
+            // 여기에 이벤트 상세 정보 표시 로직 추가
+          });
+        });
+      }
+    }
+    
+    // 초기 캘린더 데이터 로드
+    if (prevMonthBtn && nextMonthBtn) {
+      updateCalendarData(currentDate);
+    }
+    
+    // Plotly 차트 리사이즈 처리
+    window.addEventListener('resize', function() {
+      const plotlyCharts = document.querySelectorAll('.js-plotly-plot');
+      if (window.Plotly && plotlyCharts.length > 0) {
+        plotlyCharts.forEach(chart => {
+          window.Plotly.Plots.resize(chart);
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

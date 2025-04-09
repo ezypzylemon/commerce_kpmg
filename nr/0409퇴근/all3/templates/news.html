@@ -1,0 +1,741 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">트렌드 분석 - 뉴스 탭</h2>
+    
+    <!-- 기간 선택 필터 -->
+    <div class="filter-section mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="period-selector">분석 기간</label>
+                    <select id="period-selector" class="form-control">
+                        <option value="7일" {% if period == '7일' %}selected{% endif %}>최근 7일</option>
+                        <option value="2주" {% if period == '2주' %}selected{% endif %}>최근 2주</option>
+                        <option value="1개월" {% if period == '1개월' %}selected{% endif %}>최근 1개월</option>
+                        <option value="3개월" {% if period == '3개월' %}selected{% endif %}>최근 3개월</option>
+                        <option value="6개월" {% if period == '6개월' %}selected{% endif %}>최근 6개월</option>
+                        <option value="1년" {% if period == '1년' %}selected{% endif %}>최근 1년</option>
+                        <option value="custom" {% if period == 'custom' %}selected{% endif %}>직접 설정</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="date-range-container" class="{% if period == 'custom' %}d-block{% else %}d-none{% endif %}">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="start-date">시작일</label>
+                                <input type="date" id="start-date" class="form-control" value="{{ start_date if start_date and start_date != 'None' else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="end-date">종료일</label>
+                                <input type="date" id="end-date" class="form-control" value="{{ end_date if end_date and end_date != 'None' else '' }}">>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 align-self-end">
+                <button id="apply-filter-btn" class="btn btn-primary btn-block">적용</button>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+    
+    <!-- 2행 3열 그리드 레이아웃 -->
+    <div class="grid-container">
+        <!-- 1행 1열: 키워드 TOP 5 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">키워드 TOP 5</h5>
+            </div>
+            <div class="card-body">
+                <ul class="keyword-list">
+                    {% for keyword, count in top_keywords %}
+                    <li>
+                        <span class="keyword-text">{{ keyword }}</span>
+                        <span class="badge">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1행 2열: 키워드별 언급량 추세 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">키워드별 언급량 추세</h5>
+            </div>
+            <div class="visualization-container">
+                {% if keyword_trend %}
+                  <div class="trend-container">
+                    {{ keyword_trend | safe }}
+                  </div>
+                {% else %}
+                  <div class="no-data">데이터가 없습니다.</div>
+                {% endif %}
+              </div>
+        </div>
+
+        <!-- 1행 3열: 최신 뉴스 기사 헤드라인 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">최신 뉴스 헤드라인</h5>
+            </div>
+            <div class="card-body">
+                {% for article in latest_articles %}
+                <div class="article-item">
+                    <a href="{{ article.link }}" target="_blank" class="article-link">
+                        <h6 class="mb-1">{{ article.title }}</h6>
+                    </a>
+                    <p class="article-preview mb-1">{{ article.content[:100] }}...</p>
+                    <small class="text-muted">{{ article.published }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 2행 1열: TF-IDF 기반 워드클라우드 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">TF-IDF 워드클라우드</h5>
+            </div>
+            <div class="card-body">
+                {% if tfidf_wordcloud %}
+                    <div class="wordcloud-container">
+                        <img src="data:image/png;base64,{{ tfidf_wordcloud }}" alt="TF-IDF 워드클라우드" class="img-fluid" onclick="openImageModal(this.src)">
+                    </div>
+                {% else %}
+                    <div class="no-data">데이터가 없습니다.</div>
+                    <div class="mt-3">
+                        <button id="tfidf-analysis-btn" class="btn btn-sm btn-outline-primary">분석 시작</button>
+                        <div id="tfidf-loading" class="spinner-border text-primary mt-2" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        <div id="tfidf-result" class="mt-3"></div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2행 2열: 연관어 네트워크 분석 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">연관어 네트워크 분석</h5>
+            </div>
+            <div class="card-body">
+                {% if keyword_network %}
+                    <div class="network-container">
+                        {{ keyword_network | safe }}
+                    </div>
+                {% else %}
+                    <div class="no-data">데이터가 없습니다.</div>
+                    <div class="mt-3">
+                        <button id="network-analysis-btn" class="btn btn-sm btn-outline-primary">분석 시작</button>
+                        <div id="network-loading" class="spinner-border text-primary mt-2" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        <div id="network-result" class="mt-3"></div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2행 3열: 긍정/부정 기사 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">감성 분석 결과</h5>
+            </div>
+            <div class="card-body">
+                <div class="sentiment-articles">
+                    <h6 class="text-success">긍정 기사 TOP 3</h6>
+                    {% for article in positive_articles[:3] %}
+                    <div class="article-item">
+                        <small class="text-muted">{{ article.published }}</small>
+                        <div>{{ article.title }}</div>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <h6 class="text-danger">부정 기사 TOP 3</h6>
+                    {% for article in negative_articles[:3] %}
+                    <div class="article-item">
+                        <small class="text-muted">{{ article.published }}</small>
+                        <div>{{ article.title }}</div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if not positive_articles and not negative_articles %}
+                    <div class="no-data">감성 분석 데이터가 없습니다.</div>
+                    <div class="mt-3">
+                        <button id="sentiment-analysis-btn" class="btn btn-sm btn-outline-primary">분석 시작</button>
+                        <div id="sentiment-loading" class="spinner-border text-primary mt-2" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        <div id="sentiment-result" class="mt-3"></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 추가 분석 섹션 -->
+    <div class="additional-analysis mt-5">
+        <h3>추가 분석</h3>
+        
+        <!-- 탭 메뉴 -->
+        <ul class="nav nav-tabs" id="analysisTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="topic-tab" data-toggle="tab" href="#topic" role="tab" aria-controls="topic" aria-selected="true">토픽 모델링</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="timeseries-tab" data-toggle="tab" href="#timeseries" role="tab" aria-controls="timeseries" aria-selected="false">시계열 분석</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false">키워드 검색</a>
+            </li>
+        </ul>
+        
+        <!-- 탭 콘텐츠 -->
+        <div class="tab-content" id="analysisTabContent">
+            <!-- 토픽 모델링 탭 -->
+            <div class="tab-pane fade show active" id="topic" role="tabpanel" aria-labelledby="topic-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">토픽 모델링 분석</h5>
+                        <p class="card-text">뉴스 기사를 주제별로 분류하고 각 주제의 핵심 키워드를 분석합니다.</p>
+                        
+                        <div class="form-group">
+                            <label for="topic-count">토픽 수</label>
+                            <select id="topic-count" class="form-control form-control-sm col-md-2">
+                                <option value="3">3개</option>
+                                <option value="5" selected>5개</option>
+                                <option value="7">7개</option>
+                                <option value="10">10개</option>
+                            </select>
+                        </div>
+                        
+                        <button id="topic-analysis-btn" class="btn btn-primary">토픽 분석 시작</button>
+                        
+                        <div id="topic-loading" class="spinner-border text-primary mt-3" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        
+                        <div id="topic-result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 시계열 분석 탭 -->
+            <div class="tab-pane fade" id="timeseries" role="tabpanel" aria-labelledby="timeseries-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">시계열 분석</h5>
+                        <p class="card-text">시간에 따른 뉴스 기사 수와 주요 키워드의 변화 추이를 분석합니다.</p>
+                        
+                        <div class="form-group">
+                            <label>시간 단위</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="time-unit" id="time-unit-daily" value="daily">
+                                <label class="form-check-label" for="time-unit-daily">일별</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="time-unit" id="time-unit-weekly" value="weekly">
+                                <label class="form-check-label" for="time-unit-weekly">주별</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="time-unit" id="time-unit-monthly" value="monthly" checked>
+                                <label class="form-check-label" for="time-unit-monthly">월별</label>
+                            </div>
+                        </div>
+                        
+                        <button id="timeseries-analysis-btn" class="btn btn-primary">시계열 분석 시작</button>
+                        
+                        <div id="timeseries-loading" class="spinner-border text-primary mt-3" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        
+                        <div id="timeseries-result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 키워드 검색 탭 -->
+            <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">키워드 검색</h5>
+                        <p class="card-text">특정 키워드가 포함된 뉴스 기사를 검색합니다.</p>
+                        
+                        <div class="input-group mb-3">
+                            <input type="text" id="search-keyword" class="form-control" placeholder="검색할 키워드 입력">
+                            <div class="input-group-append">
+                                <button id="search-btn" class="btn btn-primary">검색</button>
+                            </div>
+                        </div>
+                        
+                        <div id="search-loading" class="spinner-border text-primary mt-3" role="status" style="display: none;">
+                            <span class="sr-only">로딩 중...</span>
+                        </div>
+                        
+                        <div id="search-result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- 이미지 모달 -->
+<div id="image-modal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content modal-img">
+</div>
+
+<style>
+/* 전체 컨테이너 스타일 개선 */
+.container-fluid {
+    padding: 20px 30px;
+    background-color: #f8f9fa;
+}
+
+/* 페이지 제목 스타일 */
+h2.mb-4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    border-left: 5px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 20px !important;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    padding: 15px 5px;
+    height: calc(100vh - 140px);
+    min-height: 650px; /* 최소 높이 설정 */
+}
+
+/* 카드 스타일 개선 */
+.card {
+    border: none;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    border-radius: 15px 15px 0 0 !important;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.2rem;
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd3da #f8f9fa;
+}
+
+.card-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background-color: #cbd3da;
+    border-radius: 6px;
+}
+
+/* 워드클라우드 컨테이너 */
+.wordcloud-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+/* 워드클라우드 이미지 크기 조정 */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+
+/* 네트워크 그래프 컨테이너 */
+.network-container {
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+}
+
+/* 트렌드 컨테이너 */
+.trend-container {
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+}
+
+/* Plotly 차트 컨테이너 스타일 조정 */
+.js-plotly-plot {
+    width: 100% !important;
+}
+
+.js-plotly-plot .plot-container {
+    overflow: visible !important;
+}
+
+/* 키워드 리스트 스타일 개선 */
+.keyword-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.keyword-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border-left: 4px solid #007bff;
+    cursor: pointer;
+}
+
+.keyword-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #f0f2f5 0%, #e9ecef 100%);
+}
+
+.keyword-list .badge {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.keyword-list li:hover .badge {
+    transform: scale(1.05);
+}
+
+.keyword-list .keyword-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #343a40;
+}
+
+/* 기사 목록 스타일 개선 */
+.article-item {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.article-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+}
+
+.article-item:last-child {
+    border-bottom: none;
+}
+
+.article-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.article-link:hover {
+    color: #007bff;
+}
+
+.article-preview {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* 감성 분석 섹션 스타일 */
+.sentiment-articles {
+    width: 100%;
+    max-height: none;
+    overflow-y: visible;
+}
+
+.sentiment-articles h6 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 600;
+    border-left: 3px solid;
+    padding-left: 10px;
+}
+
+.sentiment-articles h6.text-success {
+    border-color: #28a745;
+}
+
+.sentiment-articles h6.text-danger {
+    border-color: #dc3545;
+}
+
+.sentiment-articles .article-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eaeaea;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+    color: #6c757d;
+    font-size: 1.1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 1000px;
+}
+
+.modal .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 추가 분석 섹션 스타일 */
+.additional-analysis {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+}
+
+.additional-analysis h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 20px;
+}
+
+.additional-analysis .card {
+    margin-top: 20px;
+}
+
+.additional-analysis .nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.additional-analysis .nav-tabs .nav-link {
+    border: none;
+    color: #495057;
+    font-weight: 500;
+    padding: 10px 20px;
+}
+
+.additional-analysis .nav-tabs .nav-link.active {
+    color: #007bff;
+    background-color: transparent;
+    border-bottom: 2px solid #007bff;
+}
+
+.additional-analysis .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    color: #007bff;
+}
+
+/* 반응형 미디어 쿼리 추가 */
+@media (max-width: 1200px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, 1fr);
+    }
+    
+    .container-fluid {
+        padding: 15px;
+    }
+}
+
+/* 실시간 분석 창 추가 스타일 */
+.analysis-loading {
+    text-align: center;
+    padding: 20px;
+}
+
+.analysis-result {
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+/* 분석 버튼 스타일 향상 */
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+    transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* 다크 모드와의 호환성 개선 */
+@media (prefers-color-scheme: dark) {
+    .card {
+        background-color: #2b3035;
+        color: #e9ecef;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #2b3035 0%, #212529 100%);
+    }
+    
+    .card-title {
+        color: #e9ecef;
+    }
+    
+    .no-data {
+        background-color: #212529;
+        color: #adb5bd;
+        border-color: #495057;
+    }
+    
+    .additional-analysis {
+        background-color: #2b3035;
+    }
+    
+    .article-link {
+        color: #e9ecef;
+    }
+    
+    .article-link:hover {
+        color: #007bff;
+    }
+    
+    .keyword-list li {
+        background: linear-gradient(135deg, #2b3035 0%, #212529 100%);
+    }
+    
+    .keyword-list .keyword-text {
+        color: #e9ecef;
+    }
+}
+</style>
+
+<!-- JavaScript 추가 -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+// Plotly 로드 확인
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Plotly 로드 확인:', typeof Plotly !== 'undefined');
+});
+</script>
+<script src="{{ url_for('static', filename='js/news.js') }}?v={{ now.timestamp() }}"></script>
+{% endblock %}

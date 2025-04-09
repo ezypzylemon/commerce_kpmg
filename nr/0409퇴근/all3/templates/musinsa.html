@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}무신사 분석 - 경쟁사 분석 탭 (무신사 데이터 활용){% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/musinsa.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2>트렌드 분석 - 경쟁사 분석 탭 (무신사 데이터 활용)</h2>
+
+<!-- 기간 설정 컴포넌트 -->
+{% with pageId = 'musinsa' %}
+{% include 'period_filter.html' with context %}
+{% endwith %}
+
+<!-- 오류 메시지 표시 -->
+{% if error %}
+<div class="error-message" style="background-color: #fee; color: #c00; padding: 15px; margin: 20px 0; border-radius: 5px; border: 1px solid #c00;">
+  <strong>오류:</strong> {{ error }}
+</div>
+{% endif %}
+
+<!-- 디버깅 정보 (개발 중에만 표시) -->
+<div class="debug-info" style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px; display: none;">
+  <h4>디버깅 정보</h4>
+  
+  {% if debug_info %}
+  <p>사용 가능한 키:</p>
+  <ul>
+    {% for key in debug_info.keys() %}
+    <li><strong>{{ key }}</strong></li>
+    {% endfor %}
+  </ul>
+  
+  <p>샘플 데이터:</p>
+  <pre style="background: #fff; padding: 10px; border-radius: 3px; max-height: 300px; overflow: auto;">
+    {% for key, value in debug_info.sample_data.items() %}
+    <strong>{{ key }}:</strong> {{ value }}
+    {% endfor %}
+  </pre>
+  {% else %}
+  <p>사용 가능한 변수:</p>
+  <ul>
+    {% for key in config.keys() %}
+    <li><strong>{{ key }}</strong></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  
+  <p><strong>기간:</strong> {{ period }} ({{ display_period }})</p>
+  <p><strong>총 상품수:</strong> {{ total_items }}</p>
+  <p><strong>브랜드 수:</strong> {{ total_brands }}</p>
+  <p><strong>카테고리 수:</strong> {{ total_categories }}</p>
+  <p><strong>평균 가격:</strong> {{ avg_price|default(0)|round|int }}원</p>
+</div>
+
+<!-- 경쟁사 분석 메인 컨테이너 -->
+<div class="musinsa-container">
+  <!-- 첫 번째 행 (인기 아이템 및 브랜드) -->
+  <div class="musinsa-row">
+    <!-- 왼쪽: 인기 아이템 TOP 5 (남성/여성) -->
+    <section class="musinsa-section popular-items-section">
+      <div class="tabs-container">
+        <div class="tabs">
+          <div class="tab active" data-tab="female">여성</div>
+          <div class="tab" data-tab="male">남성</div>
+        </div>
+        
+        <div class="tab-content active" id="female-tab">
+          <h3>여성 인기 아이템 TOP 5</h3>
+          <div class="item-list">
+            {% if top_female_items %}
+              {% for item in top_female_items[:5] %}
+              <div class="item-card">
+                <div class="item-rank">{{ loop.index }}</div>
+                <div class="item-info">
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-count">{{ item.count }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-data">데이터가 없습니다</div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="tab-content" id="male-tab">
+          <h3>남성 인기 아이템 TOP 5</h3>
+          <div class="item-list">
+            {% if top_male_items %}
+              {% for item in top_male_items[:5] %}
+              <div class="item-card">
+                <div class="item-rank">{{ loop.index }}</div>
+                <div class="item-info">
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-count">{{ item.count }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-data">데이터가 없습니다</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    
+    <!-- 인기 브랜드 TOP 10 섹션 수정 -->
+    <section class="musinsa-section popular-brands-section">
+      <h3>인기 브랜드 TOP 10 ({{display_period}} 기준)</h3>
+      <div class="brand-cloud">
+        <div class="brand-list brand-list-left">
+          {% for brand in top_brands[:5] %}
+          <div class="brand-item" data-brand-id="{{ loop.index }}">
+            <span class="brand-text">{{ loop.index }}. {{ brand.name }}</span>
+            <span class="brand-count">{{ brand.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="brand-list brand-list-right">
+          {% for brand in top_brands[5:10] %}
+          <div class="brand-item" data-brand-id="{{ loop.index + 5 }}">
+            <span class="brand-text">{{ loop.index + 5 }}. {{ brand.name }}</span>
+            <span class="brand-count">{{ brand.count }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    
+    <!-- 오른쪽: 브랜드 상세정보 -->
+    <section class="musinsa-section brand-detail-section">
+      <h3>브랜드 상세정보</h3>
+      <div class="brand-detail-container" id="brand-detail">
+        <div class="detail-header">
+          <div class="detail-brand-name">브랜드를 선택하세요</div>
+          <div class="detail-category">카테고리: -</div>
+        </div>
+        <div class="detail-stats">
+          <div class="stat-item">
+            <div class="stat-label">가격대</div>
+            <div class="stat-value">-</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">성별</div>
+            <div class="stat-value">-</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">언급량</div>
+            <div class="stat-value">-</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+    
+  <!-- 통계 요약 정보 및 하단 섹션 수정 - 전체 너비 차지 -->
+  <div class="musinsa-row">
+    <section class="musinsa-section stats-section">
+      <h3>통계 요약 정보</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">총 상품 수</div>
+          <div class="stat-value">{{ total_items|default(0)|int }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">브랜드 수</div>
+          <div class="stat-value">{{ total_brands|default(0)|int }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">카테고리 수</div>
+          <div class="stat-value">{{ total_categories|default(0)|int }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">평균 가격</div>
+          <div class="stat-value">{{ avg_price|default(0)|round|int }}원</div>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+  <!-- 하단 섹션 컨테이너 -->
+  <div class="bottom-section-container">
+    <div class="ratio-section">
+      <h3>카테고리별 비중 및 증감률</h3>
+      <hr class="divider">
+      
+      <div class="ratio-container">
+        <div class="ratio-chart">
+          <!-- 카테고리 비중 차트 이미지 -->
+          <img src="{{ url_for('static', filename='images/competitor/category_ratio_6개월.png') }}" alt="카테고리별 전체 비중" class="responsive-img chart-img">
+        </div>
+        
+        <div class="delta-chart">
+          <!-- 카테고리 증감률 차트 이미지 -->
+          <img src="{{ url_for('static', filename='images/competitor/category_delta_6개월.png') }}" alt="카테고리별 전월대비 비중증가율" class="responsive-img chart-img">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="price-range-section">
+    <h3>브랜드별 가격대 분포</h3>
+    <div class="chart-container">
+      <!-- 가격대 분포 차트 이미지 -->
+      <img src="{{ url_for('static', filename='images/competitor/price_range_6개월.png') }}" alt="브랜드별 가격대 분포 차트" class="responsive-img">
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/musinsa.js') }}"></script>
+<script>
+  // 디버깅 영역 토글 기능 (개발 중에만 활성화)
+  document.addEventListener('DOMContentLoaded', function() {
+    // F2 키를 눌러 디버깅 정보 표시/숨김
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'F2') {
+        const debugInfo = document.querySelector('.debug-info');
+        if (debugInfo) {
+          debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
