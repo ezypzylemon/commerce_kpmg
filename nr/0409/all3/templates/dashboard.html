@@ -1,0 +1,968 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}통합 대시보드 - Fashion Trend Dashboard{% endblock %}
+
+{% block content %}
+<h2>트렌드 분석 - 통합 탭</h2>
+
+<!-- 기간 설정 컴포넌트 추가 -->
+{% with pageId = 'dashboard' %}
+{% include 'period_filter.html' with context %}
+{% endwith %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<!-- 새로운 대시보드 레이아웃 구성 -->
+<div class="dashboard-container">
+  <!-- 1. 탑 트렌드 키워드 (메져진 content 데이터 + 뉴스 api호출) -->
+  <section class="grid-item top-trends-section">
+    <h3>탑 트렌드 키워드</h3>
+    <div class="trends-content">
+      <div class="trend-keywords">
+        <div class="keyword-header">
+          <h4>Top Trend Keywords</h4>
+          <span class="keyword-period">{{ display_period|default(period) }} 기준</span>
+        </div>
+        
+        <div class="keyword-list">
+          {% for i in range(1, 6) %}
+          <div class="keyword-item {% if i <= 3 %}top-three{% endif %}">
+            <span class="keyword-rank">{{ i }}</span>
+            <div class="keyword-details">
+              <span class="keyword-text">{% if top_keywords and i <= top_keywords|length %}{{ top_keywords[i-1][0] }}{% else %}키워드 {{ i }}{% endif %}</span>
+              <span class="keyword-description">키워드에 대한 GPT 분석 내용이 표시됩니다.</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <!-- 트렌드 인사이트 -->
+      <div class="trend-insight">
+        <div class="insight-header">
+          <h4>트렌드 인사이트</h4>
+        </div>
+        <div class="insight-content">
+          <!-- GPT 또는 Gemini로 생성된 트렌드 인사이트 -->
+          <p>{{ trend_insight|default('현재 트렌드 키워드를 분석한 결과, 이번 시즌에는 [키워드1]과 [키워드2]가 주목받고 있습니다. 특히 [키워드3]은 전 시즌 대비 언급량이 크게 증가했으며, 이는 최근 패션 트렌드의 변화를 나타냅니다.') }}</p>
+          
+          <!-- 키워드 연관 분석 -->
+          <div class="keyword-association">
+            <h5>키워드 연관성</h5>
+            <div class="association-chart">
+              {% if fig_network %}
+                {{ fig_network | safe }}
+              {% else %}
+                <div class="no-data">연관 키워드 데이터가 없습니다.</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 2. 바잉 인사이트: 어떤 상품을 들여와야 하나 -->
+  <section class="grid-item buying-insight-section">
+    <h3>바잉 인사이트</h3>
+    <div class="insight-container">
+      <h4>어떤 상품을 들여와야 할까?</h4>
+      <div class="buying-recommendations">
+        <!-- GPT 또는 Gemini로 생성된 바잉 인사이트 -->
+        <p>{{ buying_insight|default('트렌드 분석 결과, 다음 상품들이 주목받을 것으로 예측됩니다:') }}</p>
+        <ul class="recommendation-list">
+          <li>
+            <span class="product-category">아우터</span>
+            <span class="product-name">오버사이즈 크롭 재킷</span>
+            <span class="recommendation-reason">S/S 시즌 트렌드 부상 중</span>
+          </li>
+          <li>
+            <span class="product-category">상의</span>
+            <span class="product-name">니트 베스트</span>
+            <span class="recommendation-reason">언급량 전월 대비 82% 증가</span>
+          </li>
+          <li>
+            <span class="product-category">하의</span>
+            <span class="product-name">와이드 팬츠</span>
+            <span class="recommendation-reason">지속적인 인기 유지</span>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- 카테고리 분석 차트 -->
+      <div class="category-analysis">
+        <h5>카테고리별 인기도</h5>
+        <div class="category-chart">
+          {% if fig_category %}
+            {{ fig_category | safe }}
+          {% else %}
+            <div class="no-data">카테고리 데이터가 없습니다.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 3. 셀링 인사이트: 어떤 키워드로 마케팅할까 -->
+  <section class="grid-item selling-insight-section">
+    <h3>셀링 인사이트</h3>
+    <div class="insight-container">
+      <h4>어떤 키워드로 마케팅할까?</h4>
+      <div class="marketing-recommendations">
+        <!-- GPT 또는 Gemini로 생성된 셀링 인사이트 -->
+        <p>{{ selling_insight|default('현재 트렌드와 검색량을 분석한 결과, 다음 키워드를 활용한 마케팅이 효과적일 것으로 예측됩니다:') }}</p>
+        <div class="marketing-keywords">
+          <div class="marketing-keyword">
+            <span class="keyword-text">#미니멀룩</span>
+            <span class="keyword-stats">검색량 증가율: +45%</span>
+          </div>
+          <div class="marketing-keyword">
+            <span class="keyword-text">#오버핏</span>
+            <span class="keyword-stats">검색량 증가율: +38%</span>
+          </div>
+          <div class="marketing-keyword">
+            <span class="keyword-text">#뉴트로</span>
+            <span class="keyword-stats">검색량 증가율: +27%</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 키워드 트렌드 차트 -->
+      <div class="keyword-trends">
+        <h5>키워드 검색 트렌드</h5>
+        <div class="trend-chart">
+          <div id="keyword-trend-chart" class="chart-container">
+            <!-- 여기에 동적으로 생성된 차트가 삽입됩니다 -->
+            {% if keyword_trend %}
+              {{ keyword_trend | safe }}
+            {% else %}
+              <div class="no-data">키워드 트렌드 데이터가 없습니다.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 4. 패션 전시/등 패션 관련 문화, 이슈 달력 -->
+  <section class="grid-item fashion-calendar-section">
+    <h3>패션 전시 등 패션 관련 이슈 캘린더</h3>
+    <div class="calendar-container">
+      <div class="calendar-navigation">
+        <button class="prev-month"><i class="bi bi-chevron-left"></i></button>
+        <h4 id="current-month">{{ current_month|default('2025년 4월') }}</h4>
+        <button class="next-month"><i class="bi bi-chevron-right"></i></button>
+      </div>
+      
+      <!-- 캘린더 그리드 -->
+      <div class="calendar-grid">
+        <div class="calendar-header">
+          <span>일</span>
+          <span>월</span>
+          <span>화</span>
+          <span>수</span>
+          <span>목</span>
+          <span>금</span>
+          <span>토</span>
+        </div>
+        <div class="calendar-days">
+          <!-- 동적으로 생성되는 캘린더 날짜들 -->
+          <!-- 예시: -->
+          <div class="calendar-day empty"></div>
+          <div class="calendar-day">1</div>
+          <div class="calendar-day">2</div>
+          <div class="calendar-day has-event" data-events="서울패션위크">3</div>
+          <div class="calendar-day">4</div>
+          <div class="calendar-day">5</div>
+          <div class="calendar-day">6</div>
+          <!-- ... 나머지 날짜들 ... -->
+        </div>
+      </div>
+      
+      <!-- 선택된 날짜의 이벤트 -->
+      <div class="event-details">
+        <h5>이번 달 주요 패션 이벤트</h5>
+        <div class="event-list">
+          <div class="event-item">
+            <span class="event-date">4월 3일 - 4월 8일</span>
+            <span class="event-title">서울패션위크 2025 F/W</span>
+            <span class="event-location">동대문 DDP</span>
+          </div>
+          <div class="event-item">
+            <span class="event-date">4월 15일 - 4월 20일</span>
+            <span class="event-title">패션 아트 전시회</span>
+            <span class="event-location">성수동 S팩토리</span>
+          </div>
+          <div class="event-item">
+            <span class="event-date">4월 25일</span>
+            <span class="event-title">지속가능 패션 포럼</span>
+            <span class="event-location">코엑스 컨퍼런스룸</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 5. 탑 트렌드 키워드에 대한 상세 GPT 리포트 -->
+  <section class="grid-item trend-report-section">
+    <h3>탑 트렌드 키워드 상세 리포트</h3>
+    <div class="report-container">
+      <div class="report-tabs">
+        {% for i in range(1, 6) %}
+        <button class="report-tab {% if i == 1 %}active{% endif %}" data-tab="keyword{{ i }}">키워드 {{ i }}</button>
+        {% endfor %}
+      </div>
+      
+      <div class="report-content">
+        {% for i in range(1, 6) %}
+        <div id="keyword{{ i }}" class="report-panel {% if i == 1 %}active{% endif %}">
+          <h4>{% if top_keywords and i <= top_keywords|length %}{{ top_keywords[i-1][0] }}{% else %}키워드 {{ i }}{% endif %} 분석 리포트</h4>
+          
+          <div class="report-summary">
+            <!-- GPT 또는 Gemini로 생성된 키워드 분석 리포트 -->
+            <p>{{ keyword_reports[i-1]|default('이 키워드는 최근 ' ~ period ~ ' 동안 주목받고 있으며, 특히 20-30대 여성 소비자들 사이에서 인기가 높습니다. 관련 제품의 수요는 전월 대비 25% 증가했으며, 소셜 미디어에서의 언급량도 지속적으로 증가하고 있습니다.') }}</p>
+          </div>
+          
+          <div class="report-details">
+            <div class="report-section">
+              <h5>관련 제품 트렌드</h5>
+              <p>관련 제품군의 판매 추세와 소비자 반응 분석 내용이 표시됩니다.</p>
+            </div>
+            
+            <div class="report-section">
+              <h5>소비자 인구통계</h5>
+              <div class="demographics-chart">
+                <!-- 인구통계 차트가 들어갈 자리 -->
+                <div class="pie-chart-placeholder">인구통계 차트</div>
+              </div>
+            </div>
+            
+            <div class="report-section">
+              <h5>마케팅 추천</h5>
+              <ul>
+                <li>인스타그램과 틱톡을 활용한 홍보가 효과적</li>
+                <li>밀레니얼 세대를 타겟으로 한 콘텐츠 제작</li>
+                <li>지속가능성과 환경 친화적 메시지 강조</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+/* 대시보드 컨테이너 */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* 그리드 아이템 공통 스타일 */
+.grid-item {
+  background: var(--card-bg-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  overflow: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 섹션 제목 */
+.grid-item h3 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+}
+
+/* 각 섹션 위치 설정 */
+.top-trends-section {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  min-height: 400px;
+}
+
+.fashion-calendar-section {
+  grid-column: 2 / 3;
+  grid-row: 1 / 3;
+}
+
+.buying-insight-section {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  width: 50%;
+}
+
+.selling-insight-section {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+  margin-left: 50%;
+  width: 50%;
+}
+
+.trend-report-section {
+  grid-column: 1 / 3;
+  grid-row: 3 / 4;
+}
+
+/* 트렌드 섹션 스타일 */
+.trends-content {
+  display: flex;
+  flex: 1;
+}
+
+.trend-keywords {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.trend-insight {
+  flex: 2;
+  padding-left: 20px;
+  border-left: 1px solid var(--border-color);
+}
+
+.keyword-header, .insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.keyword-period {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  background-color: var(--accent-color);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.keyword-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keyword-item {
+  display: flex;
+  align-items: center;
+  background: var(--accent-color);
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.keyword-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.keyword-rank {
+  background: var(--primary-color);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.keyword-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.keyword-text {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.keyword-description {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+.top-three .keyword-rank {
+  background: linear-gradient(135deg, #FC466B 0%, #3F5EFB 100%);
+}
+
+/* 인사이트 섹션 스타일 */
+.insight-container {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-container h4 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.recommendation-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.recommendation-list li {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--accent-color);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-category {
+  color: var(--primary-color);
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.product-name {
+  flex-grow: 1;
+  padding: 0 10px;
+}
+
+.recommendation-reason {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  font-style: italic;
+}
+
+.marketing-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.marketing-keyword {
+  background: var(--accent-color);
+  padding: 10px 15px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.keyword-text {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.keyword-stats {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 5px;
+}
+
+/* 캘린더 스타일 */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.prev-month, .next-month {
+  background: var(--accent-color);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.prev-month:hover, .next-month:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-header span {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 10px 0;
+  flex: 1;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover {
+  background: var(--accent-color);
+}
+
+.calendar-day.has-event {
+  background: var(--primary-color);
+  color: white;
+  position: relative;
+}
+
+.calendar-day.has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+}
+
+.calendar-day.empty {
+  visibility: hidden;
+}
+
+.event-details {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+}
+
+.event-list {
+  margin-top: 10px;
+}
+
+.event-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--accent-color);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-date {
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.event-title {
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.event-location {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+/* 리포트 섹션 스타일 */
+.report-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.report-tabs {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.report-tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  color: var(--secondary-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.report-tab:hover {
+  color: var(--primary-color);
+}
+
+.report-tab.active {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.report-panel {
+  display: none;
+  padding: 15px;
+}
+
+.report-panel.active {
+  display: block;
+}
+
+.report-summary {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.report-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.report-section {
+  background: var(--accent-color);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.report-section h5 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.pie-chart-placeholder {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.5);
+  border-radius: 8px;
+  color: var(--secondary-text);
+}
+
+/* 차트 컨테이너 스타일 */
+.chart-container {
+  width: 100%;
+  height: 200px;
+  margin: 15px 0;
+}
+
+.association-chart, .category-chart, .trend-chart {
+  margin-top: 15px;
+  height: 180px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 데이터 없음 표시 */
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  color: var(--secondary-text);
+  background-color: var(--accent-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* 반응형 조정 */
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .top-trends-section, 
+  .fashion-calendar-section, 
+  .buying-insight-section, 
+  .selling-insight-section, 
+  .trend-report-section {
+    grid-column: 1;
+  }
+  
+  .top-trends-section {
+    grid-row: 1;
+  }
+  
+  .buying-insight-section {
+    grid-row: 2;
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .selling-insight-section {
+    grid-row: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .fashion-calendar-section {
+    grid-row: 4;
+  }
+  
+  .trend-report-section {
+    grid-row: 5;
+  }
+  
+  .trends-content {
+    flex-direction: column;
+  }
+  
+  .trend-keywords, .trend-insight {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .trend-insight {
+    margin-top: 20px;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .report-details {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}?v={{ now.timestamp() }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 현재 페이지 ID 설정
+    const pageId = 'dashboard';
+    
+    // 기간 필터 초기화
+    if (typeof initPeriodFilter === 'function') {
+      initPeriodFilter(pageId);
+    }
+    
+    // 리포트 탭 전환 기능
+    const reportTabs = document.querySelectorAll('.report-tab');
+    const reportPanels = document.querySelectorAll('.report-panel');
+    
+    reportTabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        
+        // 모든 탭 비활성화
+        reportTabs.forEach(t => t.classList.remove('active'));
+        reportPanels.forEach(p => p.classList.remove('active'));
+        
+        // 선택한 탭 활성화
+        this.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // 캘린더 이벤트 핸들링
+    const calendarDays = document.querySelectorAll('.calendar-day');
+    
+    calendarDays.forEach(day => {
+      day.addEventListener('click', function() {
+        if (this.classList.contains('empty')) return;
+        
+        // 선택한 날짜 하이라이트
+        calendarDays.forEach(d => d.classList.remove('selected'));
+        this.classList.add('selected');
+        
+        // 선택한 날짜의 이벤트 표시 (실제 구현 필요)
+        // 여기에 이벤트 로드 코드가 들어갑니다.
+      });
+    });
+    
+    // 달력 이동 버튼
+    const prevMonthBtn = document.querySelector('.prev-month');
+    const nextMonthBtn = document.querySelector('.next-month');
+    const currentMonthEl = document.getElementById('current-month');
+    
+    if (prevMonthBtn && nextMonthBtn && currentMonthEl) {
+      // 현재 표시된 월 정보
+      let currentDate = new Date();
+      
+      // 날짜 형식 도우미 함수
+      function formatMonth(date) {
+        return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+      }
+      
+      // 초기 월 표시
+      currentMonthEl.textContent = formatMonth(currentDate);
+      
+      // 이전 달 버튼
+      prevMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        currentMonthEl.textContent = formatMonth(currentDate);
+        // 여기에 해당 월의 캘린더 데이터를 새로 불러오는 AJAX 요청 코드 추가
+        updateCalendarData(currentDate);
+      });
+      
+      // 다음 달 버튼
+      nextMonthBtn.addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        currentMonthEl.textContent = formatMonth(currentDate);
+        // 여기에 해당 월의 캘린더 데이터를 새로 불러오는 AJAX 요청 코드 추가
+        updateCalendarData(currentDate);
+      });
+      
+      // 캘린더 데이터 업데이트 함수
+      function updateCalendarData(date) {
+        // 실제 구현에서는 서버에서 해당 월의 이벤트 데이터를 가져와야 함
+        console.log(`${date.getFullYear()}년 ${date.getMonth() + 1}월 데이터 요청`);
+        
+        // 예시로 로딩 표시 추가
+        const calendarDays = document.querySelector('.calendar-days');
+        if (calendarDays) {
+          calendarDays.innerHTML = '<div class="calendar-loading">로딩 중...</div>';
+        }
+        
+        // 나중에 구현할 AJAX 요청 코드 (예시)
+        /*
+        fetch(`/api/calendar-events?year=${date.getFullYear()}&month=${date.getMonth() + 1}`)
+          .then(response => response.json())
+          .then(data => {
+            // 캘린더 업데이트 로직
+            renderCalendar(date, data.events);
+          })
+          .catch(error => {
+            console.error('캘린더 데이터 로드 오류:', error);
+          });
+        */
+        
+        // 임시로 캘린더 렌더링 (실제 구현에서는 서버 데이터 사용)
+        setTimeout(() => {
+          renderCalendar(date, [
+            { date: new Date(date.getFullYear(), date.getMonth(), 3), title: '패션쇼' },
+            { date: new Date(date.getFullYear(), date.getMonth(), 15), title: '전시회' },
+            { date: new Date(date.getFullYear(), date.getMonth(), 25), title: '포럼' }
+          ]);
+        }, 500);
+      }
+      
+      // 캘린더 렌더링 함수
+      function renderCalendar(date, events) {
+        const calendarDays = document.querySelector('.calendar-days');
+        if (!calendarDays) return;
+        
+        // 해당 월의 첫 날과 마지막 날
+        const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+        const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        
+        // 첫 날의 요일 (0: 일요일, 6: 토요일)
+        const firstDayOfWeek = firstDay.getDay();
+        
+        // HTML 생성
+        let html = '';
+        
+        // 첫 날 이전의 빈 칸
+        for (let i = 0; i < firstDayOfWeek; i++) {
+          html += '<div class="calendar-day empty"></div>';
+        }
+        
+        // 해당 월의 날짜 채우기
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+          const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
+          
+          // 이벤트가 있는지 확인
+          const hasEvent = events.some(event => 
+            event.date.getDate() === day &&
+            event.date.getMonth() === currentDate.getMonth() &&
+            event.date.getFullYear() === currentDate.getFullYear()
+          );
+          
+          // 이벤트가 있으면 클래스 추가
+          const eventClass = hasEvent ? 'has-event' : '';
+          
+          // 이벤트 제목 데이터 속성 추가
+          const eventTitle = hasEvent 
+            ? events.find(event => 
+                event.date.getDate() === day &&
+                event.date.getMonth() === currentDate.getMonth() &&
+                event.date.getFullYear() === currentDate.getFullYear()
+              ).title 
+            : '';
+          
+          html += `<div class="calendar-day ${eventClass}" data-events="${eventTitle}">${day}</div>`;
+        }
+        
+        // 캘린더 업데이트
+        calendarDays.innerHTML = html;
+        
+        // 날짜 클릭 이벤트 재설정
+        document.querySelectorAll('.calendar-day').forEach(day => {
+          day.addEventListener('click', function() {
+            if (this.classList.contains('empty')) return;
+            
+            // 선택한 날짜 하이라이트
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            // 이벤트 정보 표시
+            const events = this.getAttribute('data-events');
+            console.log('선택한 날짜의 이벤트:', events);
+            
+            // 여기에 이벤트 상세 정보 표시 로직 추가
+          });
+        });
+      }
+    }
+    
+    // 초기 캘린더 데이터 로드
+    if (prevMonthBtn && nextMonthBtn) {
+      updateCalendarData(currentDate);
+    }
+    
+    // Plotly 차트 리사이즈 처리
+    window.addEventListener('resize', function() {
+      const plotlyCharts = document.querySelectorAll('.js-plotly-plot');
+      if (window.Plotly && plotlyCharts.length > 0) {
+        plotlyCharts.forEach(chart => {
+          window.Plotly.Plots.resize(chart);
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}무신사 분석 - Fashion Trend Dashboard{% endblock %}
+
+{% block content %}
+<h2>트렌드 분석 - 무신사 탭</h2>
+
+<!-- 기간 설정 컴포넌트 추가 -->
+{% with pageId = 'musinsa' %}
+{% include 'period_filter.html' with context %}
+{% endwith %}
+
+<!-- 경쟁사 분석 그리드 레이아웃 -->
+<div class="dashboard-grid competitor-grid">
+  <!-- 첫 번째 행 (3열) -->
+  <div class="competitor-row">
+    <!-- 인기 아이템 TOP 5 (여성) -->
+    <section class="grid-item competitor-top-items">
+      <h3>여성 인기 아이템 TOP 5</h3>
+      <div class="visualization-container">
+        <div class="gender-top-items female">
+          <div class="top-items-list">
+            {% for item in female_top_items %}
+            <div class="top-item-card">
+              <span class="item-rank">{{ loop.index }}</span>
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-count">{{ item.count }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 인기 아이템 TOP 5 (남성) -->
+    <section class="grid-item competitor-top-items">
+      <h3>남성 인기 아이템 TOP 5</h3>
+      <div class="visualization-container">
+        <div class="gender-top-items male">
+          <div class="top-items-list">
+            {% for item in male_top_items %}
+            <div class="top-item-card">
+              <span class="item-rank">{{ loop.index }}</span>
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-count">{{ item.count }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 아이템별 언급량 추세 -->
+    <section class="grid-item">
+      <h3>아이템별 언급량 추세</h3>
+      <div class="visualization-container">
+        <div class="item-trend-chart">
+          {% if item_trend_chart %}
+          <img src="{{ url_for('static', filename=item_trend_chart) }}" class="full-width-img">
+          {% else %}
+          <div class="no-data-message">데이터가 없습니다</div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </div>
+  
+  <!-- 두 번째 행 (2열) -->
+  <div class="competitor-row">
+    <!-- 카테고리별 시계열 추이 -->
+    <section class="grid-item category-timeseries">
+      <h3>카테고리별 시계열 추이</h3>
+      <div class="visualization-container">
+        <div class="gender-charts-container">
+          <div class="gender-chart">
+            <h4>여성</h4>
+            {% if female_category_chart %}
+            <img src="{{ url_for('static', filename=female_category_chart) }}" class="full-width-img">
+            {% else %}
+            <div class="no-data-message">데이터가 없습니다</div>
+            {% endif %}
+          </div>
+          <div class="gender-chart">
+            <h4>남성</h4>
+            {% if male_category_chart %}
+            <img src="{{ url_for('static', filename=male_category_chart) }}" class="full-width-img">
+            {% else %}
+            <div class="no-data-message">데이터가 없습니다</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 인기 브랜드 TOP 20 -->
+    <section class="grid-item popular-brands">
+      <h3>인기 브랜드 TOP 20</h3>
+      <div class="visualization-container">
+        <div class="brands-container">
+          <div class="popular-brands-grid">
+            {% for brand in popular_brands %}
+            <div class="brand-tile" data-brand-id="{{ brand.id }}">
+              <div class="brand-name">{{ brand.name }}</div>
+              <div class="brand-count">{{ brand.count }}</div>
+              
+              <!-- 브랜드 상세정보 (마우스 오버 시 표시) -->
+              <div class="brand-detail-popup">
+                <h5>{{ brand.name }} 상세정보</h5>
+                <div class="brand-detail-content">
+                  <div class="detail-row">
+                    <span class="detail-label">브랜드:</span>
+                    <span class="detail-value">{{ brand.name }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">카테고리:</span>
+                    <span class="detail-value">{{ brand.category }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">가격대:</span>
+                    <span class="detail-value">{{ brand.price_range }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">성별:</span>
+                    <span class="detail-value">{{ brand.gender }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  
+  <!-- 세 번째 행 (1열) -->
+  <div class="competitor-row">
+    <!-- 카테고리별(아이템) 가격대 분포 히트맵 -->
+    <section class="grid-item heatmap-container">
+      <h3>카테고리별 가격대 분포 히트맵</h3>
+      <div class="visualization-container">
+        <div class="price-heatmap">
+          {% if price_heatmap_chart %}
+          <img src="{{ url_for('static', filename=price_heatmap_chart) }}" class="full-width-img">
+          {% else %}
+          <div class="no-data-message">데이터가 없습니다</div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+/* 필터 바 스타일 */
+.time-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: var(--card-bg-color);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filter-option {
+  padding: 8px 15px;
+  background: var(--accent-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-color);
+}
+
+.filter-option.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* 날짜 필터 섹션 */
+.date-filter-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--card-bg-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.date-filter-section.hidden {
+  display: none;
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+}
+
+.date-range-picker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.date-input {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--accent-color);
+  color: var(--text-color);
+}
+
+.apply-date-btn {
+  padding: 8px 15px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apply-date-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* 그리드 레이아웃 */
+.competitor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: 20px;
+  padding: 20px;
+}
+
+.competitor-row {
+  display: grid;
+  gap: 20px;
+}
+
+.competitor-row:nth-child(1) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.competitor-row:nth-child(2) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.competitor-row:nth-child(3) {
+  grid-template-columns: 1fr;
+}
+
+.grid-item {
+  background: var(--card-bg-color);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: auto; /* 내용이 넘칠 경우 스크롤바 생성 */
+  height: 100%; /* 높이를 부모 컨테이너에 맞춤 */
+  display: flex;
+  flex-direction: column;
+}
+
+h3 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+h4 {
+  color: var(--text-color);
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+/* 상위 아이템 카드 스타일 */
+.top-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top-item-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: var(--accent-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.top-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.item-rank {
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-right: 10px;
+  font-size: 1.1rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+.item-name {
+  flex-grow: 1;
+  color: var(--text-color);
+}
+
+.item-count {
+  background: var(--primary-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* 인기 브랜드 그리드 */
+.popular-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.brand-tile {
+  background: var(--accent-color);
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.brand-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.brand-name {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.brand-count {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+/* 브랜드 상세 팝업 */
+.brand-detail-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  background: var(--card-bg-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  padding: 15px;
+  z-index: 10;
+  display: none;
+}
+
+.brand-tile:hover .brand-detail-popup {
+  display: block;
+}
+
+.brand-detail-content {
+  margin-top: 10px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.detail-label {
+  color: var(--secondary-text);
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--text-color);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* 카테고리 시계열 차트 */
+.gender-charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.gender-chart {
+  background: var(--accent-color);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+/* 그리드 아이템 내부의 시각화 컨테이너 */
+.grid-item .visualization-container {
+  flex: 1;
+  overflow: auto; /* 스크롤바 추가 */
+  min-height: 0; /* flexbox 내에서 축소 가능하도록 설정 */
+  width: 100%; /* 너비 100% 설정 */
+}
+
+/* 이미지 스타일 */
+.full-width-img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 1200px) {
+  .competitor-row:nth-child(1) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .competitor-row:nth-child(2) {
+    grid-template-columns: 1fr;
+  }
+  
+  .gender-charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .competitor-row:nth-child(1) {
+    grid-template-columns: 1fr;
+  }
+  
+  .time-filter-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    padding: 10px;
+  }
+  
+  .filter-option {
+    flex: 0 0 auto;
+  }
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  background: var(--accent-color);
+  border-radius: 8px;
+  color: var(--secondary-text);
+  font-size: 1.1rem;
+  font-style: italic;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // 페이지 로드 시 실행
+  document.addEventListener('DOMContentLoaded', function() {
+    // 현재 페이지 ID 설정
+    const pageId = 'musinsa';
+    
+    // 필터 초기화
+    initPeriodFilter(pageId);
+    
+    // 브랜드 호버 효과
+    document.querySelectorAll('.brand-tile').forEach(tile => {
+      tile.addEventListener('mouseenter', function() {
+        const popup = this.querySelector('.brand-detail-popup');
+        popup.style.display = 'block';
+      });
+      
+      tile.addEventListener('mouseleave', function() {
+        const popup = this.querySelector('.brand-detail-popup');
+        popup.style.display = 'none';
+      });
+    });
+  });
+</script>
+{% endblock %}

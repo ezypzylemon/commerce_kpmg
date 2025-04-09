@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}매거진 분석 - Fashion Trend Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/magazine.css') }}">
+{% endblock %}
+
+{% block content %}
+<h2>트렌드 분석 - 매거진 탭</h2>
+
+<!-- 기간 설정 컴포넌트 추가 -->
+{% with pageId = 'magazine' %}
+{% include 'period_filter.html' with context %}
+{% endwith %}
+
+<!-- 매거진 선택 필터 -->
+<div class="magazine-filter">
+    <h3>매거진 선택</h3>
+    <div class="filter-tags">
+        <span class="filter-tag {% if 'jentestore' in selected_magazines %}active{% endif %}" data-magazine="jentestore">jentestore <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'marieclaire' in selected_magazines %}active{% endif %}" data-magazine="marieclaire">marieclaire <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'vogue' in selected_magazines %}active{% endif %}" data-magazine="vogue">vogue <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'wkorea' in selected_magazines %}active{% endif %}" data-magazine="wkorea">wkorea <span class="remove">×</span></span>
+        <span class="filter-tag {% if 'wwdkorea' in selected_magazines %}active{% endif %}" data-magazine="wwdkorea">wwdkorea <span class="remove">×</span></span>
+    </div>
+</div>
+
+<!-- 매거진 탭 레이아웃 - 3열 2행 구조 -->
+<div class="dashboard-grid magazine-grid-3col">
+  <!-- 1행 1열: 매거진별 키워드 -->
+  <section class="grid-item">
+    <h3>매거진별 고유 키워드</h3>
+    
+    <!-- 공통 키워드 가이드 -->
+    <div class="common-keywords-guide">
+      <h3>공통 키워드</h3>
+      <div class="common-keywords-tags">
+        {% for keyword in common_keywords %}
+        <span class="common-keyword-tag">{{ keyword }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    
+    <div class="magazine-keywords-grid">
+        {% for magazine_name, data in magazine_data.items() %}
+        <div class="magazine-column magazine-{{ magazine_name|lower }}">
+            <h4>{{ magazine_name }}</h4>
+            <div class="keyword-list">
+                {% for i in range(1, 11) %}
+                <div class="keyword-item">
+                    <span class="keyword-rank">{{ i }}.</span>
+                    <span class="keyword-text">{{ data.keywords[i-1].keyword }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+  </section>
+  
+  <!-- 1행 2열: 키워드별 언급량 추세 -->
+  <section class="grid-item">
+    <h3>키워드별 언급량 추세</h3>
+    <div class="visualization-container">
+    {% if fig_trend %}
+      <div class="plotly-chart-container">
+        {{ fig_trend | safe }}
+      </div>
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+    </div>
+  </section>
+  
+  <!-- 1행 3열: 카드뉴스 섹션 -->
+  <section class="grid-item">
+    <h3>카드뉴스</h3>
+    
+    <!-- 매거진 필터 버튼 -->
+    <div class="magazine-filter-buttons">
+      <button class="magazine-filter-btn active" data-magazine="all">전체</button>
+      {% for magazine in selected_magazines %}
+      <button class="magazine-filter-btn" data-magazine="{{ magazine|lower }}">{{ magazine }}</button>
+      {% endfor %}
+    </div>
+    
+    <!-- 카드 뉴스 그리드 -->
+    <div class="magazine-card-grid">
+      {% for article in articles %}
+      <div class="magazine-card" data-magazine="{{ article.source|default('')|lower }}">
+        {% if article.image_url %}
+        <div class="magazine-card-image-container">
+          <img src="{{ article.image_url }}" alt="{{ article.title }}" class="magazine-card-image">
+        </div>
+        {% endif %}
+        <div class="magazine-card-content">
+          <h4 class="magazine-card-title">{{ article.title }}</h4>
+          <p class="magazine-card-date">{{ article.upload_date }}</p>
+          <p class="magazine-card-source">출처: {{ article.source }}</p>
+          {% if article.article_url %}
+          <a href="{{ article.article_url }}" target="_blank" class="magazine-card-link">자세히 보기</a>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="no-data">카드뉴스가 없습니다.</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2행 1열: TF-IDF 기반 워드클라우드 -->
+  <section class="grid-item">
+    <h3>TF-IDF 기반 워드클라우드</h3>
+    <div class="visualization-container">
+    {% if fig_wordcloud %}
+      <div class="plotly-chart-container">
+        {{ fig_wordcloud | safe }}
+      </div>
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+    </div>
+  </section>
+  
+  <!-- 2행 2열: 연관어 기반 네트워크 분석 -->
+  <section class="grid-item">
+    <h3>연관어 기반 네트워크 분석</h3>
+    <div class="visualization-container">
+    {% if fig_network %}
+      <div class="plotly-chart-container">
+        {{ fig_network | safe }}
+      </div>
+    {% else %}
+      <div class="no-data">데이터가 없습니다.</div>
+    {% endif %}
+    </div>
+  </section>
+  
+  <!-- 2행 3열: 카테고리별 분포 -->
+  <section class="grid-item">
+    <h3>카테고리별 분포</h3>
+    
+    <!-- 카테고리 선택 라디오 버튼 -->
+    <div class="category-selector">
+      <div class="radio-group">
+        <div class="category-label">카테고리:</div>
+        <label class="radio-label">
+          <input type="radio" name="category-type" value="item" checked>
+          <span class="radio-custom"></span>
+          아이템
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="category-type" value="color">
+          <span class="radio-custom"></span>
+          컬러
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="category-type" value="material">
+          <span class="radio-custom"></span>
+          소재
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="category-type" value="print">
+          <span class="radio-custom"></span>
+          프린트
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="category-type" value="style">
+          <span class="radio-custom"></span>
+          스타일
+        </label>
+      </div>
+      
+      <!-- 기간 표시 -->
+      <div class="period-display">
+        기간: <span id="current-period">{{ display_period|default(period) }}</span>
+      </div>
+    </div>
+    
+    <!-- 그래프 컨테이너 -->
+    <div class="visualization-container">
+      <div id="category-loading" class="loading">데이터를 불러오는 중...</div>
+      <div id="category-count-chart" class="chart-container"></div>
+      <div id="category-growth-chart" class="chart-container"></div>
+      <div class="chart-info">
+        <p>* 상위밀집선: 전체 언급량의 50%를 차지하는 카테고리 경계를 나타냅니다.</p>
+        <p>* 증감률(%): 이전 기간 대비 언급량 변화 비율입니다.</p>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Plotly.js 라이브러리 로드 -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="{{ url_for('static', filename='js/magazine.js') }}"></script>
+<script>
+// 현재 기간 표시 업데이트 함수
+function updatePeriodDisplay() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentPeriod = urlParams.get('period') || '7일';
+  const periodDisplay = document.getElementById('current-period');
+  
+  if (periodDisplay) {
+    if (currentPeriod === 'custom') {
+      const startDate = urlParams.get('start_date');
+      const endDate = urlParams.get('end_date');
+      if (startDate && endDate) {
+        periodDisplay.textContent = `${startDate} ~ ${endDate}`;
+      } else {
+        periodDisplay.textContent = '직접설정';
+      }
+    } else {
+      periodDisplay.textContent = currentPeriod;
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 현재 기간 표시 업데이트
+  updatePeriodDisplay();
+});
+</script>
+{% endblock %}

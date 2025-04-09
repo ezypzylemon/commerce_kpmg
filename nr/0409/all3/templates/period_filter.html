@@ -1,0 +1,28 @@
+<!-- 파일명: templates/period_filter.html -->
+<!-- 기간 설정 컴포넌트 시작 -->
+<div class="period-filter-container">
+  <!-- 드롭다운 형태의 필터 -->
+  <div class="period-dropdown">
+    <select id="period-filter-{{ pageId }}" class="period-select">
+      <option value="7일" {% if period == '7일' %}selected{% endif %}>7일</option>
+      <option value="1주일" {% if period == '1주일' %}selected{% endif %}>1주일</option>
+      <option value="2주" {% if period == '2주' %}selected{% endif %}>2주</option>
+      <option value="1개월" {% if period == '1개월' %}selected{% endif %}>1개월</option>
+      <option value="3개월" {% if period == '3개월' %}selected{% endif %}>3개월</option>
+      <option value="6개월" {% if period == '6개월' %}selected{% endif %}>6개월</option>
+      <option value="1년" {% if period == '1년' %}selected{% endif %}>1년</option>
+      <option value="custom" {% if period == 'custom' %}selected{% endif %}>직접설정</option>
+    </select>
+  </div>
+  
+  <!-- 직접설정 선택 시 나타나는 날짜 선택 필드 -->
+  <div id="custom-period-{{ pageId }}" class="custom-period-container {% if period != 'custom' %}hidden{% endif %}">
+    <div class="date-range-picker">
+      <input type="text" class="date-input custom-flatpickr" id="start-date-{{ pageId }}" placeholder="시작 날짜">
+      <span class="date-separator">~</span>
+      <input type="text" class="date-input custom-flatpickr" id="end-date-{{ pageId }}" placeholder="종료 날짜">
+      <button class="apply-date-btn" onclick="applyCustomDate('{{ pageId }}')">적용</button>
+    </div>
+  </div>
+</div>
+<!-- 기간 설정 컴포넌트 끝 --> 
