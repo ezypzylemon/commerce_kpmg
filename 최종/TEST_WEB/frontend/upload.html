@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문서 업로드 - 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 네비게이션 바 -->
+        <header class="top-nav">
+            <div class="nav-logo">
+                <img src="logo.png" alt="로고" class="logo-image">
+                <h1>관리 시스템</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html">문서 관리</a></li>
+                    <li><a href="calendar.html">일정</a></li>
+                </ul>
+            </nav>
+            <div class="nav-user">
+                <span class="user-profile">
+                    <img src="stk.png" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+        </header>
+        
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li class="active">
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-info">
+                <h3>OCR 처리 현황</h3>
+                <div class="status-card">
+                    <div class="status-header">
+                        <h4>오늘 처리한 문서</h4>
+                        <span class="status-value">7</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 70%;"></div>
+                    </div>
+                    <div class="status-footer">
+                        <span>일일 목표: 10</span>
+                        <span>70% 완료</span>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="status-header">
+                        <h4>처리 대기 중</h4>
+                        <span class="status-value">3</span>
+                    </div>
+                    <div class="status-label warning">
+                        <i class="fas fa-clock"></i>
+                        <span>추정 완료 시간: 15분</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>문서 업로드</h1>
+                <div class="header-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-outline active">단일 업로드</button>
+                        <button class="btn btn-outline">대량 업로드</button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 파일 업로드 섹션 -->
+            <div class="upload-container">
+                <div class="upload-area">
+                    <div class="upload-dropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>파일을 여기에 끌어다 놓으세요</h3>
+                        <p>또는</p>
+                        <button class="btn btn-primary">파일 선택</button>
+                        <input type="file" id="fileUpload" accept=".pdf" style="display: none;">
+                        <p class="upload-hint">지원 형식: PDF (최대 50MB)</p>
+                    </div>
+                    
+                    <div class="upload-options">
+                        <div class="option-group">
+                            <h3>문서 설정</h3>
+                            
+                            <div class="form-group">
+                                <label>문서 타입</label>
+                                <select class="form-select" name="docType" required>
+                                    <option value="" disabled selected>선택해주세요</option>
+                                    <option value="invoice">인보이스</option>
+                                    <option value="order">발주서</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>브랜드</label>
+                                <select class="form-select" name="brand">
+                                    <option value="자동 감지" selected>자동 감지</option>
+                                    <option value="TOGA VIRILIS">TOGA VIRILIS</option>
+                                    <option value="WILD DONKEY">WILD DONKEY</option>
+                                    <option value="ATHLETICS FTWR">ATHLETICS FTWR</option>
+                                    <option value="BASERANGE">BASERANGE</option>
+                                    <option value="NOU NOU">NOU NOU</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>시즌</label>
+                                <select class="form-select" name="season">
+                                    <option value="2024SS">2024SS</option>
+                                    <option value="2024FW">2024FW</option>
+                                    <option value="2025SS" selected>2025SS</option>
+                                    <option value="2025FW">2025FW</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="option-group">
+                            <h3>OCR 설정</h3>
+                            
+                            <div class="form-group">
+                                <label>OCR 언어</label>
+                                <select class="form-select" name="ocrLang">
+                                    <option value="자동 감지" selected>자동 감지</option>
+                                    <option value="한국어">한국어</option>
+                                    <option value="영어">영어</option>
+                                    <option value="일본어">일본어</option>
+                                    <option value="중국어">중국어</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group checkbox">
+                                <input type="checkbox" id="enhance-tables" checked>
+                                <label for="enhance-tables">표 인식 향상</label>
+                            </div>
+                            
+                            <div class="form-group checkbox">
+                                <input type="checkbox" id="extract-fields" checked>
+                                <label for="extract-fields">주요 필드 자동 추출</label>
+                            </div>
+                            
+                            <div class="form-group checkbox">
+                                <input type="checkbox" id="auto-compare">
+                                <label for="auto-compare">기존 문서와 자동 비교</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 업로드 상태 표시 -->
+                <div id="uploadStatus" class="upload-status-container" style="display: none;">
+                    <div class="upload-status">
+                        <div class="status-icon">
+                            <i id="uploadStatusIcon" class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <div class="status-message">
+                            <p id="uploadStatusMessage">문서를 처리하고 있습니다...</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-actions">
+                    <button class="btn btn-primary btn-lg"><i class="fas fa-upload"></i> 업로드 및 OCR 시작</button>
+                    <button class="btn btn-outline btn-lg"><i class="fas fa-save"></i> 설정 저장</button>
+                </div>
+            </div>
+            
+            <!-- 결과 미리보기 -->
+            <div id="uploadResult" class="result-container" style="display: none;">
+                <div class="section-header">
+                    <h2>처리 결과</h2>
+                    <div class="section-actions">
+                        <button id="downloadExcelBtn" class="btn btn-primary"><i class="fas fa-download"></i> 엑셀 다운로드</button>
+                    </div>
+                </div>
+                <div id="resultPreview" class="result-preview"></div>
+            </div>
+            
+            <!-- 업로드 히스토리 -->
+            <div class="upload-history">
+                <div class="section-header">
+                    <h2>최근 업로드</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-sm" id="refreshHistory"><i class="fas fa-sync-alt"></i> 새로고침</button>
+                        <button class="btn btn-sm"><i class="fas fa-filter"></i> 필터</button>
+                    </div>
+                </div>
+                
+                <div class="history-items">
+                    <div class="history-item">
+                        <div class="history-icon processing">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <h3>TOGA_Invoice_03112025.pdf</h3>
+                                <span class="status-badge processing">처리 중</span>
+                            </div>
+                            <div class="history-details">
+                                <span><i class="fas fa-clock"></i> 방금 전</span>
+                                <span><i class="fas fa-file-invoice"></i> 인보이스</span>
+                                <span><i class="fas fa-tag"></i> TOGA VIRILIS</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 45%;"></div>
+                            </div>
+                            <div class="progress-status">
+                                <span>OCR 처리 중...</span>
+                                <span>45%</span>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn btn-icon"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div class="history-icon success">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <h3>WILD_PO_03102025.pdf</h3>
+                                <span class="status-badge complete">완료</span>
+                            </div>
+                            <div class="history-details">
+                                <span><i class="fas fa-clock"></i> 20분 전</span>
+                                <span><i class="fas fa-file-contract"></i> 발주서</span>
+                                <span><i class="fas fa-tag"></i> WILD DONKEY</span>
+                                <span><i class="fas fa-chart-bar"></i> 32개 항목</span>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn btn-icon"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-icon"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div class="history-icon error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <h3>ATHLETICS_Invoice_03102025.pdf</h3>
+                                <span class="status-badge error">오류</span>
+                            </div>
+                            <div class="history-details">
+                                <span><i class="fas fa-clock"></i> 1시간 전</span>
+                                <span><i class="fas fa-file-invoice"></i> 인보이스</span>
+                                <span><i class="fas fa-tag"></i> ATHLETICS FTWR</span>
+                            </div>
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>파일 손상: PDF를 읽을 수 없습니다.</span>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn btn-icon"><i class="fas fa-redo"></i></button>
+                            <button class="btn btn-icon"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="history-item">
+                        <div class="history-icon success">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-header">
+                                <h3>NOU_Contract_03092025.pdf</h3>
+                                <span class="status-badge complete">완료</span>
+                            </div>
+                            <div class="history-details">
+                                <span><i class="fas fa-clock"></i> 1일 전</span>
+                                <span><i class="fas fa-file-contract"></i> 계약서</span>
+                                <span><i class="fas fa-tag"></i> NOU NOU</span>
+                                <span><i class="fas fa-chart-bar"></i> 15개 항목</span>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn btn-icon"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-icon"><i class="fas fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="history-footer">
+                    <button class="btn btn-outline btn-block" id="viewAllHistory">모든 업로드 기록 보기</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/upload.js"></script>
+</body>
+</html>

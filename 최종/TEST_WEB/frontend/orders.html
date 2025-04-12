@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>발주 및 계약 관리 - 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 네비게이션 바 -->
+        <header class="top-nav">
+            <div class="nav-logo">
+                <img src="logo.png" alt="로고" class="logo-image">
+                <h1>관리 시스템</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html">문서 관리</a></li>
+                    <li><a href="calendar.html">일정</a></li>
+                </ul>
+            </nav>
+            <div class="nav-user">
+                <span class="user-profile">
+                    <img src="stk.png" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li class="active">
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-filters">
+                <h3>필터</h3>
+                
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" value="2025-02-11">
+                        <span>~</span>
+                        <input type="date" class="date-input" value="2025-03-11">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>문서 타입</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-all" checked>
+                            <label for="doc-all">모든 문서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-po">
+                            <label for="doc-po">발주서</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-invoice">
+                            <label for="doc-invoice">인보이스</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="doc-contract">
+                            <label for="doc-contract">계약서</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>브랜드</label>
+                    <select class="form-select" name="brand">
+                        <option selected>모든 브랜드</option>
+                        <option>TOGA VIRILIS</option>
+                        <option>WILD DONKEY</option>
+                        <option>ATHLETICS FTWR</option>
+                        <option>BASERANGE</option>
+                        <option>NOU NOU</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary btn-block">필터 적용</button>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>발주 및 계약 관리</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="문서 검색...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> 새 문서</button>
+                </div>
+            </header>
+            
+            <!-- 주요 지표 카드 -->
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 수</h3>
+                        <p class="metric-value" id="totalOrders">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>계약 건수</h3>
+                        <p class="metric-value" id="totalContracts">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>데이터 불일치</h3>
+                        <p class="metric-value" id="totalMismatches">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 금액</h3>
+                        <p class="metric-value" id="totalAmount">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 문서 관리 섹션 -->
+            <div class="document-management">
+                <div class="tabs">
+                    <button class="tab-btn active">모든 문서</button>
+                    <button class="tab-btn">발주서</button>
+                    <button class="tab-btn">인보이스</button>
+                    <button class="tab-btn">계약서</button>
+                </div>
+                
+                <!-- 문서 그리드 (JavaScript로 채워짐) -->
+                <div class="document-grid">
+                    <div class="loading-indicator">
+                        <i class="fas fa-spinner fa-spin"></i> 문서 로드 중...
+                    </div>
+                </div>
+                
+                <!-- 페이지네이션 -->
+                <div class="pagination">
+                    <button class="btn btn-sm"><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-sm active">1</button>
+                    <button class="btn btn-sm">2</button>
+                    <button class="btn btn-sm">3</button>
+                    <span>...</span>
+                    <button class="btn btn-sm">8</button>
+                    <button class="btn btn-sm"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            
+            <!-- 문서 상세 보기 섹션 -->
+            <div class="document-detail" style="display: none;">
+                <div class="section-header">
+                    <h2>문서 상세 정보</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> 편집</button>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-download"></i> 다운로드</button>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-print"></i> 인쇄</button>
+                    </div>
+                </div>
+                
+                <div class="document-viewer">
+                    <div class="document-info-panel">
+                        <div class="doc-preview">
+                            <!-- 이미지 URL 수정 -->
+                            <img src="https://placehold.co/300x400/gray/white?text=PDF+Preview" alt="문서 미리보기">
+                            <div class="preview-actions">
+                                <button class="btn btn-icon"><i class="fas fa-search-plus"></i></button>
+                                <button class="btn btn-icon"><i class="fas fa-search-minus"></i></button>
+                                <button class="btn btn-icon"><i class="fas fa-expand"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="doc-details">
+                            <div class="detail-group">
+                                <h3>문서 정보</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">문서 ID:</span>
+                                    <span class="detail-value">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">문서 타입:</span>
+                                    <span class="detail-value">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">생성일:</span>
+                                    <span class="detail-value">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">브랜드:</span>
+                                    <span class="detail-value">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">시즌:</span>
+                                    <span class="detail-value">-</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <h3>품목 정보</h3>
+                                <table class="detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>품목명</th>
+                                            <th>수량</th>
+                                            <th>단가</th>
+                                            <th>합계</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 품목 데이터는 JavaScript로 채워짐 -->
+                                        <tr>
+                                            <td colspan="4">품목 정보가 없습니다.</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3">총 금액</td>
+                                            <td id="itemTotalAmount">₩0</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <h3>데이터 일치 상태</h3>
+                                <div id="matchStatus">
+                                    <!-- 일치 상태 정보는 JavaScript로 채워짐 -->
+                                    <div class="info-message">문서를 선택하면 일치 상태 정보가 표시됩니다.</div>
+                                </div>
+                                
+                                <div class="comparison-actions" style="margin-top: 15px;">
+                                    <button class="btn btn-primary btn-sm" id="compareButton"><i class="fas fa-exchange-alt"></i> 다른 문서와 비교</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 문서 비교 모달 -->
+    <div class="modal" id="compareModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>문서 비교</h3>
+                <button class="btn btn-icon modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>비교할 문서 선택</label>
+                    <select class="form-control" id="compareDocSelect">
+                        <option value="">선택하세요</option>
+                        <!-- 옵션은 JavaScript로 채워짐 -->
+                    </select>
+                </div>
+                <div id="compareResult" style="margin-top: 20px; display: none;">
+                    <!-- 비교 결과는 JavaScript로 채워짐 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelCompareBtn">취소</button>
+                <button class="btn btn-primary" id="startCompareBtn">비교 시작</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/orders.js"></script>
+</body>
+</html>

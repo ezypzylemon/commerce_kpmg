@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 네비게이션 바 -->
+        <header class="top-nav">
+            <div class="nav-logo">
+                <img src="logo.png" alt="로고" class="logo-image">
+                <h1>관리 시스템</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html">문서 관리</a></li>
+                    <li><a href="calendar.html">일정</a></li>
+                </ul>
+            </nav>
+            <div class="nav-user">
+                <span class="user-profile">
+                    <img src="stk.png" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li>
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-filters">
+                <h3>필터</h3>
+                
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" id="startDate">
+                        <span>~</span>
+                        <input type="date" class="date-input" id="endDate">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>브랜드</label>
+                    <div class="checkbox-list" id="brandCheckboxes">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-all" checked>
+                            <label for="brand-all">모든 브랜드</label>
+                        </div>
+                        <!-- 브랜드 체크박스는 JavaScript로 동적 생성 -->
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>상태</label>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-all" checked>
+                            <label for="status-all">모든 상태</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-complete">
+                            <label for="status-complete">완료</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-review">
+                            <label for="status-review">검토 필요</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="status-progress">
+                            <label for="status-progress">처리 중</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary btn-block" id="applyFilter">필터 적용</button>
+            </div>
+            
+            <div class="sidebar-actions">
+                <h3>빠른 액션</h3>
+                <button class="btn btn-outline btn-block" id="newDocumentBtn"><i class="fas fa-upload"></i> 새 문서 업로드</button>
+                <button class="btn btn-outline btn-block" id="reprocessOcrBtn"><i class="fas fa-sync-alt"></i> OCR 재처리</button>
+                <button class="btn btn-outline btn-block" id="generateReportBtn"><i class="fas fa-file-alt"></i> 보고서 생성</button>
+                <button class="btn btn-outline btn-block" id="compareDocumentsBtn"><i class="fas fa-robot"></i> AI 문서 비교</button>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>메인 대시보드</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="브랜드 또는 시즌 검색...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-icon"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-icon"><i class="fas fa-question-circle"></i></button>
+                </div>
+            </header>
+            
+            <!-- 주요 지표 카드 -->
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 문서 수</h3>
+                        <p class="metric-value" id="totalDocumentsCount">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>평균 일치율</h3>
+                        <p class="metric-value" id="averageMatchRate">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>검토 필요</h3>
+                        <p class="metric-value" id="reviewNeededCount">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon success">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>이번 주 처리</h3>
+                        <p class="metric-value" id="processedThisWeek">-</p>
+                        <span class="metric-delta" id="processedDelta">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 차트 섹션 -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>전체 일치/불일치 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <div class="pie-chart-container">
+                            <div class="pie-chart">
+                                <canvas id="matchRateChart"></canvas>
+                            </div>
+                            <div class="pie-legend" id="matchRateLegend">
+                                <!-- JavaScript로 생성될 범례 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>알림</h2>
+                    </div>
+                    <div class="chart-body">
+                        <div class="alerts-list" id="alertsList">
+                            <!-- JavaScript로 동적 생성될 알림 -->
+                            <div class="loading-indicator">
+                                <i class="fas fa-spinner fa-spin"></i> 알림 로드 중...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 최근 문서 -->
+            <div class="recent-documents">
+                <div class="section-header">
+                    <h2>최근 문서 비교 결과</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-sm" id="filterResultsBtn"><i class="fas fa-filter"></i> 필터</button>
+                        <button class="btn btn-sm" id="exportResultsBtn"><i class="fas fa-download"></i> 내보내기</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <!-- HTML 테이블 구조 개선 -->
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>비교 날짜</th>
+                                <th>문서 정보</th>
+                                <th>브랜드/시즌</th>
+                                <th>일치율</th>
+                                <th>상태</th>
+                                <th>액션</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonResultsTable">
+                            <!-- JavaScript로 동적 생성될 내용 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" id="documentsPagination">
+                    <!-- JavaScript로 동적 생성될 페이지네이션 -->
+                </div>
+            </div>
+            
+            <!-- 일치율 추이 -->
+            <div class="trend-chart">
+                <div class="section-header">
+                    <h2>일치율 추이 (최근 30일)</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-sm" id="exportTrendBtn"><i class="fas fa-download"></i> 내보내기</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container full-width">
+                    <div class="chart-body">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

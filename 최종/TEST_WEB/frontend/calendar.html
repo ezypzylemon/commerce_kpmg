@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>일정 관리</title>
+   <link rel="stylesheet" href="css/style.css">
+   <link rel="stylesheet" href="css/calendar_style.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+   <div class="container">
+       <!-- 상단 네비게이션 바 -->
+       <header class="top-nav">
+            <div class="nav-logo">
+                <img src="logo.png" alt="로고" class="logo-image">
+                <h1>관리 시스템</h1>
+            </div>
+           <nav class="main-nav">
+               <ul>
+                   <li><a href="dashboard.html">문서 관리</a></li>
+                   <li class="active"><a href="calendar.html">일정</a></li>
+               </ul>
+           </nav>
+           <div class="nav-user">
+               <span class="user-profile">
+                   <img src="stk.png" alt="프로필">
+                   <span>관리자</span>
+               </span>
+           </div>
+       </header>
+
+       <main class="main-content full-width">
+           <header class="content-header">
+               <h1>일정 관리</h1>
+               <div class="header-actions">
+                   <div class="search-box">
+                       <input type="text" id="searchEvent" placeholder="일정 검색...">
+                       <i class="fas fa-search"></i>
+                   </div>
+                   <button class="btn btn-primary" id="addEventBtn"><i class="fas fa-plus"></i> 새 일정</button>
+               </div>
+           </header>
+
+           <div class="metrics-cards">
+               <div class="metric-card">
+                   <div class="metric-icon">
+                       <i class="fas fa-user-tie"></i>
+                   </div>
+                   <h3>총 거래처 수</h3>
+                   <p id="total-clients" class="metric-value">-</p>
+               </div>
+               <div class="metric-card">
+                   <div class="metric-icon">
+                       <i class="fas fa-handshake"></i>
+                   </div>
+                   <h3>진행 중 거래</h3>
+                   <p id="in-progress-count" class="metric-value">-</p>
+               </div>
+               <div class="metric-card">
+                   <div class="metric-icon success">
+                       <i class="fas fa-check"></i>
+                   </div>
+                   <h3>완료된 거래</h3>
+                   <p id="completed-count" class="metric-value">-</p>
+               </div>
+               <div class="metric-card">
+                   <div class="metric-icon">
+                       <i class="fas fa-calendar-alt"></i>
+                   </div>
+                   <h3>오늘의 일정</h3>
+                   <p id="today-events" class="metric-value">-</p>
+               </div>
+           </div>
+
+           <div class="calendar-options">
+               <div class="calendar-view-options">
+                   <button class="btn btn-sm active" id="monthViewBtn">월간</button>
+                   <button class="btn btn-sm" id="weekViewBtn">주간</button>
+                   <button class="btn btn-sm" id="dayViewBtn">일간</button>
+               </div>
+               
+               <div class="calendar-filter-options">
+                   <div class="filter-item">
+                       <input type="checkbox" id="filter-personal" checked>
+                       <label for="filter-personal" class="filter-label personal">개인 일정</label>
+                   </div>
+                   <div class="filter-item">
+                       <input type="checkbox" id="filter-business" checked>
+                       <label for="filter-business" class="filter-label business">업무 일정</label>
+                   </div>
+                   <div class="filter-item">
+                       <input type="checkbox" id="filter-shipping" checked>
+                       <label for="filter-shipping" class="filter-label shipping">선적 일정</label>
+                   </div>
+               </div>
+           </div>
+
+           <div class="calendar-section">
+               <div class="calendar-header">
+                   <div class="calendar-title">
+                       <h2>일정 관리</h2>
+                   </div>
+                   <div class="calendar-controls">
+                       <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                       <span id="currentMonth">2025년 3월</span>
+                       <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                   </div>
+               </div>
+               <div class="calendar-grid">
+                   <div class="calendar-days-header">
+                       <div>일</div>
+                       <div>월</div>
+                       <div>화</div>
+                       <div>수</div>
+                       <div>목</div>
+                       <div>금</div>
+                       <div>토</div>
+                   </div>
+                   <div class="calendar-days" id="calendar-days">
+                       <div class="loading-indicator">
+                           <i class="fas fa-spinner fa-spin"></i> 캘린더 로딩 중...
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </main>
+   </div>
+
+   <!-- 일정 추가 모달 -->
+   <div class="modal" id="eventModal">
+       <div class="modal-overlay"></div>
+       <div class="modal-container">
+           <div class="modal-header">
+               <h3 id="eventModalTitle">새 일정 추가</h3>
+               <button class="btn btn-icon modal-close"><i class="fas fa-times"></i></button>
+           </div>
+           <div class="modal-body">
+               <form id="eventForm">
+                   <div class="form-group">
+                       <label for="eventTitle">일정 제목</label>
+                       <input type="text" id="eventTitle" class="form-control" placeholder="일정 제목을 입력하세요" required>
+                   </div>
+                   
+                   <div class="form-group">
+                       <label for="eventDate">날짜</label>
+                       <input type="date" id="eventDate" class="form-control" required>
+                   </div>
+                   
+                   <div class="form-row">
+                       <div class="form-group half">
+                           <label for="eventStartTime">시작 시간</label>
+                           <input type="time" id="eventStartTime" class="form-control">
+                       </div>
+                       <div class="form-group half">
+                           <label for="eventEndTime">종료 시간</label>
+                           <input type="time" id="eventEndTime" class="form-control">
+                       </div>
+                   </div>
+                   
+                   <div class="form-group">
+                       <label for="eventCategory">카테고리</label>
+                       <select id="eventCategory" class="form-control">
+                           <option value="personal">개인 일정</option>
+                           <option value="business">업무 일정</option>
+                           <option value="shipping">선적 일정</option>
+                       </select>
+                   </div>
+                   
+                   <div class="form-group">
+                       <label for="eventDescription">설명</label>
+                       <textarea id="eventDescription" class="form-control" rows="3" placeholder="일정에 대한 상세 설명"></textarea>
+                   </div>
+                   
+                   <div class="form-group checkbox">
+                       <input type="checkbox" id="eventRepeat">
+                       <label for="eventRepeat">반복 일정</label>
+                   </div>
+                   
+                   <div id="repeatOptions" style="display: none;">
+                       <div class="form-group">
+                           <label for="repeatType">반복 주기</label>
+                           <select id="repeatType" class="form-control">
+                               <option value="daily">매일</option>
+                               <option value="weekly">매주</option>
+                               <option value="monthly">매월</option>
+                           </select>
+                       </div>
+                       
+                       <div class="form-group">
+                           <label for="repeatUntil">반복 종료일</label>
+                           <input type="date" id="repeatUntil" class="form-control">
+                       </div>
+                   </div>
+               </form>
+           </div>
+           <div class="modal-footer">
+               <button class="btn btn-outline" id="cancelEventBtn">취소</button>
+               <button class="btn btn-primary" id="saveEventBtn">저장</button>
+           </div>
+       </div>
+   </div>
+
+   <!-- 일정 상세 보기 모달 -->
+   <div class="modal" id="eventDetailModal">
+       <div class="modal-overlay"></div>
+       <div class="modal-container">
+           <div class="modal-header">
+               <h3 id="detailModalTitle">일정 상세 정보</h3>
+               <button class="btn btn-icon modal-close"><i class="fas fa-times"></i></button>
+           </div>
+           <div class="modal-body">
+               <div class="event-detail-content">
+                   <div class="event-detail-header">
+                       <span id="detailEventCategory" class="event-category">업무 일정</span>
+                       <h2 id="detailEventTitle">일정 제목</h2>
+                   </div>
+                   
+                   <div class="event-detail-info">
+                       <div class="detail-item">
+                           <i class="fas fa-calendar-day"></i>
+                           <span id="detailEventDate">2025년 3월 15일</span>
+                       </div>
+                       <div class="detail-item">
+                           <i class="fas fa-clock"></i>
+                           <span id="detailEventTime">09:00 - 10:30</span>
+                       </div>
+                       <div class="detail-item">
+                           <i class="fas fa-repeat"></i>
+                           <span id="detailEventRepeat">반복 없음</span>
+                       </div>
+                   </div>
+                   
+                   <div class="event-detail-description">
+                       <h4>설명</h4>
+                       <p id="detailEventDescription">일정에 대한 상세 설명입니다.</p>
+                   </div>
+               </div>
+           </div>
+           <div class="modal-footer">
+               <button class="btn btn-outline" id="deleteEventBtn"><i class="fas fa-trash"></i> 삭제</button>
+               <button class="btn btn-primary" id="editEventBtn"><i class="fas fa-edit"></i> 수정</button>
+           </div>
+       </div>
+   </div>
+
+   <script src="js/calendar.js"></script>
+</body>
+
+</html>

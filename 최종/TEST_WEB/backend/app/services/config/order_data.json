@@ -1,0 +1,504 @@
+{
+    "document_bounds": {
+        "start_x": 1,
+        "start_y": 5,
+        "end_x": 3505,
+        "end_y": 2480
+    },
+    "header_fields": {
+        "date": {
+            "x": 661,
+            "y": 512,
+            "width": 218,
+            "height": 72
+        },
+        "season": {
+            "x": 974,
+            "y": 512,
+            "width": 191,
+            "height": 75
+        },
+        "brand": {
+            "x": 1381,
+            "y": 516,
+            "width": 281,
+            "height": 72
+        }
+    },
+    "table_headers": {
+        "item_code": {
+            "x": 90,
+            "y": 731,
+            "width": 141,
+            "height": 51
+        },
+        "model": {
+            "x": 309,
+            "y": 727,
+            "width": 115,
+            "height": 56
+        },
+        "unit_price": {
+            "x": 843,
+            "y": 733,
+            "width": 139,
+            "height": 72
+        },
+        "disc_prcnt": {
+            "x": 1142,
+            "y": 734,
+            "width": 118,
+            "height": 68
+        },
+        "shipping_window": {
+            "x": 1347,
+            "y": 734,
+            "width": 88,
+            "height": 88
+        }
+    },
+    "size_headers": {
+        "390": {
+            "x": 1461,
+            "y": 781,
+            "width": 81,
+            "height": 51
+        },
+        "400": {
+            "x": 1559,
+            "y": 777,
+            "width": 70,
+            "height": 56
+        },
+        "410": {
+            "x": 1651,
+            "y": 778,
+            "width": 66,
+            "height": 51
+        },
+        "420": {
+            "x": 1739,
+            "y": 779,
+            "width": 70,
+            "height": 56
+        },
+        "430": {
+            "x": 1828,
+            "y": 781,
+            "width": 69,
+            "height": 47
+        },
+        "440": {
+            "x": 1919,
+            "y": 775,
+            "width": 69,
+            "height": 57
+        },
+        "total": {
+            "x": 2015,
+            "y": 777,
+            "width": 77,
+            "height": 47
+        }
+    },
+    "product_rows": [
+        {
+            "item_code": {
+                "x": 81,
+                "y": 858,
+                "width": 127,
+                "height": 66
+            },
+            "model": {
+                "x": 250,
+                "y": 860,
+                "width": 181,
+                "height": 70
+            },
+            "unit_price": {
+                "x": 703,
+                "y": 859,
+                "width": 104,
+                "height": 60
+            },
+            "disc_prcnt": {
+                "x": 856,
+                "y": 856,
+                "width": 90,
+                "height": 76
+            },
+            "shipping_start": {
+                "x": 1000,
+                "y": 854,
+                "width": 109,
+                "height": 73
+            },
+            "shipping_end": {
+                "x": 1171,
+                "y": 855,
+                "width": 115,
+                "height": 71
+            },
+            "total_price": {
+                "x": 1338,
+                "y": 859,
+                "width": 94,
+                "height": 60
+            },
+            "sizes": {
+                "390": {
+                    "x": 1478,
+                    "y": 860,
+                    "width": 86,
+                    "height": 63
+                },
+                "400": {
+                    "x": 1574,
+                    "y": 860,
+                    "width": 47,
+                    "height": 47
+                },
+                "410": {
+                    "x": 1662,
+                    "y": 864,
+                    "width": 51,
+                    "height": 42
+                },
+                "420": {
+                    "x": 1751,
+                    "y": 861,
+                    "width": 44,
+                    "height": 41
+                },
+                "430": {
+                    "x": 1837,
+                    "y": 861,
+                    "width": 51,
+                    "height": 46
+                },
+                "440": {
+                    "x": 1932,
+                    "y": 866,
+                    "width": 45,
+                    "height": 44
+                },
+                "total": {
+                    "x": 2029,
+                    "y": 861,
+                    "width": 59,
+                    "height": 55
+                }
+            }
+        },
+        {
+            "item_code": {
+                "x": 83,
+                "y": 991,
+                "width": 130,
+                "height": 69
+            },
+            "model": {
+                "x": 249,
+                "y": 989,
+                "width": 174,
+                "height": 76
+            },
+            "unit_price": {
+                "x": 704,
+                "y": 993,
+                "width": 97,
+                "height": 56
+            },
+            "disc_prcnt": {
+                "x": 860,
+                "y": 991,
+                "width": 80,
+                "height": 53
+            },
+            "shipping_start": {
+                "x": 1001,
+                "y": 988,
+                "width": 112,
+                "height": 59
+            },
+            "shipping_end": {
+                "x": 1171,
+                "y": 987,
+                "width": 99,
+                "height": 59
+            },
+            "total_price": {
+                "x": 1337,
+                "y": 992,
+                "width": 92,
+                "height": 54
+            },
+            "sizes": {
+                "390": {
+                    "x": 1480,
+                    "y": 990,
+                    "width": 57,
+                    "height": 49
+                },
+                "400": {
+                    "x": 1570,
+                    "y": 997,
+                    "width": 53,
+                    "height": 48
+                },
+                "410": {
+                    "x": 1661,
+                    "y": 998,
+                    "width": 47,
+                    "height": 45
+                },
+                "420": {
+                    "x": 1755,
+                    "y": 994,
+                    "width": 44,
+                    "height": 49
+                },
+                "430": {
+                    "x": 1846,
+                    "y": 990,
+                    "width": 43,
+                    "height": 54
+                },
+                "440": {
+                    "x": 1931,
+                    "y": 995,
+                    "width": 46,
+                    "height": 44
+                },
+                "total": {
+                    "x": 2024,
+                    "y": 989,
+                    "width": 68,
+                    "height": 58
+                }
+            }
+        },
+        {
+            "item_code": {
+                "x": 83,
+                "y": 1121,
+                "width": 132,
+                "height": 64
+            },
+            "model": {
+                "x": 255,
+                "y": 1120,
+                "width": 155,
+                "height": 69
+            },
+            "unit_price": {
+                "x": 713,
+                "y": 1120,
+                "width": 83,
+                "height": 47
+            },
+            "disc_prcnt": {
+                "x": 869,
+                "y": 1120,
+                "width": 62,
+                "height": 44
+            },
+            "shipping_start": {
+                "x": 1000,
+                "y": 1120,
+                "width": 117,
+                "height": 45
+            },
+            "shipping_end": {
+                "x": 1166,
+                "y": 1120,
+                "width": 120,
+                "height": 44
+            },
+            "total_price": {
+                "x": 1339,
+                "y": 1121,
+                "width": 97,
+                "height": 36
+            },
+            "sizes": {
+                "390": {
+                    "x": 1487,
+                    "y": 1123,
+                    "width": 39,
+                    "height": 42
+                },
+                "400": {
+                    "x": 1575,
+                    "y": 1123,
+                    "width": 44,
+                    "height": 46
+                },
+                "410": {
+                    "x": 1658,
+                    "y": 1122,
+                    "width": 50,
+                    "height": 42
+                },
+                "420": {
+                    "x": 1754,
+                    "y": 1119,
+                    "width": 42,
+                    "height": 47
+                },
+                "430": {
+                    "x": 1847,
+                    "y": 1120,
+                    "width": 43,
+                    "height": 45
+                },
+                "440": {
+                    "x": 1937,
+                    "y": 1124,
+                    "width": 41,
+                    "height": 40
+                },
+                "total": {
+                    "x": 2041,
+                    "y": 1123,
+                    "width": 45,
+                    "height": 52
+                }
+            }
+        },
+        {
+            "item_code": {
+                "x": 84,
+                "y": 1251,
+                "width": 131,
+                "height": 66
+            },
+            "model": {
+                "x": 258,
+                "y": 1253,
+                "width": 156,
+                "height": 59
+            },
+            "unit_price": {
+                "x": 704,
+                "y": 1252,
+                "width": 88,
+                "height": 39
+            },
+            "disc_prcnt": {
+                "x": 864,
+                "y": 1251,
+                "width": 72,
+                "height": 37
+            },
+            "shipping_start": {
+                "x": 1000,
+                "y": 1254,
+                "width": 108,
+                "height": 38
+            },
+            "shipping_end": {
+                "x": 1170,
+                "y": 1252,
+                "width": 96,
+                "height": 33
+            },
+            "total_price": {
+                "x": 1340,
+                "y": 1256,
+                "width": 81,
+                "height": 34
+            },
+            "sizes": {
+                "390": {
+                    "x": 1479,
+                    "y": 1251,
+                    "width": 52,
+                    "height": 42
+                },
+                "400": {
+                    "x": 1571,
+                    "y": 1257,
+                    "width": 41,
+                    "height": 37
+                },
+                "410": {
+                    "x": 1655,
+                    "y": 1251,
+                    "width": 53,
+                    "height": 43
+                },
+                "420": {
+                    "x": 1751,
+                    "y": 1257,
+                    "width": 47,
+                    "height": 37
+                },
+                "430": {
+                    "x": 1839,
+                    "y": 1251,
+                    "width": 50,
+                    "height": 50
+                },
+                "440": {
+                    "x": 1931,
+                    "y": 1255,
+                    "width": 43,
+                    "height": 44
+                },
+                "total": {
+                    "x": 2036,
+                    "y": 1257,
+                    "width": 49,
+                    "height": 40
+                }
+            }
+        }
+    ],
+    "total_row": {
+        "sizes": {
+            "390": {
+                "x": 1484,
+                "y": 1375,
+                "width": 43,
+                "height": 49
+            },
+            "400": {
+                "x": 1568,
+                "y": 1384,
+                "width": 50,
+                "height": 42
+            },
+            "410": {
+                "x": 1667,
+                "y": 1382,
+                "width": 37,
+                "height": 40
+            },
+            "420": {
+                "x": 1759,
+                "y": 1377,
+                "width": 34,
+                "height": 47
+            },
+            "430": {
+                "x": 1841,
+                "y": 1380,
+                "width": 43,
+                "height": 44
+            },
+            "440": {
+                "x": 1935,
+                "y": 1381,
+                "width": 31,
+                "height": 41
+            },
+            "total": {
+                "x": 2033,
+                "y": 1375,
+                "width": 57,
+                "height": 47
+            }
+        }
+    }
+}

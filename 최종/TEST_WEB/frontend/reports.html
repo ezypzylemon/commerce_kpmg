@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>브랜드 및 품목별 보고서 - 문서 관리 시스템</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 상단 네비게이션 바 -->
+        <header class="top-nav">
+            <div class="nav-logo">
+                <img src="logo.png" alt="로고" class="logo-image">
+                <h1>관리 시스템</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html">문서 관리</a></li>
+                    <li><a href="calendar.html">일정</a></li>
+                </ul>
+            </nav>
+            <div class="nav-user">
+                <span class="user-profile">
+                    <img src="stk.png" alt="프로필">
+                    <span>관리자</span>
+                </span>
+            </div>
+        </header>
+        
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="dashboard.html"><i class="fas fa-chart-line"></i> 메인 대시보드</a>
+                    </li>
+                    <li>
+                        <a href="orders.html"><i class="fas fa-file-contract"></i> 발주 및 계약 관리</a>
+                    </li>
+                    <li class="active">
+                        <a href="reports.html"><i class="fas fa-chart-bar"></i> 브랜드 및 품목별 보고서</a>
+                    </li>
+                    <li>
+                        <a href="upload.html"><i class="fas fa-upload"></i> 문서 업로드</a>
+                    </li>
+                    <li>
+                        <a href="settings.html"><i class="fas fa-cog"></i> 설정</a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-filters">
+                <h3>보고서 필터</h3>
+                
+                <div class="filter-group">
+                    <label>날짜 범위</label>
+                    <div class="date-inputs">
+                        <input type="date" class="date-input" id="reportStartDate">
+                        <span>~</span>
+                        <input type="date" class="date-input" id="reportEndDate">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>보고서 유형</label>
+                    <select class="form-select" id="reportType">
+                        <option selected>모든 보고서</option>
+                        <option>브랜드별 분석</option>
+                        <option>품목별 분석</option>
+                        <option>시즌별 분석</option>
+                        <option>문서 처리 현황</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>데이터 그룹화</label>
+                    <select class="form-select" id="dataGrouping">
+                        <option selected>월별</option>
+                        <option>주별</option>
+                        <option>분기별</option>
+                        <option>연도별</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary btn-block" id="applyReportFilter">필터 적용</button>
+                <button class="btn btn-outline btn-block" id="exportReportData">내보내기</button>
+            </div>
+        </aside>
+        
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>브랜드 및 품목별 보고서</h1>
+                <div class="header-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-outline active" id="viewChart">차트</button>
+                        <button class="btn btn-outline" id="viewTable">표</button>
+                        <button class="btn btn-outline" id="viewSummary">요약</button>
+                    </div>
+                    <button class="btn btn-primary" id="downloadReport"><i class="fas fa-download"></i> 보고서 다운로드</button>
+                </div>
+            </header>
+            
+            <!-- 요약 지표 카드 -->
+            <div class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 브랜드 수</h3>
+                        <p class="metric-value" id="totalBrands">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 품목 수</h3>
+                        <p class="metric-value" id="totalItems">-</p>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 발주 금액</h3>
+                        <p class="metric-value" id="totalOrderAmount">-</p>
+                        <span class="metric-delta" id="orderAmountDelta">-</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>총 주문 건수</h3>
+                        <p class="metric-value" id="totalOrders">-</p>
+                        <span class="metric-delta" id="ordersDelta">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 주요 차트 섹션 -->
+            <div class="report-charts">
+                <!-- 브랜드 분석 차트 -->
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h2>브랜드별 주문 금액</h2>
+                        <div class="chart-actions">
+                            <select class="form-select form-select-sm" id="brandChartPeriod">
+                                <option selected>최근 3개월</option>
+                                <option>최근 6개월</option>
+                                <option>최근 1년</option>
+                                <option>전체 기간</option>
+                            </select>
+                            <button class="btn btn-sm" id="downloadBrandChart"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm" id="expandBrandChart"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="brandOrderChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 월별 추이 차트 -->
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h2>월별 발주 금액 추이</h2>
+                        <div class="chart-actions">
+                            <div class="legend-items" id="monthlyTrendLegend">
+                                <!-- JavaScript로 동적 생성될 범례 -->
+                            </div>
+                            <button class="btn btn-sm" id="downloadMonthlyTrendChart"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm" id="expandMonthlyTrendChart"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 품목별 분석 차트 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>상위 품목 카테고리</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm" id="downloadCategoryChart"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm" id="expandCategoryChart"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="categoryPieChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 시즌별 분석 차트 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h2>시즌별 발주 비율</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm" id="downloadSeasonChart"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm" id="expandSeasonChart"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="seasonPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 브랜드별 품목 분석 -->
+            <div class="brand-analysis">
+                <div class="section-header">
+                    <h2>브랜드별 품목 분석</h2>
+                    <div class="section-actions">
+                        <select class="form-select form-select-sm" id="seasonFilter">
+                            <option selected>모든 시즌</option>
+                            <!-- JavaScript로 동적 생성될 시즌 옵션 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>브랜드</th>
+                                <th>셔츠/블라우스</th>
+                                <th>청바지/팬츠</th>
+                                <th>아우터</th>
+                                <th>신발</th>
+                                <th>액세서리</th>
+                                <th>총 발주액</th>
+                                <th>비교</th>
+                            </tr>
+                        </thead>
+                        <tbody id="brandAnalysisTableBody">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="loading-indicator">
+                                        <i class="fas fa-spinner fa-spin"></i> 데이터 로드 중...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot id="brandAnalysisTableFoot">
+                            <!-- JavaScript로 동적 생성될 합계 행 -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 품목 성장률 분석 -->
+            <div class="chart-container full-width">
+                <div class="chart-header">
+                    <h2>품목별 성장률 분석</h2>
+                    <div class="chart-actions">
+                        <select class="form-select form-select-sm" id="growthComparisonPeriod">
+                            <option selected>전년 동기 대비</option>
+                            <option>전분기 대비</option>
+                            <option>전월 대비</option>
+                        </select>
+                        <button class="btn btn-sm" id="downloadGrowthChart"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <canvas id="growthRateChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/reports.js"></script>
+</body>
+</html>
